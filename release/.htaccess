@@ -1,0 +1,11 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  
+  # Correctly route assets requested from nested client routes (e.g. /superadmin/tenants)
+  RewriteRule ^.*/assets/(.*)$ assets/$1 [L,NC]
+
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . index.html [L]
+</IfModule>
+
