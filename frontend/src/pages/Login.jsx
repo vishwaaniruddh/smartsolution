@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, LogIn, AlertCircle } from 'lucide-react';
-import { basePath } from '../utils/env.js';
+import { basePath, apiBaseUrl } from '../utils/env.js';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ const Login = () => {
     setForgotSuccess('');
     setLoading(true);
 
-    fetch('http://localhost/lead/api/reset_password.php', {
+    fetch(`${apiBaseUrl}/reset-password`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'request_reset', email: forgotEmail })
@@ -51,7 +51,7 @@ const Login = () => {
     setError('');
     setLoading(true);
 
-    fetch('http://localhost/lead/api/auth.php', {
+    fetch(`${apiBaseUrl}/auth`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -70,9 +70,9 @@ const Login = () => {
             navigate('/superadmin/tenants');
           } else if (data.user.role === 'Sales Associate') {
             localStorage.setItem('crm_active_agent', `${data.user.first_name} ${data.user.last_name}`);
-            navigate('/sa/dashboard');
+            navigate('/feature/leads/sa/dashboard');
           } else {
-            navigate('/');
+            navigate('/feature/leads');
           }
         } else {
           setError(data.error || 'Invalid credentials.');

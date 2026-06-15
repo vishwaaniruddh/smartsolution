@@ -1,6 +1,6 @@
 <?php
 // setup.php
-require_once 'db.php';
+require_once __DIR__ . '/core/db.php';
 
 // Run migrations to alter existing table if it exists
 try {
@@ -25,6 +25,13 @@ try {
     $pdo->exec("ALTER TABLE leads ADD COLUMN IF NOT EXISTS is_deleted TINYINT DEFAULT 0;");
     $pdo->exec("ALTER TABLE leads ADD COLUMN IF NOT EXISTS remarks TEXT NULL;");
     $pdo->exec("ALTER TABLE leads ADD COLUMN IF NOT EXISTS tenant_id INT DEFAULT 1;");
+    $pdo->exec("ALTER TABLE leads ADD COLUMN IF NOT EXISTS sales_status VARCHAR(50) DEFAULT 'Pending';");
+    $pdo->exec("ALTER TABLE leads ADD COLUMN IF NOT EXISTS received_payment DECIMAL(10,2) DEFAULT 0.00;");
+    $pdo->exec("ALTER TABLE leads ADD COLUMN IF NOT EXISTS payment_status VARCHAR(50) DEFAULT 'Unpaid';");
+    $pdo->exec("ALTER TABLE leads ADD COLUMN IF NOT EXISTS payment_method VARCHAR(50) NULL;");
+    $pdo->exec("ALTER TABLE leads ADD COLUMN IF NOT EXISTS transaction_reference VARCHAR(150) NULL;");
+    $pdo->exec("ALTER TABLE leads ADD COLUMN IF NOT EXISTS payment_date DATE NULL;");
+    $pdo->exec("ALTER TABLE leads ADD COLUMN IF NOT EXISTS finalization_remarks TEXT NULL;");
 
     // Alter other tables to add tenant_id
     $pdo->exec("ALTER TABLE users ADD COLUMN IF NOT EXISTS tenant_id INT DEFAULT 1;");
@@ -56,6 +63,13 @@ CREATE TABLE IF NOT EXISTS leads (
     is_deleted TINYINT DEFAULT 0,
     remarks TEXT NULL,
     tenant_id INT DEFAULT 1,
+    sales_status VARCHAR(50) DEFAULT 'Pending',
+    received_payment DECIMAL(10,2) DEFAULT 0.00,
+    payment_status VARCHAR(50) DEFAULT 'Unpaid',
+    payment_method VARCHAR(50) NULL,
+    transaction_reference VARCHAR(150) NULL,
+    payment_date DATE NULL,
+    finalization_remarks TEXT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

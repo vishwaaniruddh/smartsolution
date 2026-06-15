@@ -244,7 +244,7 @@ input, select, textarea { font-family: inherit; }
 /* ─── STAT CARDS ────────────────────────────────────── */
 .stats-row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
   margin-bottom: 24px;
 }
@@ -274,6 +274,8 @@ input, select, textarea { font-family: inherit; }
 .stat-card.blue::before { background: var(--accent-blue); }
 .stat-card.green::before { background: var(--accent-green); }
 .stat-card.orange::before { background: var(--accent-orange); }
+.stat-card.purple::before { background: var(--accent-purple); }
+.stat-card.cyan::before { background: var(--accent-cyan); }
 
 .stat-card:hover {
   transform: translateY(-2px);
@@ -293,6 +295,8 @@ input, select, textarea { font-family: inherit; }
 .stat-icon.blue { background: rgba(59,130,246,0.15); color: var(--accent-blue); }
 .stat-icon.green { background: rgba(16,185,129,0.15); color: var(--accent-green); }
 .stat-icon.orange { background: rgba(249,115,22,0.15); color: var(--accent-orange); }
+.stat-icon.purple { background: rgba(139,92,246,0.15); color: var(--accent-purple); }
+.stat-icon.cyan { background: rgba(6,182,212,0.15); color: var(--accent-cyan); }
 
 .stat-info h3 {
   font-size: 28px;
@@ -1943,7 +1947,7 @@ input, select, textarea { font-family: inherit; }
 
 .sales-stats-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
   margin-bottom: 24px;
 }
@@ -1957,6 +1961,9 @@ input, select, textarea { font-family: inherit; }
     position: static !important;
     max-height: none !important;
   }
+  .sales-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 768px) {
@@ -1967,7 +1974,6 @@ input, select, textarea { font-family: inherit; }
 
 @media (max-width: 500px) {
   .sales-stats-grid {
-    /* Fallback to 1 column on extremely small screens */
     grid-template-columns: 1fr;
   }
 }

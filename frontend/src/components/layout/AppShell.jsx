@@ -1,36 +1,36 @@
 import React, { useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { basePath } from '../../utils/env.js';
+import { basePath, apiBaseUrl } from '../../utils/env.js';
 import {
   LayoutDashboard, Users, GitBranch, UserCircle, BarChart3,
   Settings, PanelLeftClose, Search, UserCheck, CheckSquare, IndianRupee, Building, LogOut, Menu, ChevronDown, ChevronRight, Shield, Mail, LayoutGrid
 } from 'lucide-react';
 
 const adminNavItems = [
-  { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/feature/leads', icon: LayoutDashboard, label: 'Dashboard' },
   {
     isDropdown: true,
     icon: Shield,
     label: 'Admin',
     subItems: [
-      { to: '/lead-sources', icon: GitBranch, label: 'Lead Sources' },
+      { to: '/feature/leads/lead-sources', icon: GitBranch, label: 'Lead Sources' },
       { to: '/users', icon: UserCheck, label: 'Users' }
     ]
   },
-  { to: '/leads', icon: Users, label: 'Leads' },
-  { to: '/pipeline', icon: GitBranch, label: 'Sales Pipeline' },
-  { to: '/sales', icon: IndianRupee, label: 'Sales' },
+  { to: '/feature/leads/leads', icon: Users, label: 'Leads' },
+  { to: '/feature/leads/pipeline', icon: GitBranch, label: 'Sales Pipeline' },
+  { to: '/feature/leads/sales', icon: IndianRupee, label: 'Sales' },
   { to: '/contacts', icon: UserCircle, label: 'Contacts' },
-  { to: '/reports', icon: BarChart3, label: 'Reports' },
+  { to: '/feature/leads/reports', icon: BarChart3, label: 'Reports' },
   { to: '/settings', icon: Settings, label: 'Settings' },
 ];
 
 const saNavItems = [
-  { to: '/sa/dashboard', icon: LayoutDashboard, label: 'SA Dashboard' },
-  { to: '/sa/leads', icon: Users, label: 'My Leads' },
-  { to: '/sa/pipeline', icon: GitBranch, label: 'My Pipeline' },
-  { to: '/sa/sales', icon: IndianRupee, label: 'My Sales' },
-  { to: '/sa/tasks', icon: CheckSquare, label: 'My Tasks' },
+  { to: '/feature/leads/sa/dashboard', icon: LayoutDashboard, label: 'SA Dashboard' },
+  { to: '/feature/leads/sa/leads', icon: Users, label: 'My Leads' },
+  { to: '/feature/leads/sa/pipeline', icon: GitBranch, label: 'My Pipeline' },
+  { to: '/feature/leads/sa/sales', icon: IndianRupee, label: 'My Sales' },
+  { to: '/feature/leads/sa/tasks', icon: CheckSquare, label: 'My Tasks' },
 ];
 
 const superadminNavItems = [
@@ -66,7 +66,7 @@ const AppShell = () => {
   const handleCloseWelcomeModal = () => {
     if (!user) return;
     
-    fetch('http://localhost/lead/api/auth.php', {
+    fetch(`${apiBaseUrl}/auth`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -122,15 +122,15 @@ const AppShell = () => {
 
   const getHeaderTitle = () => {
     const path = location.pathname;
-    if (path === '/') return 'CRM Dashboard Overview';
-    if (path === '/leads') return 'Leads Management';
-    if (path === '/pipeline') return 'Sales Pipeline Management';
-    if (path === '/sales') return 'Sales Performance & Revenue';
+    if (path === '/' || path === '/feature/leads') return 'CRM Dashboard Overview';
+    if (path === '/feature/leads/leads') return 'Leads Management';
+    if (path === '/feature/leads/pipeline') return 'Sales Pipeline Management';
+    if (path === '/feature/leads/sales') return 'Sales Performance & Revenue';
     if (path === '/contacts') return 'Contacts';
     if (path === '/users') return 'User Management';
-    if (path === '/reports') return 'Reports';
+    if (path === '/feature/leads/reports') return 'Reports';
     if (path === '/settings') return 'Settings';
-    if (path === '/lead-sources') return 'Lead Sources Management';
+    if (path === '/feature/leads/lead-sources') return 'Lead Sources Management';
     
     // Superadmin Routes
     if (path === '/superadmin/tenants') return 'Superadmin Tenant Management';
@@ -139,11 +139,11 @@ const AppShell = () => {
 
     
     // SA Routes
-    if (path === '/sa/dashboard') return 'Sales Associate Dashboard';
-    if (path === '/sa/leads') return 'My Assigned Leads';
-    if (path === '/sa/pipeline') return 'My Sales Pipeline';
-    if (path === '/sa/sales') return 'My Converted Sales';
-    if (path === '/sa/tasks') return 'My Tasks & Follow-ups';
+    if (path === '/feature/leads/sa/dashboard') return 'Sales Associate Dashboard';
+    if (path === '/feature/leads/sa/leads') return 'My Assigned Leads';
+    if (path === '/feature/leads/sa/pipeline') return 'My Sales Pipeline';
+    if (path === '/feature/leads/sa/sales') return 'My Converted Sales';
+    if (path === '/feature/leads/sa/tasks') return 'My Tasks & Follow-ups';
     
     return 'Help Center';
   };
@@ -211,7 +211,7 @@ const AppShell = () => {
               <NavLink
                 key={item.to}
                 to={item.to}
-                end={item.to === '/' || item.to === '/sa/dashboard'}
+                end={item.to === '/feature/leads' || item.to === '/feature/leads/sa/dashboard'}
                 className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >

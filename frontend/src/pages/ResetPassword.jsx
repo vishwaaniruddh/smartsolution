@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Lock, LogIn, AlertCircle, CheckCircle } from 'lucide-react';
-import { basePath } from '../utils/env.js';
+import { basePath, apiBaseUrl } from '../utils/env.js';
 
 const ResetPassword = () => {
   const navigate = useNavigate();
@@ -39,7 +39,7 @@ const ResetPassword = () => {
     setError('');
     setLoading(true);
 
-    fetch('http://localhost/lead/api/reset_password.php', {
+    fetch(`${apiBaseUrl}/reset-password`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

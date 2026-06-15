@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { User, Key, Building2, Mail, Save, Activity, Send, CheckCircle2, AlertCircle, X } from 'lucide-react';
 import { useToast } from '../components/NotificationContext';
+import { apiBaseUrl } from '../utils/env.js';
 
 const currenciesList = [
   { name: 'Indian Rupee', symbol: '₹' },
@@ -69,7 +70,7 @@ const SettingsPage = () => {
   // Fetch initial profile & tenant configurations
   useEffect(() => {
     if (currentUser && currentUser.id) {
-      fetch(`http://localhost/lead/api/users.php?id=${currentUser.id}`)
+      fetch(`${apiBaseUrl}/users?id=${currentUser.id}`)
         .then(res => res.json())
         .then(data => {
           if (data.success && data.data) {
@@ -104,7 +105,7 @@ const SettingsPage = () => {
   useEffect(() => {
     if (activeTab === 'SMTP' && isAdminOrManager) {
       setSmtpLoading(true);
-      fetch('http://localhost/lead/api/smtp_config.php', {
+      fetch(`${apiBaseUrl}/smtp-config`, {
         headers: {
           'X-Tenant-ID': currentUser?.tenant_id || '1'
         }
@@ -145,7 +146,7 @@ const SettingsPage = () => {
       role: currentUser.role
     };
 
-    fetch('http://localhost/lead/api/users.php', {
+    fetch(`${apiBaseUrl}/users`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -194,7 +195,7 @@ const SettingsPage = () => {
       new_password: passwordForm.new_password
     };
 
-    fetch('http://localhost/lead/api/change_password.php', {
+    fetch(`${apiBaseUrl}/change-password`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -234,7 +235,7 @@ const SettingsPage = () => {
       return;
     }
 
-    fetch('http://localhost/lead/api/tenants.php', {
+    fetch(`${apiBaseUrl}/tenants`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -284,7 +285,7 @@ const SettingsPage = () => {
     e.preventDefault();
     setSmtpSaving(true);
 
-    fetch('http://localhost/lead/api/smtp_config.php', {
+    fetch(`${apiBaseUrl}/smtp-config`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -310,7 +311,7 @@ const SettingsPage = () => {
   // Handle SMTP Connection Test
   const handleSmtpTestConnection = () => {
     setSmtpTesting(true);
-    fetch('http://localhost/lead/api/smtp_config.php', {
+    fetch(`${apiBaseUrl}/smtp-config`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -341,7 +342,7 @@ const SettingsPage = () => {
     }
 
     setSmtpSendingTest(true);
-    fetch('http://localhost/lead/api/smtp_config.php', {
+    fetch(`${apiBaseUrl}/smtp-config`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

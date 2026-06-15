@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, Phone, MapPin, Search, Filter } from 'lucide-react';
+import { apiBaseUrl } from '../utils/env.js';
 
 const colors = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#22d3ee'];
 
@@ -16,7 +17,7 @@ const Contacts = () => {
   // Fetch leads to extract contacts
   const fetchContacts = () => {
     setLoading(true);
-    fetch('http://localhost/lead/api/leads.php')
+    fetch(`${apiBaseUrl}/leads`)
       .then(res => res.json())
       .then(data => {
         if (data.success && data.data) {

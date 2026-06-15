@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Search, Plus, X, Mail, Phone, MapPin, User, Lock, Upload, Edit2, Trash2, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useToast, useConfirm } from '../components/NotificationContext';
+import { apiBaseUrl } from '../utils/env.js';
 
 const defaultUsers = [
   {
@@ -83,7 +84,7 @@ const Users = () => {
 
   // Fetch users from backend
   const fetchUsers = () => {
-    fetch('http://localhost/lead/api/users.php')
+    fetch(`${apiBaseUrl}/users`)
       .then(res => res.json())
       .then(data => {
         if (data.success && data.data) {
@@ -135,7 +136,7 @@ const Users = () => {
       return;
     }
 
-    fetch(`http://localhost/lead/api/users.php?id=${userId}`, {
+    fetch(`${apiBaseUrl}/users?id=${userId}`, {
       method: 'DELETE'
     })
     .then(res => res.json())
@@ -208,7 +209,7 @@ const Users = () => {
     }
 
     setIsSubmitting(true);
-    fetch('http://localhost/lead/api/users.php', {
+    fetch(`${apiBaseUrl}/users`, {
       method: 'POST',
       body: formData
     })
@@ -302,7 +303,7 @@ const Users = () => {
     if (photoPath.startsWith('data:') || photoPath.startsWith('blob:') || photoPath.startsWith('http')) {
       return photoPath;
     }
-    return `http://localhost/lead/api/${photoPath}`;
+    return `${apiBaseUrl}/${photoPath}`;
   };
 
   const getInitials = (user) => {

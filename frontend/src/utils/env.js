@@ -5,19 +5,19 @@ export function getAppBasePath() {
   }
   const routerPaths = [
     '/superadmin/tenants',
-    '/sa/dashboard',
-    '/sa/leads',
-    '/sa/pipeline',
-    '/sa/tasks',
-    '/sa/sales',
+    '/feature/leads/sa/dashboard',
+    '/feature/leads/sa/leads',
+    '/feature/leads/sa/pipeline',
+    '/feature/leads/sa/tasks',
+    '/feature/leads/sa/sales',
     '/login',
-    '/leads',
-    '/pipeline',
-    '/sales',
+    '/feature/leads/leads',
+    '/feature/leads/pipeline',
+    '/feature/leads/sales',
+    '/feature/leads',
     '/contacts',
     '/users',
-    '/lead-sources',
-    '/smtp-config',
+    '/feature/leads/lead-sources',
     '/reports',
     '/settings',
     '/help'
@@ -37,3 +37,20 @@ export function getAppBasePath() {
 
 export const basePath = getAppBasePath();
 export const isProd = window.location.hostname !== 'localhost' || window.location.port !== '5173';
+
+export function getApiBaseUrl() {
+  const hostname = window.location.hostname;
+  if (hostname === 'workforce.sarsspl.com') {
+    return 'https://workforce.sarsspl.com/api';
+  } else if (hostname === 'workforce_dev.sarsspl.com') {
+    return 'https://workforce_dev.sarsspl.com/api';
+  } else {
+    // Local / Testing environment
+    if (window.location.port === '5173') {
+      return 'http://localhost/lead/api';
+    }
+    return window.location.origin + basePath + '/api';
+  }
+}
+
+export const apiBaseUrl = getApiBaseUrl();
