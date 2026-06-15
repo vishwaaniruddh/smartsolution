@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { useOutletContext } from 'react-router-dom';
 import { Search, Filter, MessageSquare, Check, X, FileText, Phone, Mail, Clock, Plus } from 'lucide-react';
 import { useToast } from '../../components/NotificationContext';
+import LeadFormResolver from '../../components/LeadFormResolver';
 
 
 const getStatusClass = (status) => {
@@ -39,16 +40,6 @@ const SAMyLeads = () => {
 
   // Create Lead modal states
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [leadForm, setLeadForm] = useState({
-    name: '',
-    email: '',
-    contact_number: '',
-    source: 'Website',
-    status: 'New',
-    value: '',
-    remarks: ''
-  });
-  const [formErrors, setFormErrors] = useState({});
   const [saving, setSaving] = useState(false);
 
   // Side Drawer state
@@ -61,63 +52,22 @@ const SAMyLeads = () => {
   const [loggingActivity, setLoggingActivity] = useState(false);
 
   const handleOpenCreateModal = () => {
-
-    setLeadForm({
-      name: '',
-      email: '',
-      contact_number: '',
-      source: 'Website',
-      status: 'New',
-      value: '',
-      remarks: ''
-    });
-    setFormErrors({});
     setIsCreateModalOpen(true);
   };
 
-  const handleLeadSubmit = (e) => {
-    e.preventDefault();
-    const errors = {};
-    if (!leadForm.name || !leadForm.name.trim()) {
-      errors.name = 'Lead name is required.';
-    }
-    
-    // Validate email if provided
-    if (leadForm.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(leadForm.email.trim())) {
-      errors.email = 'Please enter a valid email address.';
-    }
-    
-    // Validate phone if provided
-    if (leadForm.contact_number) {
-      const digitsOnly = leadForm.contact_number.replace(/\D/g, '');
-      if (digitsOnly.length < 7 || digitsOnly.length > 15 || !/^\+?[0-9\s\-()]+$/.test(leadForm.contact_number)) {
-        errors.contact_number = 'Please enter a valid phone number (7-15 digits).';
-      }
-    }
-
-    if (Object.keys(errors).length > 0) {
-      setFormErrors(errors);
-      return;
-    }
-
+  const handleLeadSubmitDirect = (payload) => {
     setSaving(true);
 
-    const payload = {
-      name: leadForm.name,
-      email: leadForm.email || null,
-      contact_number: leadForm.contact_number || null,
-      source: leadForm.source,
-      status: leadForm.status,
-      value: leadForm.value ? parseFloat(leadForm.value) : 0.00,
+    const completePayload = {
+      ...payload,
       agent: activeAgent,
-      delegation_status: 'Accepted',
-      remarks: leadForm.remarks || null
+      delegation_status: 'Accepted'
     };
 
     fetch('http://localhost/lead/api/leads.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(completePayload)
     })
       .then(res => res.json())
       .then(data => {
@@ -133,8 +83,8 @@ const SAMyLeads = () => {
         console.warn('API error creating lead, using local fallback:', err);
         const localLead = {
           id: Date.now(),
-          ...payload,
-          value: payload.value.toString()
+          ...completePayload,
+          value: completePayload.value.toString()
         };
         setLeads([localLead, ...leads]);
         setIsCreateModalOpen(false);
@@ -576,121 +526,13 @@ const SAMyLeads = () => {
                 <X size={18} />
               </button>
             </div>
-            <form onSubmit={handleLeadSubmit}>
-              <div className="modal-body">
-                <div className="form-group">
-                  <label className="form-label">Lead Name *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Acme Corporation or Jane Doe"
-                    className={`form-control ${formErrors.name ? 'is-invalid' : ''}`}
-                    value={leadForm.name}
-                    onChange={(e) => {
-                      setLeadForm({ ...leadForm, name: e.target.value });
-                      if (formErrors.name) setFormErrors({ ...formErrors, name: null });
-                    }}
-                  />
-                  {formErrors.name && <span className="invalid-feedback">{formErrors.name}</span>}
-                </div>
-                
-                <div className="form-row">
-                  <div className="form-group">
-                    <label className="form-label">Email Address</label>
-                    <input
-                      type="email"
-                      placeholder="e.g. john@acme.com"
-                      className={`form-control ${formErrors.email ? 'is-invalid' : ''}`}
-                      value={leadForm.email || ''}
-                      onChange={(e) => {
-                        setLeadForm({ ...leadForm, email: e.target.value });
-                        if (formErrors.email) setFormErrors({ ...formErrors, email: null });
-                      }}
-                    />
-                    {formErrors.email && <span className="invalid-feedback">{formErrors.email}</span>}
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Contact Number</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. +1 (555) 012-3456"
-                      className={`form-control ${formErrors.contact_number ? 'is-invalid' : ''}`}
-                      value={leadForm.contact_number || ''}
-                      onChange={(e) => {
-                        setLeadForm({ ...leadForm, contact_number: e.target.value });
-                        if (formErrors.contact_number) setFormErrors({ ...formErrors, contact_number: null });
-                      }}
-                    />
-                    {formErrors.contact_number && <span className="invalid-feedback">{formErrors.contact_number}</span>}
-                  </div>
-                </div>
-
-                <div className="form-row">
-                  <div className="form-group">
-                    <label className="form-label">Source</label>
-                    <select
-                      className="form-control"
-                      value={leadForm.source}
-                      onChange={(e) => setLeadForm({ ...leadForm, source: e.target.value })}
-                    >
-                      <option>Website</option>
-                      <option>Referral</option>
-                      <option>LinkedIn</option>
-                      <option>Partner</option>
-                      <option>Cold Call</option>
-                      <option>Other</option>
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Status</label>
-                    <select
-                      className="form-control"
-                      value={leadForm.status}
-                      onChange={(e) => setLeadForm({ ...leadForm, status: e.target.value })}
-                    >
-                      <option>New</option>
-                      <option>Contacted</option>
-                      <option>Qualified</option>
-                      <option>Closed</option>
-                      <option>Lost</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Estimated Value ({currencySymbol})</label>
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    placeholder="e.g. 5000.00"
-                    className="form-control"
-                    value={leadForm.value}
-                    onChange={(e) => setLeadForm({ ...leadForm, value: e.target.value })}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Remarks</label>
-                  <textarea
-                    rows="3"
-                    placeholder="General remarks, notes, or background information about this lead..."
-                    className="form-control"
-                    style={{ resize: 'vertical' }}
-                    value={leadForm.remarks || ''}
-                    onChange={(e) => setLeadForm({ ...leadForm, remarks: e.target.value })}
-                  />
-                </div>
-              </div>
-              <div className="modal-footer">
-                <button type="button" className="modal-btn secondary" onClick={() => setIsCreateModalOpen(false)}>
-                  Cancel
-                </button>
-                <button type="submit" className="modal-btn primary" disabled={saving}>
-                  {saving ? 'Creating...' : 'Create Lead'}
-                </button>
-              </div>
-            </form>
+            <LeadFormResolver
+              onSubmit={handleLeadSubmitDirect}
+              onCancel={() => setIsCreateModalOpen(false)}
+              showAgentAssignment={false}
+              currencySymbol={currencySymbol}
+              saving={saving}
+            />
           </div>
         </div>
       , document.body)}

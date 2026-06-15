@@ -2,13 +2,27 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Search, Filter, Plus, X, Check, XCircle, Edit2, Trash2, UserPlus, MessageSquare, Clock } from 'lucide-react';
 import { useToast, useConfirm } from '../components/NotificationContext';
+import LeadFormResolver from '../components/LeadFormResolver';
 
-const defaultLeads = [
-  { id: 1, name: 'John Smith', email: 'john.smith@gmail.com', contact_number: '+1 (555) 019-2834', status: 'New', source: 'Website', value: 5000.00, agent: 'Emily Davis', delegation_status: 'Accepted' },
-  { id: 2, name: 'Sarah Chen', email: 'schen@techflow.io', contact_number: '+1 (555) 019-5847', status: 'Contacted', source: 'Referral', value: 12500.00, agent: 'Emily Davis', delegation_status: 'Pending' },
-  { id: 3, name: 'Michael Brown', email: 'mbrown@apex.org', contact_number: '+1 (555) 019-0000', status: 'Qualified', source: 'LinkedIn', value: 8200.00, agent: 'Alex Lee', delegation_status: 'Accepted' },
-  { id: 4, name: 'David Miller', email: 'dmiller@millerco.com', contact_number: '+1 (555) 019-1111', status: 'Closed', source: 'Website', value: 15000.00, agent: 'Emily Davis', delegation_status: 'Accepted' },
-];
+const formatRemarks = (remarks) => {
+  if (!remarks) return '';
+  const trimmed = remarks.trim();
+  if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+    try {
+      const json = JSON.parse(trimmed);
+      const parts = [];
+      if (json.industry_sector) parts.push(json.industry_sector);
+      if (json.company_size) parts.push(`Size: ${json.company_size}`);
+      if (json.text_remarks) parts.push(json.text_remarks);
+      return parts.join(' | ');
+    } catch (e) {
+      return remarks;
+    }
+  }
+  return remarks;
+};
+
+
 
 const getStatusClass = (status) => {
   switch (status) {
@@ -55,7 +69,7 @@ const LeadsTable = () => {
   const currentUser = userStr ? JSON.parse(userStr) : null;
   const currencySymbol = currentUser?.currency_symbol || '₹';
 
-  const [leads, setLeads] = useState(defaultLeads);
+  const [leads, setLeads] = useState([]);
   const [agentsList, setAgentsList] = useState(['Unassigned', 'Emily Davis', 'Alex Lee', 'Sarah Connor']);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
@@ -66,20 +80,7 @@ const LeadsTable = () => {
   const [editingLeadId, setEditingLeadId] = useState(null); // null = create, number = edit
   
   // Lead Form State (Create or Edit)
-  const [leadForm, setLeadForm] = useState({
-    name: '',
-    email: '',
-    contact_number: '',
-    source: 'Website',
-    status: 'New',
-    value: '',
-    agent: 'Unassigned',
-    delegation_status: 'None',
-    remarks: ''
-  });
-
-  // Validation feedback state
-  const [formErrors, setFormErrors] = useState({});
+  const [savingLead, setSavingLead] = useState(false);
 
   // Delegation Form State
   const [selectedLead, setSelectedLead] = useState(null);
@@ -138,36 +139,12 @@ const LeadsTable = () => {
   // Open Create Modal
   const openCreateModal = () => {
     setEditingLeadId(null);
-    setFormErrors({});
-    setLeadForm({
-      name: '',
-      email: '',
-      contact_number: '',
-      source: 'Website',
-      status: 'New',
-      value: '',
-      agent: 'Unassigned',
-      delegation_status: 'None',
-      remarks: ''
-    });
     setIsCreateModalOpen(true);
   };
 
   // Open Edit Modal
   const openEditModal = (lead) => {
     setEditingLeadId(lead.id);
-    setFormErrors({});
-    setLeadForm({
-      name: lead.name || '',
-      email: lead.email || '',
-      contact_number: lead.contact_number || '',
-      source: lead.source || 'Website',
-      status: lead.status || 'New',
-      value: lead.value ? lead.value.toString() : '',
-      agent: lead.agent || 'Unassigned',
-      delegation_status: lead.delegation_status || 'None',
-      remarks: lead.remarks || ''
-    });
     setIsCreateModalOpen(true);
   };
 
@@ -227,33 +204,8 @@ const LeadsTable = () => {
   };
 
   // Handle lead creation/edit submit
-  const handleLeadSubmit = (e) => {
-    e.preventDefault();
-    const errors = {};
-    if (!leadForm.name || !leadForm.name.trim()) {
-      errors.name = 'Lead Name is required.';
-    }
-
-    if (leadForm.email && !validateEmail(leadForm.email)) {
-      errors.email = 'Please enter a valid Email Address (e.g. name@domain.com).';
-    }
-
-    if (leadForm.contact_number && !validatePhone(leadForm.contact_number)) {
-      errors.contact_number = 'Please enter a valid Contact Number (7-15 digits).';
-    }
-
-    if (Object.keys(errors).length > 0) {
-      setFormErrors(errors);
-      return;
-    }
-    setFormErrors({});
-
-    const payload = {
-      ...leadForm,
-      value: leadForm.value === '' ? 0.00 : parseFloat(leadForm.value),
-      delegation_status: leadForm.agent === 'Unassigned' ? 'None' : leadForm.delegation_status
-    };
-
+  const handleLeadSubmitDirect = (payload) => {
+    setSavingLead(true);
     if (editingLeadId !== null) {
       // PERFORM UPDATE (PUT)
       fetch('http://localhost/lead/api/leads.php', {
@@ -275,6 +227,9 @@ const LeadsTable = () => {
         // Fallback local update
         setLeads(leads.map(l => l.id === editingLeadId ? { ...l, id: editingLeadId, ...payload } : l));
         setIsCreateModalOpen(false);
+      })
+      .finally(() => {
+        setSavingLead(false);
       });
     } else {
       // PERFORM CREATE (POST)
@@ -301,6 +256,9 @@ const LeadsTable = () => {
         };
         setLeads([localNewLead, ...leads]);
         setIsCreateModalOpen(false);
+      })
+      .finally(() => {
+        setSavingLead(false);
       });
     }
   };
@@ -530,9 +488,9 @@ const LeadsTable = () => {
                             fontStyle: lead.remarks ? 'normal' : 'italic',
                             fontSize: '12.5px'
                           }}
-                          title={lead.remarks || ''}
+                          title={formatRemarks(lead.remarks)}
                         >
-                          {lead.remarks || 'No remarks'}
+                          {formatRemarks(lead.remarks) || 'No remarks'}
                         </div>
                       </td>
                       <td>
@@ -611,147 +569,15 @@ const LeadsTable = () => {
                 <X size={18} />
               </button>
             </div>
-            <form onSubmit={handleLeadSubmit}>
-              <div className="modal-body">
-                <div className="form-group">
-                  <label className="form-label">Lead Name</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Acme Corporation or Jane Doe"
-                    className={`form-control ${formErrors.name ? 'is-invalid' : ''}`}
-                    value={leadForm.name}
-                    onChange={(e) => {
-                      setLeadForm({ ...leadForm, name: e.target.value });
-                      if (formErrors.name) setFormErrors({ ...formErrors, name: null });
-                    }}
-                  />
-                  {formErrors.name && <span className="invalid-feedback">{formErrors.name}</span>}
-                </div>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label className="form-label">Email Address</label>
-                    <input
-                      type="email"
-                      placeholder="e.g. john@acme.com"
-                      className={`form-control ${formErrors.email ? 'is-invalid' : ''}`}
-                      value={leadForm.email || ''}
-                      onChange={(e) => {
-                        setLeadForm({ ...leadForm, email: e.target.value });
-                        if (formErrors.email) setFormErrors({ ...formErrors, email: null });
-                      }}
-                    />
-                    {formErrors.email && <span className="invalid-feedback">{formErrors.email}</span>}
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Contact Number</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. +1 (555) 012-3456"
-                      className={`form-control ${formErrors.contact_number ? 'is-invalid' : ''}`}
-                      value={leadForm.contact_number || ''}
-                      onChange={(e) => {
-                        setLeadForm({ ...leadForm, contact_number: e.target.value });
-                        if (formErrors.contact_number) setFormErrors({ ...formErrors, contact_number: null });
-                      }}
-                    />
-                    {formErrors.contact_number && <span className="invalid-feedback">{formErrors.contact_number}</span>}
-                  </div>
-                </div>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label className="form-label">Source</label>
-                    <select
-                      className="form-control"
-                      value={leadForm.source}
-                      onChange={(e) => setLeadForm({ ...leadForm, source: e.target.value })}
-                    >
-                      <option>Website</option>
-                      <option>Referral</option>
-                      <option>LinkedIn</option>
-                      <option>Partner</option>
-                      <option>Cold Call</option>
-                      <option>Other</option>
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Status</label>
-                    <select
-                      className="form-control"
-                      value={leadForm.status}
-                      onChange={(e) => setLeadForm({ ...leadForm, status: e.target.value })}
-                    >
-                      <option>New</option>
-                      <option>Contacted</option>
-                      <option>Qualified</option>
-                      <option>Closed</option>
-                      <option>Lost</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Estimated Value ({currencySymbol})</label>
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    placeholder="e.g. 5000.00"
-                    className="form-control"
-                    value={leadForm.value}
-                    onChange={(e) => setLeadForm({ ...leadForm, value: e.target.value })}
-                  />
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Remarks</label>
-                  <textarea
-                    rows="3"
-                    placeholder="General remarks, notes, or background information about this lead..."
-                    className="form-control"
-                    style={{ resize: 'vertical' }}
-                    value={leadForm.remarks || ''}
-                    onChange={(e) => setLeadForm({ ...leadForm, remarks: e.target.value })}
-                  />
-                </div>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label className="form-label">Assign Agent</label>
-                    <select
-                      className="form-control"
-                      value={leadForm.agent}
-                      onChange={(e) => {
-                        const agent = e.target.value;
-                        const status = agent === 'Unassigned' ? 'None' : 'Pending';
-                        setLeadForm({ ...leadForm, agent, delegation_status: status });
-                      }}
-                    >
-                      {agentsList.map(a => <option key={a}>{a}</option>)}
-                    </select>
-                  </div>
-                  {leadForm.agent !== 'Unassigned' && (
-                    <div className="form-group">
-                      <label className="form-label">Delegation Status</label>
-                      <select
-                        className="form-control"
-                        value={leadForm.delegation_status}
-                        onChange={(e) => setLeadForm({ ...leadForm, delegation_status: e.target.value })}
-                      >
-                        <option>Pending</option>
-                        <option>Accepted</option>
-                        <option>Rejected</option>
-                      </select>
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="modal-footer">
-                <button type="button" className="modal-btn secondary" onClick={() => setIsCreateModalOpen(false)}>
-                  Cancel
-                </button>
-                <button type="submit" className="modal-btn primary">
-                  {editingLeadId !== null ? 'Save Changes' : 'Create Lead'}
-                </button>
-              </div>
-            </form>
+            <LeadFormResolver
+              initialData={editingLeadId !== null ? leads.find(l => l.id === editingLeadId) : null}
+              onSubmit={handleLeadSubmitDirect}
+              onCancel={() => setIsCreateModalOpen(false)}
+              agentsList={agentsList}
+              showAgentAssignment={true}
+              currencySymbol={currencySymbol}
+              saving={savingLead}
+            />
           </div>
         </div>
       , document.body)}
