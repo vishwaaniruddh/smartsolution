@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { apiBaseUrl } from '../../../utils/env.js';
 
 const validateEmail = (email) => {
   if (!email) return true;
@@ -39,6 +40,35 @@ const StandardLeadForm = ({
   });
 
   const [errors, setErrors] = useState({});
+  const [sources, setSources] = useState([]);
+
+  useEffect(() => {
+    const userStr = localStorage.getItem('crm_user');
+    const currentUser = userStr ? JSON.parse(userStr) : null;
+    const tenantId = currentUser?.tenant_id || localStorage.getItem('crm_tenant_id') || '1';
+
+    fetch(`${apiBaseUrl}/lead-sources?tenant_id=${tenantId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.data && data.data.length > 0) {
+          const names = data.data.map(item => item.name);
+          setSources(names);
+          if (!initialData) {
+            setForm(prev => {
+              if (!names.includes(prev.source)) {
+                return { ...prev, source: names[0] };
+              }
+              return prev;
+            });
+          }
+        } else {
+          setSources(['Website', 'Referral', 'LinkedIn', 'Partner', 'Cold Call', 'Other']);
+        }
+      })
+      .catch(() => {
+        setSources(['Website', 'Referral', 'LinkedIn', 'Partner', 'Cold Call', 'Other']);
+      });
+  }, [initialData]);
 
   useEffect(() => {
     if (initialData) {
@@ -144,12 +174,12 @@ const StandardLeadForm = ({
               value={form.source}
               onChange={(e) => setForm({ ...form, source: e.target.value })}
             >
-              <option>Website</option>
-              <option>Referral</option>
-              <option>LinkedIn</option>
-              <option>Partner</option>
-              <option>Cold Call</option>
-              <option>Other</option>
+              {sources.map(src => (
+                <option key={src} value={src}>{src}</option>
+              ))}
+              {form.source && !sources.includes(form.source) && (
+                <option value={form.source}>{form.source}</option>
+              )}
             </select>
           </div>
 

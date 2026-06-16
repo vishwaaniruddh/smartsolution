@@ -2234,3 +2234,12 @@ input, select, textarea { font-family: inherit; }
 th, td {
   white-space: nowrap;
 }
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}

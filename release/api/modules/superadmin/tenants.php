@@ -128,7 +128,7 @@ switch ($method) {
             
             // Extract folder path by stripping query parameters and backend script name
             $request_path = explode('?', $request_uri)[0];
-            $base_path = preg_replace('/\/api\/tenants\.php$/', '', $request_path);
+            $base_path = preg_replace('/(\/api)?\/tenants(\.php)?$/i', '', rtrim($request_path, '/'));
             $base_path = rtrim($base_path, '/') . '/';
             
             // Build the absolute dynamic link to the login screen

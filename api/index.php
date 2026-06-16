@@ -21,6 +21,9 @@ switch ($route) {
     case 'leads':
         require_once __DIR__ . '/modules/leads/leads.php';
         break;
+    case 'payments':
+        require_once __DIR__ . '/modules/leads/payments.php';
+        break;
     case 'activities':
         require_once __DIR__ . '/modules/leads/activities.php';
         break;

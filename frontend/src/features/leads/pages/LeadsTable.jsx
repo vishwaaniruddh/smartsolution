@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Search, Filter, Plus, X, Check, XCircle, Edit2, Trash2, UserPlus, MessageSquare, Clock } from 'lucide-react';
+import { Search, Filter, Plus, X, Check, XCircle, Edit2, Trash2, UserPlus, MessageSquare, Clock, PlusCircle } from 'lucide-react';
 import { useToast, useConfirm } from '../../../components/NotificationContext';
 import LeadFormResolver from '../components/LeadFormResolver';
 import { apiBaseUrl } from '../../../utils/env.js';
@@ -91,11 +91,13 @@ const LeadsTable = () => {
   // Interaction drawer state
   const [selectedLogLead, setSelectedLogLead] = useState(null);
   const [activities, setActivities] = useState([]);
-  const [newActivity, setNewActivity] = useState({
+  const [isLogModalOpen, setIsLogModalOpen] = useState(false);
+  const [logModalLead, setLogModalLead] = useState(null);
+  const [logForm, setLogForm] = useState({
     type: 'Note',
     details: ''
   });
-  const [loggingActivity, setLoggingActivity] = useState(false);
+  const [savingLog, setSavingLog] = useState(false);
 
   // Fetch leads from backend API
   const fetchLeads = () => {
@@ -168,19 +170,29 @@ const LeadsTable = () => {
     fetchActivities(lead.id);
   };
 
-  const handleLogSubmit = (e) => {
+  const openLogModal = (lead) => {
+    setLogModalLead(lead);
+    setLogForm({
+      type: 'Note',
+      details: ''
+    });
+    setIsLogModalOpen(false);
+    setIsLogModalOpen(true);
+  };
+
+  const handleLogModalSubmit = (e) => {
     e.preventDefault();
-    if (!newActivity.details) {
-      toast.warning('Please enter activity notes.');
+    if (!logForm.details || !logForm.details.trim()) {
+      toast.warning('Please enter details.');
       return;
     }
     
-    setLoggingActivity(true);
+    setSavingLog(true);
     const logData = {
-      lead_id: selectedLogLead.id,
-      agent_name: 'Admin',
-      activity_type: newActivity.type,
-      details: newActivity.details
+      lead_id: logModalLead.id,
+      agent_name: currentUser ? `${currentUser.first_name} ${currentUser.last_name}` : 'Admin',
+      activity_type: logForm.type,
+      details: logForm.details
     };
 
     fetch(`${apiBaseUrl}/activities`, {
@@ -192,15 +204,21 @@ const LeadsTable = () => {
     .then(data => {
       if (data.success) {
         toast.success('Activity logged successfully.');
-        fetchActivities(selectedLogLead.id);
-        setNewActivity({ type: 'Note', details: '' });
+        setIsLogModalOpen(false);
+        if (selectedLogLead && selectedLogLead.id === logModalLead.id) {
+          fetchActivities(logModalLead.id);
+        }
+        fetchLeads();
+      } else {
+        toast.error(data.error || 'Failed to save activity.');
       }
     })
     .catch((err) => {
       console.error('API error saving activity:', err);
+      toast.error('Network error saving activity.');
     })
     .finally(() => {
-      setLoggingActivity(false);
+      setSavingLog(false);
     });
   };
 
@@ -471,14 +489,22 @@ const LeadsTable = () => {
                       </td>
                       <td>
                         <div className="action-buttons-cell" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <button 
-                            className="action-icon-btn log" 
-                            onClick={() => openLeadLog(lead)}
-                            title="View Interaction Log"
-                            style={{ color: 'var(--accent-cyan)' }}
-                          >
-                            <MessageSquare size={15} />
-                          </button>
+                           <button 
+                             className="action-icon-btn log" 
+                             onClick={() => openLeadLog(lead)}
+                             title="View Interaction Log"
+                             style={{ color: 'var(--accent-cyan)' }}
+                           >
+                             <MessageSquare size={15} />
+                           </button>
+                           <button 
+                             className="action-icon-btn log" 
+                             onClick={() => openLogModal(lead)}
+                             title="Log Action or Remark"
+                             style={{ color: 'var(--accent-orange)' }}
+                           >
+                             <PlusCircle size={15} />
+                           </button>
                           <button 
                             className="action-icon-btn delegate" 
                             onClick={() => openDelegateModal(lead)}
@@ -601,6 +627,61 @@ const LeadsTable = () => {
         </div>
       , document.body)}
 
+      {isLogModalOpen && logModalLead && createPortal(
+        <div className="modal-overlay" onClick={() => setIsLogModalOpen(false)}>
+          <div className="modal-container" onClick={(e) => e.stopPropagation()} style={{ width: '450px', maxWidth: '95%' }}>
+            <div className="modal-header">
+              <h3>Log Action or Remark: {logModalLead.name}</h3>
+              <button className="modal-close-btn" onClick={() => setIsLogModalOpen(false)}>
+                <X size={18} />
+              </button>
+            </div>
+            <form onSubmit={handleLogModalSubmit}>
+              <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                <div className="form-group">
+                  <label className="form-label" style={{ display: 'block', fontSize: '12.5px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '6px' }}>
+                    Activity Type
+                  </label>
+                  <select
+                    className="form-control"
+                    value={logForm.type}
+                    onChange={(e) => setLogForm({ ...logForm, type: e.target.value })}
+                    style={{ width: '100%', height: '38px', background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', color: 'var(--text-primary)', padding: '0 8px' }}
+                  >
+                    <option>Note</option>
+                    <option>Call</option>
+                    <option>Email</option>
+                    <option>Meeting</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label className="form-label" style={{ display: 'block', fontSize: '12.5px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '6px' }}>
+                    Details / Remark <span style={{ color: 'red' }}>*</span>
+                  </label>
+                  <textarea
+                    rows="4"
+                    required
+                    placeholder="Enter details of action or remark..."
+                    className="form-control"
+                    value={logForm.details}
+                    onChange={(e) => setLogForm({ ...logForm, details: e.target.value })}
+                    style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', color: 'var(--text-primary)', padding: '8px 10px', fontSize: '13px', resize: 'vertical' }}
+                  />
+                </div>
+              </div>
+              <div className="modal-footer" style={{ borderTop: '1px solid var(--border)', paddingTop: '12px', display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+                <button type="button" className="modal-btn secondary" onClick={() => setIsLogModalOpen(false)}>
+                  Cancel
+                </button>
+                <button type="submit" disabled={savingLog} className="modal-btn primary">
+                  {savingLog ? 'Saving...' : 'Add Log Entry'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      , document.body)}
+
       {/* LEAD DETAILS & INTERACTION DRAWER */}
       {selectedLogLead && (
         <div 
@@ -654,42 +735,17 @@ const LeadsTable = () => {
             </div>
           </div>
 
-          {/* LOG ACTIVITY FORM */}
-          <form onSubmit={handleLogSubmit} style={{ borderBottom: '1px solid var(--border)', paddingBottom: '16px', marginBottom: '16px' }}>
-            <h4 style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>Log Action or Remark</h4>
-            <div className="form-group" style={{ marginBottom: '10px' }}>
-              <select
-                className="form-control"
-                style={{ padding: '6px 10px', fontSize: '12px' }}
-                value={newActivity.type}
-                onChange={(e) => setNewActivity({ ...newActivity, type: e.target.value })}
-              >
-                <option>Note</option>
-                <option>Call</option>
-                <option>Email</option>
-                <option>Meeting</option>
-              </select>
-            </div>
-            <div className="form-group" style={{ marginBottom: '10px' }}>
-              <textarea
-                rows="2"
-                required
-                placeholder="Enter details of action or remark..."
-                className="form-control"
-                style={{ padding: '6px 10px', fontSize: '12px', resize: 'vertical' }}
-                value={newActivity.details}
-                onChange={(e) => setNewActivity({ ...newActivity, details: e.target.value })}
-              />
-            </div>
+          {/* LOG ACTION BUTTON */}
+          <div style={{ borderBottom: '1px solid var(--border)', paddingBottom: '16px', marginBottom: '16px' }}>
             <button 
-              type="submit" 
-              disabled={loggingActivity}
+              type="button" 
+              onClick={() => openLogModal(selectedLogLead)}
               className="modal-btn primary"
-              style={{ width: '100%', padding: '6px', fontSize: '12px', justifyContent: 'center' }}
+              style={{ width: '100%', padding: '8px', fontSize: '13px', justifyContent: 'center', display: 'flex', alignItems: 'center', gap: '6px' }}
             >
-              {loggingActivity ? 'Saving...' : 'Add Log Entry'}
+              <PlusCircle size={15} /> Log Action or Remark
             </button>
-          </form>
+          </div>
 
           {/* ACTIVITY HISTORY FEED */}
           <div style={{ flex: 1, overflowY: 'auto' }}>

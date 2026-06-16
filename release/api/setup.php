@@ -225,10 +225,53 @@ CREATE TABLE IF NOT EXISTS smtp_settings (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE
 );
+
+-- Create Lead Payments table
+CREATE TABLE IF NOT EXISTS lead_payments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    lead_id INT NOT NULL,
+    amount DECIMAL(10,2) NOT NULL,
+    payment_method VARCHAR(50) NOT NULL,
+    transaction_reference VARCHAR(150) NOT NULL,
+    payment_date DATE NOT NULL,
+    remarks TEXT NULL,
+    tenant_id INT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (lead_id) REFERENCES leads(id) ON DELETE CASCADE
+);
 ";
 
 try {
     $pdo->exec($query);
+
+    // Migrate existing lead payment details into lead_payments table
+    $stmt = $pdo->query("SHOW TABLES LIKE 'lead_payments'");
+    if ($stmt->fetch()) {
+        $check_empty = $pdo->query("SELECT COUNT(*) FROM lead_payments");
+        if ($check_empty->fetchColumn() == 0) {
+            // Lead payments is empty, migrate from leads table
+            $stmt = $pdo->query("SELECT id, received_payment, payment_method, transaction_reference, payment_date, finalization_remarks, tenant_id FROM leads WHERE received_payment > 0");
+            $existing_payments = $stmt->fetchAll();
+            if (count($existing_payments) > 0) {
+                $insert_payment = $pdo->prepare("INSERT INTO lead_payments (lead_id, amount, payment_method, transaction_reference, payment_date, remarks, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                foreach ($existing_payments as $ep) {
+                    $pm = $ep['payment_method'] ?: 'Cash';
+                    $ref = $ep['transaction_reference'] ?: 'MIGRATED';
+                    $pdate = $ep['payment_date'] ?: date('Y-m-d');
+                    $rem = $ep['finalization_remarks'] ?: 'Migrated initial payment';
+                    $insert_payment->execute([
+                        $ep['id'],
+                        $ep['received_payment'],
+                        $pm,
+                        $ref,
+                        $pdate,
+                        $rem,
+                        $ep['tenant_id']
+                    ]);
+                }
+            }
+        }
+    }
 
     // Seed Superadmin user dynamically
     $super_email = 'vishwaaniruddh@gmail.com';

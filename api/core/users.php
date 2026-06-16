@@ -211,7 +211,7 @@ switch ($method) {
                 
                 // Extract folder path by stripping query parameters and backend script name
                 $request_path = explode('?', $request_uri)[0];
-                $base_path = preg_replace('/\/api\/users\.php$/', '', $request_path);
+                $base_path = preg_replace('/(\/api)?\/users(\.php)?$/i', '', rtrim($request_path, '/'));
                 $base_path = rtrim($base_path, '/') . '/';
                 $login_link = $protocol . "://" . $host . $base_path . "login";
 
