@@ -1,0 +1,21 @@
+first_name,last_name,email,phone,gender,date_of_joining,employment_type,department,designation,address,bank_name,account_number,ifsc_code,pan_number
+Priya,Patel,priya.patel1@example.com,9668381423,Male,06/16/2026,Part-time,HR,Analyst,"105 Business Park, Pune",ICICI Bank,96140581584154,HDFC0003228,VOIEF3652I
+Ananya,Joshi,ananya.joshi2@example.com,9346787188,Male,06/12/2026,Contract,Engineering,Coordinator,"386 Business Park, Pune",Axis Bank,16643499046276,HDFC0007253,JGEJA7379V
+Sanjay,Kulkarni,sanjay.kulkarni3@example.com,9893817708,Male,06/20/2026,Contract,Engineering,Coordinator,"350 Business Park, Pune",ICICI Bank,56404046220561,HDFC0009427,BVBLT1459Q
+Aarav,Jain,aarav.jain4@example.com,9113110431,Female,06/17/2026,Full-time,Sales,Lead,"44 Business Park, Pune",Axis Bank,76212566498939,HDFC0005415,PCQGI7066L
+Karan,Gupta,karan.gupta5@example.com,9538667268,Male,06/04/2026,Part-time,Sales,Manager,"879 Business Park, Pune",ICICI Bank,39860762146942,HDFC0001778,CUCQO8698I
+Ishita,Singh,ishita.singh6@example.com,9454558938,Female,06/12/2026,Contract,Engineering,Coordinator,"914 Business Park, Pune",SBI,43204028096693,HDFC0008322,HXAFE9504E
+Aarav,Kulkarni,aarav.kulkarni7@example.com,9044852664,Female,06/17/2026,Part-time,HR,Executive,"521 Business Park, Pune",ICICI Bank,68010379027153,HDFC0008313,TPIMV4407U
+Neha,Patel,neha.patel8@example.com,9973907572,Male,06/12/2026,Contract,Operations,Coordinator,"456 Business Park, Pune",Axis Bank,21293225178398,HDFC0006560,LZEXB9819Y
+Ritika,Nair,ritika.nair9@example.com,9028075952,Female,06/05/2026,Contract,Support,Lead,"209 Business Park, Pune",Axis Bank,69814100864782,HDFC0007737,TJNLL1205T
+Aarav,Nair,aarav.nair10@example.com,9023776596,Male,06/21/2026,Full-time,Operations,Engineer,"360 Business Park, Pune",HDFC Bank,89488780360066,HDFC0006553,TXAHR7480L
+Pooja,Patel,pooja.patel11@example.com,9965445003,Female,06/13/2026,Part-time,HR,Coordinator,"477 Business Park, Pune",ICICI Bank,81749440586722,HDFC0009159,JEHHC6728Q
+Aarav,Verma,aarav.verma12@example.com,9232489179,Male,06/27/2026,Part-time,Finance,Executive,"950 Business Park, Pune",SBI,99168473549737,HDFC0001413,KEHEK4410Y
+Sneha,Mehta,sneha.mehta13@example.com,9739309479,Female,06/26/2026,Contract,Engineering,Analyst,"893 Business Park, Pune",HDFC Bank,88376914472749,HDFC0001370,DDHRS1292O
+Amit,Gupta,amit.gupta14@example.com,9549915574,Female,06/07/2026,Part-time,Support,Lead,"115 Business Park, Pune",Kotak Bank,82080426057574,HDFC0007902,WDLFB2401L
+Meera,Verma,meera.verma15@example.com,9156208787,Female,06/27/2026,Contract,Finance,Coordinator,"518 Business Park, Pune",Axis Bank,25750606987816,HDFC0007058,OGNKD2694K
+Nikhil,Joshi,nikhil.joshi16@example.com,9932820986,Male,06/06/2026,Contract,Finance,Coordinator,"316 Business Park, Pune",ICICI Bank,28156016823786,HDFC0003701,VHWYB4189R
+Varun,Verma,varun.verma17@example.com,9197075278,Female,06/11/2026,Part-time,HR,Lead,"78 Business Park, Pune",SBI,76862838518558,HDFC0005109,IKADV9570G
+Pooja,Singh,pooja.singh18@example.com,9375498179,Female,06/29/2026,Contract,HR,Executive,"363 Business Park, Pune",ICICI Bank,51568784525257,HDFC0006139,UTXEA5479S
+Neha,Jain,neha.jain19@example.com,9157587905,Female,06/03/2026,Contract,Support,Analyst,"460 Business Park, Pune",Kotak Bank,14388096197569,HDFC0008325,KNZZL8147L
+Neha,Nair,neha.nair20@example.com,9965344919,Male,06/25/2026,Contract,Operations,Executive,"858 Business Park, Pune",Kotak Bank,86807001058394,HDFC0003052,XMJOU4805L

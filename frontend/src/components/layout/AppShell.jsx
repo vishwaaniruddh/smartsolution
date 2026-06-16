@@ -4,7 +4,7 @@ import { basePath, apiBaseUrl } from '../../utils/env.js';
 import {
   LayoutDashboard, Users, GitBranch, UserCircle, BarChart3,
   Settings, UserCheck, CheckSquare, IndianRupee, Building, LogOut, Menu, ChevronDown, ChevronRight, Shield, LayoutGrid,
-  Clock, CalendarDays, Wallet, CalendarHeart
+  Clock, CalendarDays, Wallet, CalendarHeart, Warehouse, Truck, Package, ClipboardList, History, Upload, UserPlus, ShoppingBag
 } from 'lucide-react';
 
 const adminNavItems = [
@@ -56,6 +56,21 @@ const hrmsNavItems = [
   { to: '/feature/hrms/attendance', icon: Clock, label: 'Attendance' },
   { to: '/feature/hrms/leaves', icon: CalendarDays, label: 'Leave Management' },
   { to: '/feature/hrms/payroll', icon: Wallet, label: 'Payroll' },
+  { to: '/feature/hrms/recruitment', icon: UserPlus, label: 'Recruitment' },
+  { to: '/feature/hrms/bulk-operations', icon: Upload, label: 'Bulk Operations' },
+  { to: '/settings', icon: Settings, label: 'Settings' },
+];
+
+const inventoryNavItems = [
+  { to: '/feature/inventory', icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/feature/inventory/products', icon: Package, label: 'Product Catalog' },
+  { to: '/feature/inventory/warehouses', icon: Warehouse, label: 'Warehouses' },
+  { to: '/feature/inventory/orders', icon: ClipboardList, label: 'Purchase Orders' },
+  { to: '/feature/inventory/sales-orders', icon: ShoppingBag, label: 'Sales Orders' },
+  { to: '/feature/inventory/logs', icon: History, label: 'Stock Logs' },
+  { to: '/feature/inventory/suppliers', icon: Users, label: 'Suppliers' },
+  { to: '/feature/inventory/couriers', icon: Truck, label: 'Courier Tracker' },
+  { to: '/feature/inventory/bulk-operations', icon: Upload, label: 'Bulk Operations' },
   { to: '/settings', icon: Settings, label: 'Settings' },
 ];
 
@@ -106,7 +121,7 @@ const AppShell = () => {
       });
   };
 
-  const isImpersonating = !!localStorage.getItem('crm_superadmin_user');
+  const isImpersonating = !!localStorage.getItem('crm_superadmin_user') && activeRole !== 'Superadmin';
 
   const handleStopImpersonation = () => {
     const superadminUserStr = localStorage.getItem('crm_superadmin_user');
@@ -137,13 +152,17 @@ const AppShell = () => {
 
   const activeApp = location.pathname.startsWith('/feature/hrms') 
     ? 'hrms' 
-    : (location.pathname.startsWith('/feature/leads') ? 'crm' : (localStorage.getItem('crm_active_app') || 'crm'));
+    : (location.pathname.startsWith('/feature/inventory')
+      ? 'inventory'
+      : (location.pathname.startsWith('/feature/leads') ? 'crm' : (localStorage.getItem('crm_active_app') || 'crm')));
 
   const currentNavItems = activeRole === 'Superadmin'
     ? superadminNavItems
     : (activeApp === 'hrms'
       ? hrmsNavItems
-      : (activeRole === 'Sales Associate' ? saNavItems : adminNavItems));
+      : (activeApp === 'inventory'
+        ? inventoryNavItems
+        : (activeRole === 'Sales Associate' ? saNavItems : adminNavItems)));
 
   const getHeaderTitle = () => {
     const path = location.pathname;
@@ -151,6 +170,17 @@ const AppShell = () => {
     if (path === '/feature/leads/leads') return 'Leads Management';
     if (path === '/feature/leads/pipeline') return 'Sales Pipeline Management';
     if (path === '/feature/leads/sales') return 'Sales Performance & Revenue';
+    
+    // Inventory Routes
+    if (path === '/feature/inventory') return 'Inventory Dashboard';
+    if (path === '/feature/inventory/products') return 'Product Catalog & Tag Directory';
+    if (path === '/feature/inventory/warehouses') return 'Multi-Warehouse Inventory Stock';
+    if (path === '/feature/inventory/orders') return 'Purchase Order Registry';
+    if (path === '/feature/inventory/sales-orders') return 'Sales Order Dispatch Hub';
+    if (path === '/feature/inventory/logs') return 'Stock Movement Logs';
+    if (path === '/feature/inventory/suppliers') return 'Supplier Directory';
+    if (path === '/feature/inventory/couriers') return 'Courier Shipments Tracking';
+    if (path === '/feature/inventory/bulk-operations') return 'Inventory Bulk Operations';
     if (path === '/contacts') return 'Contacts';
     if (path === '/users') return 'User Management';
     if (path === '/feature/leads/reports') return 'Reports';
@@ -170,6 +200,8 @@ const AppShell = () => {
     if (path === '/feature/hrms/leaves') return 'Leave Management';
     if (path === '/feature/hrms/payroll') return 'Payroll & Compensation';
     if (path === '/feature/hrms/holidays') return 'Holiday Calendar';
+    if (path === '/feature/hrms/recruitment') return 'Recruitment & Candidate Tracking (ATS)';
+    if (path === '/feature/hrms/bulk-operations') return 'Bulk Import Operations';
 
     
     // SA Routes
@@ -355,7 +387,7 @@ const AppShell = () => {
                 }}
               >
                 <LayoutGrid size={14} style={{ color: 'var(--accent-cyan)' }} />
-                <span>{activeApp === 'hrms' ? 'HRMS Module' : 'CRM Module'}</span>
+                <span>{activeApp === 'hrms' ? 'HRMS Module' : (activeApp === 'inventory' ? 'Inventory Module' : 'CRM Module')}</span>
               </button>
             )}
 

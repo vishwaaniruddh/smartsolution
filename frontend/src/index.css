@@ -1801,6 +1801,7 @@ input, select, textarea { font-family: inherit; }
     top: 0;
     left: 0;
     bottom: 0;
+    height: 100dvh; /* Use dynamic viewport height to handle mobile browser toolbars */
     z-index: 100;
     transform: translateX(-100%);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1808,6 +1809,10 @@ input, select, textarea { font-family: inherit; }
   
   .sidebar.open {
     transform: translateX(0);
+  }
+
+  .sidebar-collapse {
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 16px)); /* Prevent bottom cut-off on mobile devices */
   }
   
   .sidebar-overlay {

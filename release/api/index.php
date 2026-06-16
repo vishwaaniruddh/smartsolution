@@ -82,6 +82,46 @@ switch ($route) {
     case 'hrms/dashboard':
         require_once __DIR__ . '/modules/hrms/hrms_dashboard.php';
         break;
+    case 'hrms/bulk':
+        require_once __DIR__ . '/modules/hrms/bulk.php';
+        break;
+    case 'hrms/jobs':
+        require_once __DIR__ . '/modules/hrms/jobs.php';
+        break;
+    case 'hrms/candidates':
+        require_once __DIR__ . '/modules/hrms/candidates.php';
+        break;
+    case 'hrms/interviews':
+        require_once __DIR__ . '/modules/hrms/interviews.php';
+        break;
+    // Inventory Module Routes
+    case 'inventory/dashboard':
+        require_once __DIR__ . '/modules/inventory/dashboard.php';
+        break;
+    case 'inventory/warehouses':
+        require_once __DIR__ . '/modules/inventory/warehouses.php';
+        break;
+    case 'inventory/products':
+        require_once __DIR__ . '/modules/inventory/products.php';
+        break;
+    case 'inventory/stock':
+        require_once __DIR__ . '/modules/inventory/stock.php';
+        break;
+    case 'inventory/suppliers':
+        require_once __DIR__ . '/modules/inventory/suppliers.php';
+        break;
+    case 'inventory/orders':
+        require_once __DIR__ . '/modules/inventory/orders.php';
+        break;
+    case 'inventory/couriers':
+        require_once __DIR__ . '/modules/inventory/couriers.php';
+        break;
+    case 'inventory/bulk':
+        require_once __DIR__ . '/modules/inventory/bulk.php';
+        break;
+    case 'inventory/sales-orders':
+        require_once __DIR__ . '/modules/inventory/sales_orders.php';
+        break;
     default:
         // Try fallback to root facades if route contains .php extension
         $file = __DIR__ . '/' . $route;

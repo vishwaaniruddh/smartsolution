@@ -137,11 +137,30 @@ switch ($method) {
         }
 
         // Auto-create leave balances for the employee
-        $leave_types = $pdo->prepare("SELECT id, default_days FROM hrms_leave_types WHERE tenant_id = ?");
-        $leave_types->execute([$tenant_id]);
+        $leave_types_stmt = $pdo->prepare("SELECT id, default_days FROM hrms_leave_types WHERE tenant_id = ?");
+        $leave_types_stmt->execute([$tenant_id]);
+        $leave_types = $leave_types_stmt->fetchAll();
+
+        if (empty($leave_types)) {
+            // Automatically seed default leave types for this tenant
+            $defaults = [
+                ['Casual Leave', 12],
+                ['Sick Leave', 10],
+                ['Earned Leave', 15],
+                ['Unpaid Leave', 0]
+            ];
+            $stmtSeedLT = $pdo->prepare("INSERT INTO hrms_leave_types (name, default_days, tenant_id) VALUES (?, ?, ?)");
+            foreach ($defaults as $d) {
+                $stmtSeedLT->execute([$d[0], $d[1], $tenant_id]);
+            }
+            // Re-fetch
+            $leave_types_stmt->execute([$tenant_id]);
+            $leave_types = $leave_types_stmt->fetchAll();
+        }
+
         $year = date('Y');
         $lb = $pdo->prepare("INSERT INTO hrms_leave_balances (employee_id, leave_type_id, allocated, used, remaining, year, tenant_id) VALUES (?, ?, ?, 0, ?, ?, ?)");
-        foreach ($leave_types->fetchAll() as $lt) {
+        foreach ($leave_types as $lt) {
             $lb->execute([$employee_id, $lt['id'], $lt['default_days'], $lt['default_days'], $year, $tenant_id]);
         }
 

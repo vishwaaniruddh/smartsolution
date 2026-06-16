@@ -71,6 +71,27 @@ $payroll_summary = $pdo->prepare("SELECT SUM(net_salary) as total_payroll, COUNT
 $payroll_summary->execute([$current_month, $current_year, $tenant_id]);
 $payroll_data = $payroll_summary->fetchAll();
 
+// Recruitment ATS stats
+$active_jobs = $pdo->prepare("SELECT COUNT(*) as count FROM hrms_job_openings WHERE tenant_id = ? AND status = 'Open'");
+$active_jobs->execute([$tenant_id]);
+$active_jobs_count = $active_jobs->fetch()['count'];
+
+$candidates = $pdo->prepare("SELECT COUNT(*) as count FROM hrms_candidates WHERE tenant_id = ? AND stage NOT IN ('Hired', 'Rejected')");
+$candidates->execute([$tenant_id]);
+$candidates_count = $candidates->fetch()['count'];
+
+$interviews = $pdo->prepare("SELECT COUNT(*) as count FROM hrms_interviews WHERE tenant_id = ? AND status = 'Scheduled'");
+$interviews->execute([$tenant_id]);
+$interviews_count = $interviews->fetch()['count'];
+
+$recent_cands = $pdo->prepare("SELECT c.id, c.first_name, c.last_name, c.email, c.stage, c.experience_years, j.title as job_title 
+    FROM hrms_candidates c 
+    JOIN hrms_job_openings j ON c.job_opening_id = j.id AND c.tenant_id = j.tenant_id
+    WHERE c.tenant_id = ? 
+    ORDER BY c.created_at DESC LIMIT 5");
+$recent_cands->execute([$tenant_id]);
+$recent_candidates = $recent_cands->fetchAll();
+
 echo json_encode([
     "success" => true,
     "data" => [
@@ -82,7 +103,13 @@ echo json_encode([
         "upcoming_birthdays" => $upcoming_birthdays,
         "recent_hires" => $new_hires,
         "employee_statuses" => $employee_statuses,
-        "payroll_summary" => $payroll_data
+        "payroll_summary" => $payroll_data,
+        "recruitment" => [
+            "active_jobs_count" => (int)$active_jobs_count,
+            "candidates_count" => (int)$candidates_count,
+            "interviews_count" => (int)$interviews_count,
+            "recent_candidates" => $recent_candidates
+        ]
     ]
 ]);
 ?>

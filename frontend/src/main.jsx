@@ -13,14 +13,22 @@ window.fetch = (url, options = {}) => {
     const tenantId = localStorage.getItem('crm_tenant_id') || '1';
     let headers = options.headers || {};
     if (headers instanceof Headers) {
-      headers.set('X-Tenant-ID', tenantId);
+      if (!headers.has('X-Tenant-ID') && !headers.has('x-tenant-id')) {
+        headers.set('X-Tenant-ID', tenantId);
+      }
     } else if (Array.isArray(headers)) {
-      headers.push(['X-Tenant-ID', tenantId]);
+      const hasHeader = headers.some(([key]) => key.toLowerCase() === 'x-tenant-id');
+      if (!hasHeader) {
+        headers.push(['X-Tenant-ID', tenantId]);
+      }
     } else {
-      headers = {
-        ...headers,
-        'X-Tenant-ID': tenantId
-      };
+      const hasHeader = Object.keys(headers).some(key => key.toLowerCase() === 'x-tenant-id');
+      if (!hasHeader) {
+        headers = {
+          ...headers,
+          'X-Tenant-ID': tenantId
+        };
+      }
     }
     options.headers = headers;
   }

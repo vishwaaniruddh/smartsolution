@@ -61,10 +61,10 @@ const Login = () => {
       .then(res => res.json())
       .then(data => {
         if (data.success && data.user) {
-          // Save login context
           localStorage.setItem('crm_user', JSON.stringify(data.user));
           localStorage.setItem('crm_tenant_id', data.user.tenant_id ? data.user.tenant_id.toString() : '1');
           localStorage.setItem('crm_active_role', data.user.role);
+          localStorage.removeItem('crm_superadmin_user');
           
           if (data.user.role === 'Superadmin') {
             navigate('/superadmin/tenants');

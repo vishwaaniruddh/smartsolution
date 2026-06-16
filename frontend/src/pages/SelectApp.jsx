@@ -69,6 +69,14 @@ const SelectApp = () => {
   const userApps = user.apps || [];
   const isSuperadmin = user.role === 'Superadmin';
 
+  const sortedApps = [...appsData].sort((a, b) => {
+    const hasA = isSuperadmin || userApps.includes(a.id);
+    const hasB = isSuperadmin || userApps.includes(b.id);
+    if (hasA && !hasB) return -1;
+    if (!hasA && hasB) return 1;
+    return 0;
+  });
+
   const handleLaunchApp = (app) => {
     const hasAccess = isSuperadmin || userApps.includes(app.id);
     if (!hasAccess) {
@@ -113,7 +121,7 @@ const SelectApp = () => {
       {/* Header Bar */}
       <div style={{
         width: '100%',
-        maxWidth: '1000px',
+        maxWidth: '1350px',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -157,7 +165,7 @@ const SelectApp = () => {
       {/* Main Container */}
       <div style={{
         width: '100%',
-        maxWidth: '1000px',
+        maxWidth: '1350px',
         background: 'rgba(20, 27, 45, 0.5)',
         backdropFilter: 'blur(12px)',
         border: '1px solid var(--border-light)',
@@ -194,11 +202,11 @@ const SelectApp = () => {
         ) : (
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
             gap: '24px',
             marginTop: '10px'
           }}>
-            {appsData.map(app => {
+            {sortedApps.map(app => {
               const hasAccess = isSuperadmin || userApps.includes(app.id);
               return (
                 <div 

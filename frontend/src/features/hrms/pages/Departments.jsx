@@ -5,7 +5,7 @@ import { useHRMS } from '../context/HRMSContext';
 import { Plus, Edit3, Trash2, X, Building, Briefcase, Users } from 'lucide-react';
 
 const Departments = () => {
-  const { toast, tenantId } = useHRMS();
+  const { toast, tenantId, activeRole } = useHRMS();
 
   const [departments, setDepartments] = useState([]);
   const [designations, setDesignations] = useState([]);

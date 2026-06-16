@@ -1,0 +1,2 @@
+first_name,last_name,email,phone,gender,date_of_joining,employment_type,department,designation,address,bank_name,account_number,ifsc_code,pan_number
+John,Doe,john.doe@example.com,+919876543210,Male,2026-06-15,Full-time,Engineering,Software Engineer,123 Tech Park, Mumbai,HDFC Bank,50100200300400,HDFC0000123,ABCDE1234F

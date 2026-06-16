@@ -217,6 +217,109 @@ const HRMSDashboard = () => {
         </div>
       </div>
 
+      {/* Recruitment ATS Insights Section */}
+      <div style={{
+        background: 'rgba(20, 27, 45, 0.2)',
+        borderRadius: 'var(--radius-lg)',
+        border: '1px solid var(--border)',
+        padding: '24px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '16px'
+      }}>
+        <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: 'var(--text-white)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <UserPlus size={16} style={{ color: 'var(--accent-cyan)' }} />
+          Recruitment & Candidate Tracking (ATS) Insights
+        </h3>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '20px' }}>
+          {/* Left Column: ATS Metric Quick Stats */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {[
+              { label: 'Active Job Openings', value: data.recruitment?.active_jobs_count || 0, icon: Briefcase, color: 'var(--accent-blue)', bg: 'rgba(59, 130, 246, 0.1)' },
+              { label: 'Active Candidates', value: data.recruitment?.candidates_count || 0, icon: Users, color: 'var(--accent-cyan)', bg: 'rgba(34, 211, 238, 0.1)' },
+              { label: 'Scheduled Interviews', value: data.recruitment?.interviews_count || 0, icon: Calendar, color: 'var(--accent-purple)', bg: 'rgba(167, 139, 250, 0.1)' }
+            ].map(stat => (
+              <div key={stat.label} style={{
+                background: 'var(--bg-card)',
+                border: '1px solid var(--border)',
+                borderRadius: 'var(--radius-md)',
+                padding: '14px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '16px',
+                boxShadow: 'var(--shadow-sm)'
+              }}>
+                <div style={{
+                  width: '40px', height: '40px', borderRadius: 'var(--radius-sm)',
+                  background: stat.bg, color: stat.color,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  border: `1px solid ${stat.color}22`
+                }}>
+                  <stat.icon size={18} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)' }}>{stat.value}</div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 500 }}>{stat.label}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Right Column: Recent Applications */}
+          <div style={{
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border)',
+            borderRadius: 'var(--radius-md)',
+            padding: '20px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '12px'
+          }}>
+            <h4 style={{ margin: 0, fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
+              Recent Candidate Applications
+            </h4>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', overflowY: 'auto', maxHeight: '180px' }}>
+              {!data.recruitment?.recent_candidates || data.recruitment.recent_candidates.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '30px', color: 'var(--text-muted)', fontSize: '12px' }}>
+                  No recent candidate applications.
+                </div>
+              ) : data.recruitment.recent_candidates.map(cand => (
+                <div key={cand.id} style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '10px 14px',
+                  background: 'var(--bg-hover)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 'var(--radius-sm)'
+                }}>
+                  <div>
+                    <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', display: 'block' }}>
+                      {cand.first_name} {cand.last_name}
+                    </span>
+                    <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                      Applying for: <strong style={{ color: 'var(--accent-cyan)' }}>{cand.job_title}</strong> · Exp: {cand.experience_years} yrs
+                    </span>
+                  </div>
+                  <span style={{
+                    fontSize: '10px',
+                    fontWeight: 700,
+                    padding: '2px 8px',
+                    borderRadius: '10px',
+                    background: cand.stage === 'Hired' ? 'rgba(52, 211, 153, 0.1)' : 'rgba(59, 130, 246, 0.1)',
+                    color: cand.stage === 'Hired' ? 'var(--accent-emerald)' : 'var(--accent-blue)',
+                    border: `1px solid ${cand.stage === 'Hired' ? 'rgba(52, 211, 153, 0.2)' : 'rgba(59, 130, 246, 0.2)'}`
+                  }}>
+                    {cand.stage}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Bottom Row: Recent Leaves + Recent Hires + Birthdays */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
         {/* Pending Leave Requests */}

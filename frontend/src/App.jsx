@@ -28,10 +28,22 @@ import HRMSAttendance from './features/hrms/pages/Attendance';
 import HRMSLeaveManagement from './features/hrms/pages/LeaveManagement';
 import HRMSPayroll from './features/hrms/pages/Payroll';
 import HRMSHolidays from './features/hrms/pages/Holidays';
+import HRMSBulkOperations from './features/hrms/pages/BulkOperations';
+import HRMSRecruitment from './features/hrms/pages/Recruitment';
 import SelectApp from './pages/SelectApp';
 import { CRMProvider } from './features/leads/context/CRMContext';
 import { HRMSProvider } from './features/hrms/context/HRMSContext';
 import { Outlet } from 'react-router-dom';
+import { InventoryProvider } from './features/inventory/context/InventoryContext';
+import InventoryDashboard from './features/inventory/pages/InventoryDashboard';
+import InventoryProducts from './features/inventory/pages/Products';
+import InventoryWarehouses from './features/inventory/pages/Warehouses';
+import InventoryStockLogs from './features/inventory/pages/StockLogs';
+import InventorySuppliers from './features/inventory/pages/Suppliers';
+import InventoryPurchaseOrders from './features/inventory/pages/PurchaseOrders';
+import InventoryCourierTracker from './features/inventory/pages/CourierTracker';
+import InventorySalesOrders from './features/inventory/pages/SalesOrders';
+import InventoryBulkOperations from './features/inventory/pages/InventoryBulk';
 
 const CRMLayout = () => (
   <CRMProvider>
@@ -43,6 +55,12 @@ const HRMSLayout = () => (
   <HRMSProvider>
     <Outlet />
   </HRMSProvider>
+);
+
+const InventoryLayout = () => (
+  <InventoryProvider>
+    <Outlet />
+  </InventoryProvider>
 );
 
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
@@ -67,6 +85,9 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
       return <Navigate to="/select-app" replace />;
     }
     if (path.includes('/feature/leads') && !userApps.includes('crm')) {
+      return <Navigate to="/select-app" replace />;
+    }
+    if (path.includes('/feature/inventory') && !userApps.includes('inventory')) {
       return <Navigate to="/select-app" replace />;
     }
   }
@@ -100,6 +121,9 @@ const RootRedirect = () => {
     if (activeApp === 'hrms') {
       return <Navigate to="/feature/hrms" replace />;
     }
+    if (activeApp === 'inventory') {
+      return <Navigate to="/feature/inventory" replace />;
+    }
     if (user.role === 'Sales Associate') {
       return <Navigate to="/feature/leads/sa/dashboard" replace />;
     }
@@ -110,6 +134,9 @@ const RootRedirect = () => {
     localStorage.setItem('crm_active_app', apps[0]);
     if (apps[0] === 'hrms') {
       return <Navigate to="/feature/hrms" replace />;
+    }
+    if (apps[0] === 'inventory') {
+      return <Navigate to="/feature/inventory" replace />;
     }
     if (user.role === 'Sales Associate') {
       return <Navigate to="/feature/leads/sa/dashboard" replace />;
@@ -237,6 +264,65 @@ function App() {
               <Route path="holidays" element={
                 <ProtectedRoute allowedRoles={['Admin', 'Manager', 'Sales Associate']}>
                   <HRMSHolidays />
+                </ProtectedRoute>
+              } />
+              <Route path="bulk-operations" element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                  <HRMSBulkOperations />
+                </ProtectedRoute>
+              } />
+              <Route path="recruitment" element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager', 'Sales Associate']}>
+                  <HRMSRecruitment />
+                </ProtectedRoute>
+              } />
+            </Route>
+
+            {/* Inventory Module Routes */}
+            <Route path="feature/inventory" element={<InventoryLayout />}>
+              <Route index element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager', 'Sales Associate']}>
+                  <InventoryDashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="products" element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager', 'Sales Associate']}>
+                  <InventoryProducts />
+                </ProtectedRoute>
+              } />
+              <Route path="warehouses" element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                  <InventoryWarehouses />
+                </ProtectedRoute>
+              } />
+              <Route path="logs" element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                  <InventoryStockLogs />
+                </ProtectedRoute>
+              } />
+              <Route path="suppliers" element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                  <InventorySuppliers />
+                </ProtectedRoute>
+              } />
+              <Route path="orders" element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                  <InventoryPurchaseOrders />
+                </ProtectedRoute>
+              } />
+              <Route path="couriers" element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager', 'Sales Associate']}>
+                  <InventoryCourierTracker />
+                </ProtectedRoute>
+              } />
+              <Route path="sales-orders" element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager', 'Sales Associate']}>
+                  <InventorySalesOrders />
+                </ProtectedRoute>
+              } />
+              <Route path="bulk-operations" element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                  <InventoryBulkOperations />
                 </ProtectedRoute>
               } />
             </Route>
