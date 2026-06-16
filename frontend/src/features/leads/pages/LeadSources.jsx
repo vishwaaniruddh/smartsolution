@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Plus, Edit2, Trash2, Search, X } from 'lucide-react';
 import { createPortal } from 'react-dom';
-import { useToast, useConfirm } from '../../../components/NotificationContext';
 import { apiBaseUrl } from '../../../utils/env.js';
+import { useCRM } from '../context/CRMContext';
 
 const LeadSources = () => {
-  const toast = useToast();
-  const confirm = useConfirm();
+  const { toast, confirm, tenantId } = useCRM();
   const [sources, setSources] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -18,9 +17,7 @@ const LeadSources = () => {
   const [formName, setFormName] = useState('');
   const [saving, setSaving] = useState(false);
 
-  const tenantId = localStorage.getItem('crm_tenant_id') || '1';
-
-  const fetchSources = () => {
+  const fetchSources = useCallback(() => {
     setLoading(true);
     fetch(`${apiBaseUrl}/lead-sources?tenant_id=${tenantId}`)
       .then(res => res.json())
@@ -37,11 +34,11 @@ const LeadSources = () => {
       .finally(() => {
         setLoading(false);
       });
-  };
+  }, [tenantId]);
 
   useEffect(() => {
     fetchSources();
-  }, [tenantId]);
+  }, [fetchSources]);
 
   const openAddModal = () => {
     setModalMode('add');

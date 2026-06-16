@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import AppShell from './components/layout/AppShell';
 import { basePath } from './utils/env.js';
@@ -30,7 +29,21 @@ import HRMSLeaveManagement from './features/hrms/pages/LeaveManagement';
 import HRMSPayroll from './features/hrms/pages/Payroll';
 import HRMSHolidays from './features/hrms/pages/Holidays';
 import SelectApp from './pages/SelectApp';
+import { CRMProvider } from './features/leads/context/CRMContext';
+import { HRMSProvider } from './features/hrms/context/HRMSContext';
+import { Outlet } from 'react-router-dom';
 
+const CRMLayout = () => (
+  <CRMProvider>
+    <Outlet />
+  </CRMProvider>
+);
+
+const HRMSLayout = () => (
+  <HRMSProvider>
+    <Outlet />
+  </HRMSProvider>
+);
 
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   const userStr = localStorage.getItem('crm_user');
@@ -129,7 +142,7 @@ function App() {
             <Route index element={<RootRedirect />} />
 
             {/* Leads Module Routes */}
-            <Route path="feature/leads">
+            <Route path="feature/leads" element={<CRMLayout />}>
               <Route index element={
                 <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
                   <Dashboard />
@@ -190,39 +203,39 @@ function App() {
             </Route>
 
             {/* HRMS Module Routes */}
-            <Route path="feature/hrms">
+            <Route path="feature/hrms" element={<HRMSLayout />}>
               <Route index element={
-                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                <ProtectedRoute allowedRoles={['Admin', 'Manager', 'Sales Associate']}>
                   <HRMSDashboard />
                 </ProtectedRoute>
               } />
               <Route path="employees" element={
-                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                <ProtectedRoute allowedRoles={['Admin', 'Manager', 'Sales Associate']}>
                   <HRMSEmployees />
                 </ProtectedRoute>
               } />
               <Route path="departments" element={
-                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                <ProtectedRoute allowedRoles={['Admin', 'Manager', 'Sales Associate']}>
                   <HRMSDepartments />
                 </ProtectedRoute>
               } />
               <Route path="attendance" element={
-                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                <ProtectedRoute allowedRoles={['Admin', 'Manager', 'Sales Associate']}>
                   <HRMSAttendance />
                 </ProtectedRoute>
               } />
               <Route path="leaves" element={
-                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                <ProtectedRoute allowedRoles={['Admin', 'Manager', 'Sales Associate']}>
                   <HRMSLeaveManagement />
                 </ProtectedRoute>
               } />
               <Route path="payroll" element={
-                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                <ProtectedRoute allowedRoles={['Admin', 'Manager', 'Sales Associate']}>
                   <HRMSPayroll />
                 </ProtectedRoute>
               } />
               <Route path="holidays" element={
-                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                <ProtectedRoute allowedRoles={['Admin', 'Manager', 'Sales Associate']}>
                   <HRMSHolidays />
                 </ProtectedRoute>
               } />

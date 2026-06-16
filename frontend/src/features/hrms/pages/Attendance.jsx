@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { apiBaseUrl } from '../../../utils/env.js';
-import { useToast } from '../../../components/NotificationContext';
-import { Calendar, Clock, CheckCircle2, XCircle, AlertCircle, Users, ChevronLeft, ChevronRight, Save } from 'lucide-react';
+import { useHRMS } from '../context/HRMSContext';
+import { Calendar, Clock, ChevronLeft, ChevronRight, Save } from 'lucide-react';
 
 const statusOptions = ['Present', 'Absent', 'Half-Day', 'Late', 'On Leave'];
 const statusConfig = {
@@ -13,8 +13,7 @@ const statusConfig = {
 };
 
 const Attendance = () => {
-  const toast = useToast();
-  const tenantId = localStorage.getItem('crm_tenant_id') || '1';
+  const { toast, tenantId } = useHRMS();
 
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [employees, setEmployees] = useState([]);

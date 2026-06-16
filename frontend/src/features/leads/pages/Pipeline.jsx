@@ -1,19 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Filter } from 'lucide-react';
-import { useToast } from '../../../components/NotificationContext';
+import { useState, useEffect } from 'react';
 import { apiBaseUrl } from '../../../utils/env.js';
+import { useCRM } from '../context/CRMContext';
 
 const Pipeline = () => {
-  const toast = useToast();
-  const userStr = localStorage.getItem('crm_user');
-  const currentUser = userStr ? JSON.parse(userStr) : null;
-  const currencySymbol = currentUser?.currency_symbol || '₹';
+  const { toast, currencySymbol } = useCRM();
   const [leads, setLeads] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   // Fetch all leads
   const fetchLeads = () => {
-    setLoading(true);
     fetch(`${apiBaseUrl}/leads`)
       .then(res => res.json())
       .then(data => {
@@ -32,9 +26,6 @@ const Pipeline = () => {
           { id: 5, name: 'Delta Co', contact: 'delta@delta.org', status: 'Lost', source: 'Referral', value: 3400, agent: 'Alex Lee' }
         ];
         setLeads(mockLeads);
-      })
-      .finally(() => {
-        setLoading(false);
       });
   };
 

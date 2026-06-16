@@ -1,24 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { useOutletContext } from 'react-router-dom';
-import { Target, Award, ListTodo, FileText, CheckCircle2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Target, Award, ListTodo, CheckCircle2 } from 'lucide-react';
 import { apiBaseUrl } from '../../../utils/env.js';
+import { useCRM } from '../context/CRMContext';
 
 const SADashboard = () => {
-  const { activeAgent } = useOutletContext();
-  const userStr = localStorage.getItem('crm_user');
-  const currentUser = userStr ? JSON.parse(userStr) : null;
-  const currencySymbol = currentUser?.currency_symbol || '₹';
+  const { activeAgent, currencySymbol } = useCRM();
 
   const [leads, setLeads] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [activities, setActivities] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   // Define target for the simulated agent
   const salesTarget = 40000; // ₹40,000 monthly quota
 
   useEffect(() => {
-    setLoading(true);
     // Fetch leads, tasks, and activities
     const fetchAllData = async () => {
       try {
@@ -70,8 +65,6 @@ const SADashboard = () => {
         setLeads(mockLeads.filter(l => l.agent === activeAgent));
         setTasks(mockTasks.filter(t => t.agent_name === activeAgent));
         setActivities(mockActs.filter(a => a.agent_name === activeAgent));
-      } finally {
-        setLoading(false);
       }
     };
 

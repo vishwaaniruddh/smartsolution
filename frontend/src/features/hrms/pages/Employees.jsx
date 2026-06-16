@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { apiBaseUrl } from '../../../utils/env.js';
-import { useToast } from '../../../components/NotificationContext';
+import { useHRMS } from '../context/HRMSContext';
 import {
-  Search, Plus, Edit3, Trash2, X, User, Mail, Phone, MapPin,
-  Calendar, Briefcase, Building, ChevronRight, Eye, Filter
+  Search, Plus, Edit3, X, User, Mail, Phone, MapPin,
+  Calendar, Briefcase, Building, Eye
 } from 'lucide-react';
 
 const statusColors = {
@@ -14,8 +15,7 @@ const statusColors = {
 };
 
 const Employees = () => {
-  const toast = useToast();
-  const tenantId = localStorage.getItem('crm_tenant_id') || '1';
+  const { toast, tenantId, activeRole } = useHRMS();
 
   const [employees, setEmployees] = useState([]);
   const [departments, setDepartments] = useState([]);
@@ -169,9 +169,11 @@ const Employees = () => {
             <option value="Terminated">Terminated</option>
           </select>
         </div>
-        <button className="add-lead-btn" onClick={openAddModal} style={{ gap: '6px' }}>
-          <Plus size={16} /> Add Employee
-        </button>
+        {activeRole !== 'Sales Associate' && (
+          <button className="add-lead-btn" onClick={openAddModal} style={{ gap: '6px' }}>
+            <Plus size={16} /> Add Employee
+          </button>
+        )}
       </div>
 
       {/* Table */}
@@ -228,7 +230,9 @@ const Employees = () => {
                   <td style={{ textAlign: 'center' }} onClick={e => e.stopPropagation()}>
                     <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
                       <button onClick={() => openDrawer(emp)} style={{ background: 'none', border: 'none', color: 'var(--accent-cyan)', cursor: 'pointer', padding: '4px' }} title="View"><Eye size={15} /></button>
-                      <button onClick={() => openEditModal(emp)} style={{ background: 'none', border: 'none', color: 'var(--accent-blue)', cursor: 'pointer', padding: '4px' }} title="Edit"><Edit3 size={15} /></button>
+                      {activeRole !== 'Sales Associate' && (
+                        <button onClick={() => openEditModal(emp)} style={{ background: 'none', border: 'none', color: 'var(--accent-blue)', cursor: 'pointer', padding: '4px' }} title="Edit"><Edit3 size={15} /></button>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -239,7 +243,7 @@ const Employees = () => {
       </div>
 
       {/* Add/Edit Modal */}
-      {showModal && (
+      {showModal && createPortal(
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal-container" style={{ maxWidth: '700px', maxHeight: '85vh', overflow: 'auto' }} onClick={e => e.stopPropagation()}>
             <div className="modal-header">
@@ -322,11 +326,12 @@ const Employees = () => {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Employee Detail Drawer */}
-      {showDrawer && selectedEmployee && (
+      {showDrawer && selectedEmployee && createPortal(
         <>
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000 }} onClick={() => setShowDrawer(false)} />
           <div style={{
@@ -436,13 +441,16 @@ const Employees = () => {
             </div>
 
             {/* Footer Actions */}
-            <div style={{ padding: '16px 24px', borderTop: '1px solid var(--border)', display: 'flex', gap: '10px' }}>
-              <button onClick={() => { setShowDrawer(false); openEditModal(selectedEmployee); }} className="modal-btn primary" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-                <Edit3 size={14} /> Edit Profile
-              </button>
-            </div>
+            {activeRole !== 'Sales Associate' && (
+              <div style={{ padding: '16px 24px', borderTop: '1px solid var(--border)', display: 'flex', gap: '10px' }}>
+                <button onClick={() => { setShowDrawer(false); openEditModal(selectedEmployee); }} className="modal-btn primary" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                  <Edit3 size={14} /> Edit Profile
+                </button>
+              </div>
+            )}
           </div>
-        </>
+        </>,
+        document.body
       )}
     </div>
   );

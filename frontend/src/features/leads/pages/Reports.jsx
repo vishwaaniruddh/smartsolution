@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { apiBaseUrl } from '../../../utils/env.js';
+import { useCRM } from '../context/CRMContext';
 
 /* Horizontal bar chart grouped by Sales Agent */
 const TeamPerformance = ({ leads = [], users = [] }) => {
@@ -92,9 +93,7 @@ const RevenueChart = ({ leads = [] }) => {
   const path = values.map((v, i) => `${i === 0 ? 'M' : 'L'}${toX(i)},${toY(v)}`).join(' ');
   const area = path + ` L${toX(values.length - 1)},${h - pyBottom} L${pxLeft},${h - pyBottom} Z`;
 
-  const userStr = localStorage.getItem('crm_user');
-  const currentUser = userStr ? JSON.parse(userStr) : null;
-  const currencySymbol = currentUser?.currency_symbol || '₹';
+  const { currencySymbol } = useCRM();
 
   const formatYLabel = (val) => {
     if (val >= 1000000) return `${currencySymbol}${(val / 1000000).toFixed(1)}M`;

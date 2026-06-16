@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Users, TrendingUp, IndianRupee, Award } from 'lucide-react';
 import { apiBaseUrl } from '../../../utils/env.js';
+import { useCRM } from '../context/CRMContext';
 
 /* ─── Dynamic Inline SVG Charts ─── */
 
@@ -256,17 +257,13 @@ const DonutChart = ({ leads = [] }) => {
 /* ─── Main Dashboard Page ─── */
 
 const Dashboard = () => {
-  const userStr = localStorage.getItem('crm_user');
-  const currentUser = userStr ? JSON.parse(userStr) : null;
-  const currencySymbol = currentUser?.currency_symbol || '₹';
+  const { currencySymbol } = useCRM();
 
   const [leads, setLeads] = useState([]);
   const [activities, setActivities] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   const fetchDashboardData = async () => {
     try {
-      setLoading(true);
       const leadsRes = await fetch(`${apiBaseUrl}/leads`);
       const leadsData = await leadsRes.json();
       
@@ -296,8 +293,6 @@ const Dashboard = () => {
         { agent_name: 'Alex Lee', activity_type: 'Email', details: 'Sent calendar invitation.', logged_at: '2026-06-12 10:15' }
       ];
       setActivities(mockActivities);
-    } finally {
-      setLoading(false);
     }
   };
 

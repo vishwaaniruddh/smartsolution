@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { basePath, apiBaseUrl } from '../../utils/env.js';
 import {
   LayoutDashboard, Users, GitBranch, UserCircle, BarChart3,
-  Settings, PanelLeftClose, Search, UserCheck, CheckSquare, IndianRupee, Building, LogOut, Menu, ChevronDown, ChevronRight, Shield, Mail, LayoutGrid,
-  Clock, CalendarDays, Wallet, Briefcase, CalendarHeart
+  Settings, UserCheck, CheckSquare, IndianRupee, Building, LogOut, Menu, ChevronDown, ChevronRight, Shield, LayoutGrid,
+  Clock, CalendarDays, Wallet, CalendarHeart
 } from 'lucide-react';
 
 const adminNavItems = [
@@ -204,52 +204,9 @@ const AppShell = () => {
               SAR Workforce
             </span>
           </div>
-          {user && user.role !== 'Superadmin' && (
-            <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 500, paddingLeft: '38px', marginTop: '-4px' }}>
-              {user.tenant_name || 'Organization Space'}
-            </div>
-          )}
         </div>
 
-        {/* Dynamic App Switcher Button */}
-        {user && user.role !== 'Superadmin' && user.apps && user.apps.length > 1 && (
-          <div style={{ padding: '0 20px 16px 20px', borderBottom: '1px solid var(--border)', marginBottom: '12px' }}>
-            <button 
-              onClick={() => navigate('/select-app')}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                width: '100%',
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid var(--border)',
-                borderRadius: 'var(--radius-md)',
-                padding: '8px 12px',
-                color: 'var(--text-secondary)',
-                fontSize: '12px',
-                fontWeight: 600,
-                cursor: 'pointer',
-                justifyContent: 'space-between',
-                transition: 'all 0.2s',
-                outline: 'none'
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.background = 'rgba(255,255,255,0.06)';
-                e.currentTarget.style.borderColor = 'var(--accent-cyan)';
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
-                e.currentTarget.style.borderColor = 'var(--border)';
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <LayoutGrid size={14} style={{ color: 'var(--accent-cyan)' }} />
-                <span>{activeApp === 'hrms' ? 'HRMS Module' : 'CRM Module'}</span>
-              </div>
-              <ChevronRight size={12} style={{ opacity: 0.7 }} />
-            </button>
-          </div>
-        )}
+
 
         <nav className="sidebar-nav">
           {currentNavItems.map(item => {
@@ -365,81 +322,119 @@ const AppShell = () => {
             </div>
           </div>
           
-          <div style={{ position: 'relative' }}>
-            {/* User Profile Initials Button */}
-            {user && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            {/* App Switcher Button */}
+            {user && user.role !== 'Superadmin' && user.apps && user.apps.length > 1 && (
               <button 
-                onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                style={{ 
-                  width: '36px', 
-                  height: '36px', 
-                  borderRadius: '50%', 
-                  background: 'var(--gradient-blue)', 
-                  color: 'white', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center', 
-                  fontSize: '14px', 
-                  fontWeight: 700,
-                  border: '2px solid var(--border-light)',
+                onClick={() => navigate('/select-app')}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  background: 'rgba(255,255,255,0.03)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '6px 14px',
+                  color: 'var(--text-secondary)',
+                  fontSize: '12px',
+                  fontWeight: 600,
                   cursor: 'pointer',
-                  boxShadow: 'var(--shadow-sm)',
-                  transition: 'transform 0.2s'
+                  transition: 'all 0.2s',
+                  outline: 'none',
+                  boxShadow: 'var(--shadow-sm)'
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.06)';
+                  e.currentTarget.style.borderColor = 'var(--accent-cyan)';
+                  e.currentTarget.style.color = 'var(--text-primary)';
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
+                  e.currentTarget.style.borderColor = 'var(--border)';
+                  e.currentTarget.style.color = 'var(--text-secondary)';
+                }}
               >
-                {getUserInitials()}
+                <LayoutGrid size={14} style={{ color: 'var(--accent-cyan)' }} />
+                <span>{activeApp === 'hrms' ? 'HRMS Module' : 'CRM Module'}</span>
               </button>
             )}
 
-            {/* Click-away overlay */}
-            {isProfileDropdownOpen && (
-              <div 
-                style={{ position: 'fixed', inset: 0, zIndex: 99 }} 
-                onClick={() => setIsProfileDropdownOpen(false)} 
-              />
-            )}
+            <div style={{ position: 'relative' }}>
+              {/* User Profile Initials Button */}
+              {user && (
+                <button 
+                  onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                  style={{ 
+                    width: '36px', 
+                    height: '36px', 
+                    borderRadius: '50%', 
+                    background: 'var(--gradient-blue)', 
+                    color: 'white', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    fontSize: '14px', 
+                    fontWeight: 700,
+                    border: '2px solid var(--border-light)',
+                    cursor: 'pointer',
+                    boxShadow: 'var(--shadow-sm)',
+                    transition: 'transform 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                  onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                >
+                  {getUserInitials()}
+                </button>
+              )}
 
-            {/* Profile Dropdown */}
-            {isProfileDropdownOpen && (
-              <div style={{
-                position: 'absolute',
-                top: 'calc(100% + 8px)',
-                right: '0',
-                background: 'var(--bg-card)',
-                border: '1px solid var(--border)',
-                borderRadius: 'var(--radius-md)',
-                boxShadow: 'var(--shadow-lg)',
-                minWidth: '220px',
-                zIndex: 100,
-                padding: '8px 0',
-                display: 'flex',
-                flexDirection: 'column',
-                animation: 'scaleUp 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
-              }}>
-                <div style={{ padding: '8px 16px', borderBottom: '1px solid var(--border)', marginBottom: '4px' }}>
-                  <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>{user.first_name} {user.last_name}</div>
-                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>{user.role}</div>
+              {/* Click-away overlay */}
+              {isProfileDropdownOpen && (
+                <div 
+                  style={{ position: 'fixed', inset: 0, zIndex: 99 }} 
+                  onClick={() => setIsProfileDropdownOpen(false)} 
+                />
+              )}
+
+              {/* Profile Dropdown */}
+              {isProfileDropdownOpen && (
+                <div style={{
+                  position: 'absolute',
+                  top: 'calc(100% + 8px)',
+                  right: '0',
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 'var(--radius-md)',
+                  boxShadow: 'var(--shadow-lg)',
+                  minWidth: '220px',
+                  zIndex: 100,
+                  padding: '8px 0',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  animation: 'scaleUp 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
+                }}>
+                  <div style={{ padding: '8px 16px', borderBottom: '1px solid var(--border)', marginBottom: '4px' }}>
+                    <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>{user.first_name} {user.last_name}</div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>{user.role}</div>
+                  </div>
+                  <button 
+                    style={{ padding: '10px 16px', background: 'none', border: 'none', color: 'var(--text-primary)', textAlign: 'left', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', transition: 'background 0.2s' }}
+                    onClick={() => { setIsProfileDropdownOpen(false); navigate('/settings'); }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg-hover)'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
+                  >
+                    <UserCircle size={16} /> Profile Settings
+                  </button>
+                  <button 
+                    style={{ padding: '10px 16px', background: 'none', border: 'none', color: 'var(--accent-red)', textAlign: 'left', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', transition: 'background 0.2s' }}
+                    onClick={() => { setIsProfileDropdownOpen(false); handleLogout(); }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
+                  >
+                    <LogOut size={16} /> Log Out
+                  </button>
                 </div>
-                <button 
-                  style={{ padding: '10px 16px', background: 'none', border: 'none', color: 'var(--text-primary)', textAlign: 'left', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', transition: 'background 0.2s' }}
-                  onClick={() => { setIsProfileDropdownOpen(false); navigate('/settings'); }}
-                  onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg-hover)'}
-                  onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
-                >
-                  <UserCircle size={16} /> Profile Settings
-                </button>
-                <button 
-                  style={{ padding: '10px 16px', background: 'none', border: 'none', color: 'var(--accent-red)', textAlign: 'left', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', transition: 'background 0.2s' }}
-                  onClick={() => { setIsProfileDropdownOpen(false); handleLogout(); }}
-                  onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'}
-                  onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
-                >
-                  <LogOut size={16} /> Log Out
-                </button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </header>
 

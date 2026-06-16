@@ -1,19 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { useOutletContext } from 'react-router-dom';
-import { Search, MessageSquare, Clock, X, IndianRupee, TrendingUp, CheckCircle2, UserCircle, Award, Lock, Trash2, PlusCircle } from 'lucide-react';
-import { useToast, useConfirm } from '../../../components/NotificationContext';
+import { Search, MessageSquare, Clock, X, IndianRupee, TrendingUp, CheckCircle2, Award, Lock, Trash2, PlusCircle } from 'lucide-react';
 import { apiBaseUrl } from '../../../utils/env.js';
+import { useCRM } from '../context/CRMContext';
 
 const Sales = () => {
-  const toast = useToast();
-  const confirm = useConfirm();
-  const userStr = localStorage.getItem('crm_user');
-  const currentUser = userStr ? JSON.parse(userStr) : null;
-  const currencySymbol = currentUser?.currency_symbol || '₹';
-  const { activeRole, activeAgent } = useOutletContext();
+  const { toast, confirm, currencySymbol, activeRole, activeAgent, tenantId } = useCRM();
   const [leads, setLeads] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   
   // Interaction drawer state
@@ -39,7 +32,6 @@ const Sales = () => {
     payment_date: '',
     finalization_remarks: ''
   });
-  const [finalizeErrors, setFinalizeErrors] = useState({});
   const [savingFinalize, setSavingFinalize] = useState(false);
 
   // Payments tracking states
@@ -55,10 +47,8 @@ const Sales = () => {
   const [paymentErrors, setPaymentErrors] = useState({});
 
   // Fetch leads from backend
-  const fetchLeads = () => {
-    setLoading(true);
-    // Determine the current tenant from localStorage or default to 1
-    const tenantId = localStorage.getItem('crm_tenant_id') || '1';
+  const fetchLeads = useCallback(() => {
+    // tenantId from useCRM hook
     
     fetch(`${apiBaseUrl}/leads?tenant_id=${tenantId}`)
       .then(res => res.json())
@@ -89,16 +79,13 @@ const Sales = () => {
           filteredMock = mockConverted.filter(l => l.agent === activeAgent);
         }
         setLeads(filteredMock);
-      })
-      .finally(() => {
-        setLoading(false);
       });
-  };
+  }, [tenantId, activeRole, activeAgent]);
 
   useEffect(() => {
     fetchLeads();
     setSelectedLogLead(null); // Close log drawer on role/agent switch
-  }, [activeRole, activeAgent]);
+  }, [fetchLeads]);
 
   // Fetch activities for selected log lead
   const fetchActivities = (leadId) => {
@@ -171,27 +158,7 @@ const Sales = () => {
     });
   };
 
-  const updateSalesStatus = (leadId, newSalesStatus) => {
-    fetch(`${apiBaseUrl}/leads`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: leadId, sales_status: newSalesStatus })
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        toast.success(`Sales status updated to "${newSalesStatus}".`);
-        fetchLeads();
-        setSelectedLogLead(prev => prev && prev.id === leadId ? { ...prev, sales_status: newSalesStatus } : prev);
-      } else {
-        toast.error(data.error || 'Failed to update sales status.');
-      }
-    })
-    .catch((err) => {
-      console.error('API error updating sales status:', err);
-      toast.error('Network error updating sales status.');
-    });
-  };
+
 
   const openFinalizeModal = (lead) => {
     setFinalizeLead(lead);
@@ -204,7 +171,6 @@ const Sales = () => {
       payment_date: lead.payment_date || new Date().toISOString().split('T')[0],
       finalization_remarks: lead.finalization_remarks || ''
     });
-    setFinalizeErrors({});
     setNewPayment({
       amount: '',
       payment_method: '',

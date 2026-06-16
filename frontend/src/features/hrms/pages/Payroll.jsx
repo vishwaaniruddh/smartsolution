@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { apiBaseUrl } from '../../../utils/env.js';
-import { useToast } from '../../../components/NotificationContext';
-import { DollarSign, Plus, Play, Check, X, Settings, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useHRMS } from '../context/HRMSContext';
+import { Plus, Play, Check, X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const Payroll = () => {
-  const toast = useToast();
-  const tenantId = localStorage.getItem('crm_tenant_id') || '1';
+  const { toast, tenantId } = useHRMS();
 
   const [activeTab, setActiveTab] = useState('payroll');
   const [payrollData, setPayrollData] = useState([]);
@@ -279,7 +279,7 @@ const Payroll = () => {
       )}
 
       {/* Salary Structure Modal */}
-      {showStructureModal && (
+      {showStructureModal && createPortal(
         <div className="modal-overlay" onClick={() => setShowStructureModal(false)}>
           <div className="modal-container" style={{ maxWidth: '550px' }} onClick={e => e.stopPropagation()}>
             <div className="modal-header">
@@ -316,7 +316,8 @@ const Payroll = () => {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

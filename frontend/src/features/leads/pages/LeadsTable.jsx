@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Search, Filter, Plus, X, Check, XCircle, Edit2, Trash2, UserPlus, MessageSquare, Clock, PlusCircle } from 'lucide-react';
-import { useToast, useConfirm } from '../../../components/NotificationContext';
+import { Search, Filter, Plus, X, Check, Edit2, Trash2, UserPlus, MessageSquare, Clock, PlusCircle } from 'lucide-react';
+import { useCRM } from '../context/CRMContext';
 import LeadFormResolver from '../components/LeadFormResolver';
 import { apiBaseUrl } from '../../../utils/env.js';
 
@@ -16,7 +16,7 @@ const formatRemarks = (remarks) => {
       if (json.company_size) parts.push(`Size: ${json.company_size}`);
       if (json.text_remarks) parts.push(json.text_remarks);
       return parts.join(' | ');
-    } catch (e) {
+    } catch {
       return remarks;
     }
   }
@@ -46,29 +46,8 @@ const getDelegationStatusClass = (status) => {
   }
 };
 
-const validateEmail = (email) => {
-  if (!email) return true;
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email.trim());
-};
-
-const validatePhone = (phone) => {
-  if (!phone) return true;
-  const trimmed = phone.trim();
-  const phoneRegex = /^\+?[0-9\s\-()]{7,15}$/;
-  if (phoneRegex.test(trimmed)) {
-    const digitCount = trimmed.replace(/\D/g, '').length;
-    return digitCount >= 7 && digitCount <= 15;
-  }
-  return false;
-};
-
 const LeadsTable = () => {
-  const toast = useToast();
-  const confirm = useConfirm();
-  const userStr = localStorage.getItem('crm_user');
-  const currentUser = userStr ? JSON.parse(userStr) : null;
-  const currencySymbol = currentUser?.currency_symbol || '₹';
+  const { toast, confirm, currencySymbol, user: currentUser } = useCRM();
 
   const [leads, setLeads] = useState([]);
   const [agentsList, setAgentsList] = useState(['Unassigned', 'Emily Davis', 'Alex Lee', 'Sarah Connor']);

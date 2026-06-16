@@ -1,6 +1,7 @@
 <?php
 // HRMS Employees API
 require_once __DIR__ . '/../../core/db.php';
+require_once __DIR__ . '/../../core/validation.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 $tenant_id = getTenantId();
@@ -88,7 +89,20 @@ switch ($method) {
         $status = $input['status'] ?? 'Active';
 
         if (empty($first_name) || empty($last_name)) {
+            http_response_code(400);
             echo json_encode(["success" => false, "error" => "First name and last name are required."]);
+            exit;
+        }
+
+        if (!isValidEmail($email)) {
+            http_response_code(400);
+            echo json_encode(["success" => false, "error" => "Invalid Email address format."]);
+            exit;
+        }
+
+        if (!isValidPhone($phone)) {
+            http_response_code(400);
+            echo json_encode(["success" => false, "error" => "Invalid Phone Number format. Must be between 7 and 15 digits."]);
             exit;
         }
 
@@ -139,7 +153,20 @@ switch ($method) {
         $id = $input['id'] ?? null;
         
         if (!$id) {
+            http_response_code(400);
             echo json_encode(["success" => false, "error" => "Employee ID is required."]);
+            exit;
+        }
+
+        if (array_key_exists('email', $input) && !isValidEmail($input['email'])) {
+            http_response_code(400);
+            echo json_encode(["success" => false, "error" => "Invalid Email address format."]);
+            exit;
+        }
+
+        if (array_key_exists('phone', $input) && !isValidPhone($input['phone'])) {
+            http_response_code(400);
+            echo json_encode(["success" => false, "error" => "Invalid Phone Number format. Must be between 7 and 15 digits."]);
             exit;
         }
 

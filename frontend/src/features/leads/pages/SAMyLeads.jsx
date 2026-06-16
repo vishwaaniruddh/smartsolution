@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { useOutletContext } from 'react-router-dom';
-import { Search, Filter, MessageSquare, Check, X, FileText, Phone, Mail, Clock, Plus } from 'lucide-react';
-import { useToast } from '../../../components/NotificationContext';
+import { Search, Filter, Plus, Check, X, MessageSquare, Clock } from 'lucide-react';
 import LeadFormResolver from '../components/LeadFormResolver';
 import { apiBaseUrl } from '../../../utils/env.js';
+import { useCRM } from '../context/CRMContext';
 
 
 const getStatusClass = (status) => {
@@ -29,15 +28,10 @@ const getDelegationStatusClass = (status) => {
 };
 
 const SAMyLeads = () => {
-  const toast = useToast();
-  const userStr = localStorage.getItem('crm_user');
-  const currentUser = userStr ? JSON.parse(userStr) : null;
-  const currencySymbol = currentUser?.currency_symbol || '₹';
-  const { activeAgent } = useOutletContext();
+  const { toast, currencySymbol, activeAgent } = useCRM();
   const [leads, setLeads] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
-  const [loading, setLoading] = useState(true);
 
   // Create Lead modal states
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -98,8 +92,7 @@ const SAMyLeads = () => {
 
   // Fetch leads and filter by simulated agent
 
-  const fetchLeads = () => {
-    setLoading(true);
+  const fetchLeads = useCallback(() => {
     fetch(`${apiBaseUrl}/leads`)
       .then(res => res.json())
       .then(data => {
@@ -121,16 +114,13 @@ const SAMyLeads = () => {
           { id: 10, name: 'Greenfield Co', email: 'linda@greenfield.com', contact_number: '+1 (555) 019-4444', status: 'Closed', source: 'LinkedIn', value: 15000, agent: 'Emily Davis', delegation_status: 'Accepted' },
         ];
         setLeads(mockLeads.filter(l => l.agent === activeAgent));
-      })
-      .finally(() => {
-        setLoading(false);
       });
-  };
+  }, [activeAgent]);
 
   useEffect(() => {
     fetchLeads();
     setSelectedLead(null); // Close drawer on agent switch
-  }, [activeAgent]);
+  }, [fetchLeads]);
 
   // Fetch activities for selected lead
   const fetchActivities = (leadId) => {

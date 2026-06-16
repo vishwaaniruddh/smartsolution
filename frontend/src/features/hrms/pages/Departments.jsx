@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { apiBaseUrl } from '../../../utils/env.js';
-import { useToast } from '../../../components/NotificationContext';
-import { Plus, Edit3, Trash2, X, Building, Briefcase, Users, Search } from 'lucide-react';
+import { useHRMS } from '../context/HRMSContext';
+import { Plus, Edit3, Trash2, X, Building, Briefcase, Users } from 'lucide-react';
 
 const Departments = () => {
-  const toast = useToast();
-  const tenantId = localStorage.getItem('crm_tenant_id') || '1';
+  const { toast, tenantId } = useHRMS();
 
   const [departments, setDepartments] = useState([]);
   const [designations, setDesignations] = useState([]);
@@ -117,9 +117,11 @@ const Departments = () => {
             </button>
           ))}
         </div>
-        <button className="add-lead-btn" onClick={() => openAddModal(activeTab === 'departments' ? 'department' : 'designation')} style={{ gap: '6px' }}>
-          <Plus size={16} /> Add {activeTab === 'departments' ? 'Department' : 'Designation'}
-        </button>
+        {activeRole !== 'Sales Associate' && (
+          <button className="add-lead-btn" onClick={() => openAddModal(activeTab === 'departments' ? 'department' : 'designation')} style={{ gap: '6px' }}>
+            <Plus size={16} /> Add {activeTab === 'departments' ? 'Department' : 'Designation'}
+          </button>
+        )}
       </div>
 
       {/* Content */}
@@ -151,10 +153,12 @@ const Departments = () => {
                     {dept.description && <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>{dept.description}</div>}
                   </div>
                 </div>
-                <div style={{ display: 'flex', gap: '4px' }}>
-                  <button onClick={() => openEditModal('department', dept)} style={{ background: 'none', border: 'none', color: 'var(--accent-blue)', cursor: 'pointer', padding: '4px' }}><Edit3 size={14} /></button>
-                  <button onClick={() => handleDelete('department', dept.id)} style={{ background: 'none', border: 'none', color: 'var(--accent-red)', cursor: 'pointer', padding: '4px' }}><Trash2 size={14} /></button>
-                </div>
+                {activeRole !== 'Sales Associate' && (
+                  <div style={{ display: 'flex', gap: '4px' }}>
+                    <button onClick={() => openEditModal('department', dept)} style={{ background: 'none', border: 'none', color: 'var(--accent-blue)', cursor: 'pointer', padding: '4px' }}><Edit3 size={14} /></button>
+                    <button onClick={() => handleDelete('department', dept.id)} style={{ background: 'none', border: 'none', color: 'var(--accent-red)', cursor: 'pointer', padding: '4px' }}><Trash2 size={14} /></button>
+                  </div>
+                )}
               </div>
               <div style={{ display: 'flex', gap: '16px', fontSize: '12px', color: 'var(--text-muted)' }}>
                 <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Users size={13} /> {dept.employee_count || 0} employees</span>
@@ -185,10 +189,14 @@ const Departments = () => {
                   <td style={{ fontWeight: 600, fontSize: '13px' }}>{des.name}</td>
                   <td style={{ fontSize: '13px' }}>{des.department_name || '—'}</td>
                   <td style={{ textAlign: 'center' }}>
-                    <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
-                      <button onClick={() => openEditModal('designation', des)} style={{ background: 'none', border: 'none', color: 'var(--accent-blue)', cursor: 'pointer', padding: '4px' }}><Edit3 size={14} /></button>
-                      <button onClick={() => handleDelete('designation', des.id)} style={{ background: 'none', border: 'none', color: 'var(--accent-red)', cursor: 'pointer', padding: '4px' }}><Trash2 size={14} /></button>
-                    </div>
+                    {activeRole !== 'Sales Associate' ? (
+                      <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
+                        <button onClick={() => openEditModal('designation', des)} style={{ background: 'none', border: 'none', color: 'var(--accent-blue)', cursor: 'pointer', padding: '4px' }}><Edit3 size={14} /></button>
+                        <button onClick={() => handleDelete('designation', des.id)} style={{ background: 'none', border: 'none', color: 'var(--accent-red)', cursor: 'pointer', padding: '4px' }}><Trash2 size={14} /></button>
+                      </div>
+                    ) : (
+                      <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>—</span>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -198,7 +206,7 @@ const Departments = () => {
       )}
 
       {/* Modal */}
-      {showModal && (
+      {showModal && createPortal(
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal-container" style={{ maxWidth: '450px' }} onClick={e => e.stopPropagation()}>
             <div className="modal-header">
@@ -227,7 +235,8 @@ const Departments = () => {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

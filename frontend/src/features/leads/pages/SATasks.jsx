@@ -1,16 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { useOutletContext } from 'react-router-dom';
-import { Plus, Check, Trash, Calendar, AlertCircle } from 'lucide-react';
-import { useToast } from '../../../components/NotificationContext';
+import { useState, useEffect, useCallback } from 'react';
+import { Plus, Check, Calendar, AlertCircle } from 'lucide-react';
 import { apiBaseUrl } from '../../../utils/env.js';
+import { useCRM } from '../context/CRMContext';
 
 const SATasks = () => {
-  const toast = useToast();
-  const { activeAgent } = useOutletContext();
+  const { toast, activeAgent } = useCRM();
   const [tasks, setTasks] = useState([]);
   const [agentLeads, setAgentLeads] = useState([]);
   const [taskFilter, setTaskFilter] = useState('Pending');
-  const [loading, setLoading] = useState(true);
 
   // New task form state
   const [newTask, setNewTask] = useState({
@@ -21,8 +18,7 @@ const SATasks = () => {
   const [savingTask, setSavingTask] = useState(false);
 
   // Fetch agent tasks
-  const fetchTasks = () => {
-    setLoading(true);
+  const fetchTasks = useCallback(() => {
     fetch(`${apiBaseUrl}/tasks?agent_name=${encodeURIComponent(activeAgent)}`)
       .then(res => res.json())
       .then(data => {
@@ -39,14 +35,11 @@ const SATasks = () => {
           { id: 4, title: 'Cold call lead follow-up', due_date: '2026-06-10', status: 'Pending', agent_name: 'Emily Davis', lead_name: 'Acme Corp', lead_id: 1 }
         ];
         setTasks(mockTasks.filter(t => t.agent_name === activeAgent));
-      })
-      .finally(() => {
-        setLoading(false);
       });
-  };
+  }, [activeAgent]);
 
   // Fetch leads assigned to agent to populate the "Link to Lead" dropdown
-  const fetchAgentLeads = () => {
+  const fetchAgentLeads = useCallback(() => {
     fetch(`${apiBaseUrl}/leads`)
       .then(res => res.json())
       .then(data => {
@@ -63,12 +56,12 @@ const SATasks = () => {
         ];
         setAgentLeads(mockLeads.filter(l => l.agent === activeAgent));
       });
-  };
+  }, [activeAgent]);
 
   useEffect(() => {
     fetchTasks();
     fetchAgentLeads();
-  }, [activeAgent]);
+  }, [fetchTasks, fetchAgentLeads]);
 
   // Toggle task completion status
   const handleToggleStatus = (task) => {

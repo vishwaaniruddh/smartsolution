@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { apiBaseUrl } from '../../../utils/env.js';
+import { useHRMS } from '../context/HRMSContext';
 import {
   Users, Calendar, Clock, Briefcase, UserPlus, Gift,
-  TrendingUp, AlertCircle, CheckCircle2, XCircle, ArrowRight
+  AlertCircle, CheckCircle2, XCircle
 } from 'lucide-react';
 
 const HRMSDashboard = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const tenantId = localStorage.getItem('crm_tenant_id') || '1';
+  const { tenantId } = useHRMS();
 
   useEffect(() => {
     fetch(`${apiBaseUrl}/hrms/dashboard?tenant_id=${tenantId}`)

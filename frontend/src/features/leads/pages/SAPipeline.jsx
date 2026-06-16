@@ -1,21 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { useOutletContext } from 'react-router-dom';
-import { Filter, IndianRupee } from 'lucide-react';
-import { useToast } from '../../../components/NotificationContext';
+import { useState, useEffect, useCallback } from 'react';
 import { apiBaseUrl } from '../../../utils/env.js';
+import { useCRM } from '../context/CRMContext';
 
 const SAPipeline = () => {
-  const toast = useToast();
-  const userStr = localStorage.getItem('crm_user');
-  const currentUser = userStr ? JSON.parse(userStr) : null;
-  const currencySymbol = currentUser?.currency_symbol || '₹';
-  const { activeAgent } = useOutletContext();
+  const { toast, currencySymbol, activeAgent } = useCRM();
   const [leads, setLeads] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   // Fetch leads and filter by simulated agent
-  const fetchLeads = () => {
-    setLoading(true);
+  const fetchLeads = useCallback(() => {
     fetch(`${apiBaseUrl}/leads`)
       .then(res => res.json())
       .then(data => {
@@ -35,15 +27,12 @@ const SAPipeline = () => {
           { id: 10, name: 'Greenfield Co', email: 'linda@greenfield.com', contact_number: '+1 (555) 019-2222', status: 'Closed', source: 'LinkedIn', value: 15000, agent: 'Emily Davis', delegation_status: 'Accepted' },
         ];
         setLeads(mockLeads.filter(l => l.agent === activeAgent && l.delegation_status === 'Accepted'));
-      })
-      .finally(() => {
-        setLoading(false);
       });
-  };
+  }, [activeAgent]);
 
   useEffect(() => {
     fetchLeads();
-  }, [activeAgent]);
+  }, [fetchLeads]);
 
   // Update lead status in backend
   const updateLeadStatus = (leadId, newStatus) => {

@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { apiBaseUrl } from '../../../utils/env.js';
-import { useToast } from '../../../components/NotificationContext';
-import { Calendar, Plus, Check, X, Clock, AlertCircle, Filter } from 'lucide-react';
+import { useHRMS } from '../context/HRMSContext';
+import { Plus, Check, X, Clock } from 'lucide-react';
 
 const LeaveManagement = () => {
-  const toast = useToast();
-  const tenantId = localStorage.getItem('crm_tenant_id') || '1';
+  const { toast, tenantId } = useHRMS();
 
   const [leaves, setLeaves] = useState([]);
   const [leaveTypes, setLeaveTypes] = useState([]);
@@ -252,7 +252,7 @@ const LeaveManagement = () => {
       )}
 
       {/* Apply Leave Modal */}
-      {showApplyModal && (
+      {showApplyModal && createPortal(
         <div className="modal-overlay" onClick={() => setShowApplyModal(false)}>
           <div className="modal-container" style={{ maxWidth: '500px' }} onClick={e => e.stopPropagation()}>
             <div className="modal-header">
@@ -287,11 +287,12 @@ const LeaveManagement = () => {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Leave Type Modal */}
-      {showTypeModal && (
+      {showTypeModal && createPortal(
         <div className="modal-overlay" onClick={() => setShowTypeModal(false)}>
           <div className="modal-container" style={{ maxWidth: '400px' }} onClick={e => e.stopPropagation()}>
             <div className="modal-header">
@@ -309,7 +310,8 @@ const LeaveManagement = () => {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

@@ -1,29 +1,9 @@
 <?php
 // leads.php
 require_once __DIR__ . '/../../core/db.php';
+require_once __DIR__ . '/../../core/validation.php';
 
 header('Content-Type: application/json');
-
-function isValidEmail($email) {
-    if ($email === null || $email === '') {
-        return true; // Null/empty is allowed
-    }
-    $email = trim($email);
-    return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
-}
-
-function isValidPhone($phone) {
-    if ($phone === null || $phone === '') {
-        return true; // Null/empty is allowed
-    }
-    $phone = trim($phone);
-    $digitsOnly = preg_replace('/\D/', '', $phone);
-    $digitCount = strlen($digitsOnly);
-    if ($digitCount >= 7 && $digitCount <= 15) {
-        return preg_match('/^\+?[0-9\s\-()]+$/', $phone) === 1;
-    }
-    return false;
-}
 
 $method = $_SERVER['REQUEST_METHOD'];
 
