@@ -32,6 +32,15 @@ switch ($method) {
             if ($user && password_verify($password, $user['password'])) {
                 unset($user['password']); // security
                 
+                // Fetch allowed apps
+                if ($user['role'] === 'Superadmin') {
+                    $user['apps'] = ['crm', 'hrms', 'accounting', 'inventory'];
+                } else {
+                    $astmt = $pdo->prepare("SELECT app_id FROM tenant_apps WHERE tenant_id = ?");
+                    $astmt->execute([$user['tenant_id']]);
+                    $user['apps'] = $astmt->fetchAll(PDO::FETCH_COLUMN);
+                }
+                
                 echo json_encode([
                     "success" => true,
                     "message" => "Login successful",

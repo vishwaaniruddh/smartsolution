@@ -68,11 +68,26 @@ const Login = () => {
           
           if (data.user.role === 'Superadmin') {
             navigate('/superadmin/tenants');
-          } else if (data.user.role === 'Sales Associate') {
-            localStorage.setItem('crm_active_agent', `${data.user.first_name} ${data.user.last_name}`);
-            navigate('/feature/leads/sa/dashboard');
           } else {
-            navigate('/feature/leads');
+            const apps = data.user.apps || [];
+            if (apps.length === 1) {
+              localStorage.setItem('crm_active_app', apps[0]);
+              if (apps[0] === 'hrms') {
+                navigate('/feature/hrms');
+              } else if (apps[0] === 'crm') {
+                if (data.user.role === 'Sales Associate') {
+                  localStorage.setItem('crm_active_agent', `${data.user.first_name} ${data.user.last_name}`);
+                  navigate('/feature/leads/sa/dashboard');
+                } else {
+                  navigate('/feature/leads');
+                }
+              } else {
+                navigate('/select-app');
+              }
+            } else {
+              // If 0 or multiple apps, let the SelectApp component handle it
+              navigate('/select-app');
+            }
           }
         } else {
           setError(data.error || 'Invalid credentials.');

@@ -3,7 +3,8 @@ import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { basePath, apiBaseUrl } from '../../utils/env.js';
 import {
   LayoutDashboard, Users, GitBranch, UserCircle, BarChart3,
-  Settings, PanelLeftClose, Search, UserCheck, CheckSquare, IndianRupee, Building, LogOut, Menu, ChevronDown, ChevronRight, Shield, Mail, LayoutGrid
+  Settings, PanelLeftClose, Search, UserCheck, CheckSquare, IndianRupee, Building, LogOut, Menu, ChevronDown, ChevronRight, Shield, Mail, LayoutGrid,
+  Clock, CalendarDays, Wallet, Briefcase, CalendarHeart
 } from 'lucide-react';
 
 const adminNavItems = [
@@ -38,6 +39,24 @@ const superadminNavItems = [
   { to: '/superadmin/analytics', icon: BarChart3, label: 'Tenant Reports' },
   { to: '/superadmin/apps', icon: LayoutGrid, label: 'Apps' },
   { to: '/settings', icon: Settings, label: 'Settings' }
+];
+
+const hrmsNavItems = [
+  { to: '/feature/hrms', icon: LayoutDashboard, label: 'HR Dashboard' },
+  { to: '/feature/hrms/employees', icon: Users, label: 'Employees' },
+  {
+    isDropdown: true,
+    icon: Shield,
+    label: 'HR Admin',
+    subItems: [
+      { to: '/feature/hrms/departments', icon: Building, label: 'Departments' },
+      { to: '/feature/hrms/holidays', icon: CalendarHeart, label: 'Holidays' },
+    ]
+  },
+  { to: '/feature/hrms/attendance', icon: Clock, label: 'Attendance' },
+  { to: '/feature/hrms/leaves', icon: CalendarDays, label: 'Leave Management' },
+  { to: '/feature/hrms/payroll', icon: Wallet, label: 'Payroll' },
+  { to: '/settings', icon: Settings, label: 'Settings' },
 ];
 
 
@@ -116,9 +135,15 @@ const AppShell = () => {
   };
 
 
-  const currentNavItems = activeRole === 'Sales Associate'
-    ? saNavItems
-    : (activeRole === 'Superadmin' ? superadminNavItems : adminNavItems);
+  const activeApp = location.pathname.startsWith('/feature/hrms') 
+    ? 'hrms' 
+    : (location.pathname.startsWith('/feature/leads') ? 'crm' : (localStorage.getItem('crm_active_app') || 'crm'));
+
+  const currentNavItems = activeRole === 'Superadmin'
+    ? superadminNavItems
+    : (activeApp === 'hrms'
+      ? hrmsNavItems
+      : (activeRole === 'Sales Associate' ? saNavItems : adminNavItems));
 
   const getHeaderTitle = () => {
     const path = location.pathname;
@@ -136,6 +161,15 @@ const AppShell = () => {
     if (path === '/superadmin/tenants') return 'Superadmin Tenant Management';
     if (path === '/superadmin/analytics') return 'Tenant Reports & Analytics';
     if (path === '/superadmin/apps') return 'Enterprise App Directory';
+
+    // HRMS Routes
+    if (path === '/feature/hrms') return 'HR Dashboard Overview';
+    if (path === '/feature/hrms/employees') return 'Employee Directory';
+    if (path === '/feature/hrms/departments') return 'Departments & Designations';
+    if (path === '/feature/hrms/attendance') return 'Attendance & Timekeeping';
+    if (path === '/feature/hrms/leaves') return 'Leave Management';
+    if (path === '/feature/hrms/payroll') return 'Payroll & Compensation';
+    if (path === '/feature/hrms/holidays') return 'Holiday Calendar';
 
     
     // SA Routes
@@ -163,12 +197,59 @@ const AppShell = () => {
       )}
       {/* Sidebar */}
       <aside className={`sidebar ${isMobileMenuOpen ? 'open' : ''}`}>
-        <div className="sidebar-logo" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '16px 20px 20px' }}>
-          <img src={`${basePath}/sarlogoremovebg.png`} alt="SAR Workforce Logo" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
-          <span className="sidebar-logo-text" style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)' }}>
-            SAR Workforce
-          </span>
+        <div className="sidebar-logo" style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '16px 20px 12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <img src={`${basePath}/sarlogoremovebg.png`} alt="SAR Workforce Logo" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
+            <span className="sidebar-logo-text" style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)' }}>
+              SAR Workforce
+            </span>
+          </div>
+          {user && user.role !== 'Superadmin' && (
+            <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 500, paddingLeft: '38px', marginTop: '-4px' }}>
+              {user.tenant_name || 'Organization Space'}
+            </div>
+          )}
         </div>
+
+        {/* Dynamic App Switcher Button */}
+        {user && user.role !== 'Superadmin' && user.apps && user.apps.length > 1 && (
+          <div style={{ padding: '0 20px 16px 20px', borderBottom: '1px solid var(--border)', marginBottom: '12px' }}>
+            <button 
+              onClick={() => navigate('/select-app')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                width: '100%',
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid var(--border)',
+                borderRadius: 'var(--radius-md)',
+                padding: '8px 12px',
+                color: 'var(--text-secondary)',
+                fontSize: '12px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                justifyContent: 'space-between',
+                transition: 'all 0.2s',
+                outline: 'none'
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = 'rgba(255,255,255,0.06)';
+                e.currentTarget.style.borderColor = 'var(--accent-cyan)';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
+                e.currentTarget.style.borderColor = 'var(--border)';
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <LayoutGrid size={14} style={{ color: 'var(--accent-cyan)' }} />
+                <span>{activeApp === 'hrms' ? 'HRMS Module' : 'CRM Module'}</span>
+              </div>
+              <ChevronRight size={12} style={{ opacity: 0.7 }} />
+            </button>
+          </div>
+        )}
 
         <nav className="sidebar-nav">
           {currentNavItems.map(item => {

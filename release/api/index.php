@@ -57,6 +57,31 @@ switch ($route) {
     case 'superadmin/analytics':
         require_once __DIR__ . '/modules/superadmin/superadmin_analytics.php';
         break;
+    // HRMS Module Routes
+    case 'hrms/departments':
+        require_once __DIR__ . '/modules/hrms/departments.php';
+        break;
+    case 'hrms/designations':
+        require_once __DIR__ . '/modules/hrms/designations.php';
+        break;
+    case 'hrms/employees':
+        require_once __DIR__ . '/modules/hrms/employees.php';
+        break;
+    case 'hrms/attendance':
+        require_once __DIR__ . '/modules/hrms/attendance.php';
+        break;
+    case 'hrms/leaves':
+        require_once __DIR__ . '/modules/hrms/leaves.php';
+        break;
+    case 'hrms/payroll':
+        require_once __DIR__ . '/modules/hrms/payroll.php';
+        break;
+    case 'hrms/holidays':
+        require_once __DIR__ . '/modules/hrms/holidays.php';
+        break;
+    case 'hrms/dashboard':
+        require_once __DIR__ . '/modules/hrms/hrms_dashboard.php';
+        break;
     default:
         // Try fallback to root facades if route contains .php extension
         $file = __DIR__ . '/' . $route;

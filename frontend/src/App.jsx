@@ -22,6 +22,14 @@ import SADashboard from './features/leads/pages/SADashboard';
 import SAMyLeads from './features/leads/pages/SAMyLeads';
 import SAPipeline from './features/leads/pages/SAPipeline';
 import SATasks from './features/leads/pages/SATasks';
+import HRMSDashboard from './features/hrms/pages/HRMSDashboard';
+import HRMSEmployees from './features/hrms/pages/Employees';
+import HRMSDepartments from './features/hrms/pages/Departments';
+import HRMSAttendance from './features/hrms/pages/Attendance';
+import HRMSLeaveManagement from './features/hrms/pages/LeaveManagement';
+import HRMSPayroll from './features/hrms/pages/Payroll';
+import HRMSHolidays from './features/hrms/pages/Holidays';
+import SelectApp from './pages/SelectApp';
 
 
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
@@ -30,12 +38,73 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
     return <Navigate to="/login" replace />;
   }
   const user = JSON.parse(userStr);
+  
+  // Guard role
   if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
     if (user.role === 'Superadmin') return <Navigate to="/superadmin/tenants" replace />;
     if (user.role === 'Sales Associate') return <Navigate to="/feature/leads/sa/dashboard" replace />;
     return <Navigate to="/feature/leads" replace />;
   }
+
+  // Guard apps
+  const path = window.location.pathname;
+  const userApps = user.apps || [];
+  if (user.role !== 'Superadmin') {
+    if (path.includes('/feature/hrms') && !userApps.includes('hrms')) {
+      return <Navigate to="/select-app" replace />;
+    }
+    if (path.includes('/feature/leads') && !userApps.includes('crm')) {
+      return <Navigate to="/select-app" replace />;
+    }
+  }
+
   return children;
+};
+
+const RootRedirect = () => {
+  const userStr = localStorage.getItem('crm_user');
+  if (!userStr) {
+    return <Navigate to="/login" replace />;
+  }
+  const user = JSON.parse(userStr);
+  if (user.role === 'Superadmin') {
+    return <Navigate to="/superadmin/tenants" replace />;
+  }
+  
+  const apps = user.apps || [];
+  if (apps.length === 0) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text-primary)', flexDirection: 'column', gap: '16px' }}>
+        <h2>No applications provisioned</h2>
+        <p style={{ color: 'var(--text-muted)' }}>Please contact your system administrator.</p>
+        <button className="modal-btn primary" onClick={() => { localStorage.clear(); window.location.href = basePath + '/login'; }}>Log Out</button>
+      </div>
+    );
+  }
+
+  const activeApp = localStorage.getItem('crm_active_app');
+  if (activeApp && apps.includes(activeApp)) {
+    if (activeApp === 'hrms') {
+      return <Navigate to="/feature/hrms" replace />;
+    }
+    if (user.role === 'Sales Associate') {
+      return <Navigate to="/feature/leads/sa/dashboard" replace />;
+    }
+    return <Navigate to="/feature/leads" replace />;
+  }
+
+  if (apps.length === 1) {
+    localStorage.setItem('crm_active_app', apps[0]);
+    if (apps[0] === 'hrms') {
+      return <Navigate to="/feature/hrms" replace />;
+    }
+    if (user.role === 'Sales Associate') {
+      return <Navigate to="/feature/leads/sa/dashboard" replace />;
+    }
+    return <Navigate to="/feature/leads" replace />;
+  }
+
+  return <Navigate to="/select-app" replace />;
 };
 
 function App() {
@@ -45,18 +114,19 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/select-app" element={
+            <ProtectedRoute>
+              <SelectApp />
+            </ProtectedRoute>
+          } />
           
           <Route path="/" element={
             <ProtectedRoute>
               <AppShell />
             </ProtectedRoute>
           }>
-            {/* Root index redirect to Leads active app */}
-            <Route index element={
-              <ProtectedRoute>
-                <Navigate to="/feature/leads" replace />
-              </ProtectedRoute>
-            } />
+            {/* Root index redirect to dynamic app landing */}
+            <Route index element={<RootRedirect />} />
 
             {/* Leads Module Routes */}
             <Route path="feature/leads">
@@ -115,6 +185,45 @@ function App() {
               <Route path="sa/sales" element={
                 <ProtectedRoute allowedRoles={['Sales Associate']}>
                   <Sales />
+                </ProtectedRoute>
+              } />
+            </Route>
+
+            {/* HRMS Module Routes */}
+            <Route path="feature/hrms">
+              <Route index element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                  <HRMSDashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="employees" element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                  <HRMSEmployees />
+                </ProtectedRoute>
+              } />
+              <Route path="departments" element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                  <HRMSDepartments />
+                </ProtectedRoute>
+              } />
+              <Route path="attendance" element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                  <HRMSAttendance />
+                </ProtectedRoute>
+              } />
+              <Route path="leaves" element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                  <HRMSLeaveManagement />
+                </ProtectedRoute>
+              } />
+              <Route path="payroll" element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                  <HRMSPayroll />
+                </ProtectedRoute>
+              } />
+              <Route path="holidays" element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                  <HRMSHolidays />
                 </ProtectedRoute>
               } />
             </Route>

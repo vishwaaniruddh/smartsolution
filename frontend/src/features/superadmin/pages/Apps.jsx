@@ -15,21 +15,23 @@ const appsList = [
     border: 'rgba(34, 211, 238, 0.2)',
     badgeColor: 'var(--accent-emerald)',
     badgeBg: 'rgba(16, 185, 129, 0.1)',
-    badgeText: 'Active Module'
+    badgeText: 'Active Module',
+    launchPath: '/feature/leads'
   },
   {
     id: 'hrms',
     name: 'Human Resource Management (HRMS)',
     description: 'Complete employee directory, shift scheduling, real-time clock-in trackers, leave planner, payroll ledger, and task sheets.',
     category: 'Human Resources',
-    status: 'Inactive',
+    status: 'Active',
     icon: Users,
     color: 'var(--accent-blue)',
     bg: 'rgba(59, 130, 246, 0.1)',
     border: 'rgba(59, 130, 246, 0.2)',
-    badgeColor: 'var(--accent-yellow)',
-    badgeBg: 'rgba(245, 158, 11, 0.1)',
-    badgeText: 'Available'
+    badgeColor: 'var(--accent-emerald)',
+    badgeBg: 'rgba(16, 185, 129, 0.1)',
+    badgeText: 'Active Module',
+    launchPath: '/feature/hrms'
   },
   {
     id: 'accounting',
@@ -258,7 +260,14 @@ const Apps = () => {
                       <CheckCircle2 size={12} /> Active License
                     </div>
                     <button 
-                      onClick={() => window.location.href = '#/superadmin/tenants'}
+                      onClick={() => {
+                        const path = app.launchPath || '#/superadmin/tenants';
+                        if (path.startsWith('/')) {
+                          window.location.href = window.location.origin + (window.location.pathname.split('/feature')[0] || '') + path;
+                        } else {
+                          window.location.href = path;
+                        }
+                      }}
                       className="add-lead-btn"
                       style={{
                         padding: '14px',

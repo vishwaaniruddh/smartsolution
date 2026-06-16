@@ -40,6 +40,11 @@ switch ($method) {
                 $ustmt->execute([$t['id']]);
                 $admin = $ustmt->fetch();
                 $t['admin'] = $admin ? $admin : null;
+
+                // Fetch app_ids from tenant_apps
+                $astmt = $pdo->prepare("SELECT app_id FROM tenant_apps WHERE tenant_id = ?");
+                $astmt->execute([$t['id']]);
+                $t['apps'] = $astmt->fetchAll(PDO::FETCH_COLUMN);
             }
 
             
@@ -65,6 +70,7 @@ switch ($method) {
         $contact = isset($data['contact']) ? trim($data['contact']) : '';
         $gender = isset($data['gender']) ? trim($data['gender']) : 'Other';
         $address = isset($data['address']) ? trim($data['address']) : '';
+        $apps = isset($data['apps']) && is_array($data['apps']) ? $data['apps'] : [];
 
         // Validation
         if (empty($tenant_name)) {
@@ -110,6 +116,14 @@ switch ($method) {
                 $hashed_password,
                 $tenant_id
             ]);
+
+            // 3. Insert Tenant Apps
+            if (!empty($apps)) {
+                $astmt = $pdo->prepare("INSERT INTO tenant_apps (tenant_id, app_id) VALUES (?, ?)");
+                foreach ($apps as $app_id) {
+                    $astmt->execute([$tenant_id, $app_id]);
+                }
+            }
 
             $pdo->commit();
 
@@ -222,6 +236,7 @@ switch ($method) {
         $name = isset($data['name']) ? trim($data['name']) : '';
         $currency_name = isset($data['currency_name']) ? trim($data['currency_name']) : 'Indian Rupee';
         $currency_symbol = isset($data['currency_symbol']) ? trim($data['currency_symbol']) : '₹';
+        $apps = isset($data['apps']) && is_array($data['apps']) ? $data['apps'] : null;
 
         if (empty($name)) {
             http_response_code(400);
@@ -230,10 +245,31 @@ switch ($method) {
         }
 
         try {
+            $pdo->beginTransaction();
+
             $stmt = $pdo->prepare("UPDATE tenants SET name = ?, currency_name = ?, currency_symbol = ? WHERE id = ?");
             $stmt->execute([$name, $currency_name, $currency_symbol, $tenant_id]);
+
+            if ($apps !== null) {
+                // Delete existing tenant apps
+                $delStmt = $pdo->prepare("DELETE FROM tenant_apps WHERE tenant_id = ?");
+                $delStmt->execute([$tenant_id]);
+
+                // Insert new ones
+                if (!empty($apps)) {
+                    $insStmt = $pdo->prepare("INSERT INTO tenant_apps (tenant_id, app_id) VALUES (?, ?)");
+                    foreach ($apps as $app_id) {
+                        $insStmt->execute([$tenant_id, $app_id]);
+                    }
+                }
+            }
+
+            $pdo->commit();
             echo json_encode(["success" => true, "message" => "Tenant settings updated successfully."]);
         } catch (PDOException $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
             http_response_code(500);
             echo json_encode(["success" => false, "error" => $e->getMessage()]);
         }

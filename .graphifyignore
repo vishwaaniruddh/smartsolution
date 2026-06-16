@@ -1,0 +1,19 @@
+# Exclude third-party vendor libraries
+api/vendor/
+release/
+
+# Exclude package manager folders
+node_modules/
+frontend/node_modules/
+package-lock.json
+frontend/package-lock.json
+
+# Exclude builds
+dist/
+frontend/dist/
+build/
+
+# Exclude git & internal graphify folders
+.git/
+graphify-out/
+.gemini/

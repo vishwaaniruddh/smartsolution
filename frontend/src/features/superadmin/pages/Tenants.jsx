@@ -47,7 +47,8 @@ const Tenants = () => {
   const [tenantForm, setTenantForm] = useState({
     name: '',
     currency_name: 'Indian Rupee',
-    currency_symbol: '₹'
+    currency_symbol: '₹',
+    apps: []
   });
   const [tenantSmtp, setTenantSmtp] = useState({
     host: '',
@@ -73,7 +74,8 @@ const Tenants = () => {
     password: '',
     contact: '',
     gender: 'Male',
-    address: ''
+    address: '',
+    apps: ['crm']
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -128,7 +130,8 @@ const Tenants = () => {
     setTenantForm({
       name: tenant.name || '',
       currency_name: tenant.currency_name || 'Indian Rupee',
-      currency_symbol: tenant.currency_symbol || '₹'
+      currency_symbol: tenant.currency_symbol || '₹',
+      apps: tenant.apps || []
     });
     setTenantSmtp({
       host: '',
@@ -178,7 +181,8 @@ const Tenants = () => {
       body: JSON.stringify({
         name: tenantForm.name.trim(),
         currency_name: tenantForm.currency_name,
-        currency_symbol: tenantForm.currency_symbol
+        currency_symbol: tenantForm.currency_symbol,
+        apps: tenantForm.apps
       })
     })
       .then(res => res.json())
@@ -306,7 +310,8 @@ const Tenants = () => {
       password: '',
       contact: '',
       gender: 'Male',
-      address: ''
+      address: '',
+      apps: ['crm']
     });
     setFormErrors({});
     setIsModalOpen(true);
@@ -534,6 +539,23 @@ const Tenants = () => {
                         <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent-emerald)' }}></span>
                         {tenant.currency_symbol || '₹'} ({tenant.currency_name || 'Indian Rupee'})
                       </span>
+                    </div>
+                    {/* Active Provisioned Application Badges */}
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '8px' }}>
+                      {tenant.apps && tenant.apps.map(appId => {
+                        let label = appId.toUpperCase();
+                        let color = 'var(--text-muted)';
+                        let bg = 'var(--bg-hover)';
+                        if (appId === 'crm') { label = 'CRM'; color = 'var(--accent-cyan)'; bg = 'rgba(34, 211, 238, 0.1)'; }
+                        if (appId === 'hrms') { label = 'HRMS'; color = 'var(--accent-blue)'; bg = 'rgba(59, 130, 246, 0.1)'; }
+                        if (appId === 'accounting') { label = 'Accounting'; color = 'var(--accent-purple)'; bg = 'rgba(139, 92, 246, 0.1)'; }
+                        if (appId === 'inventory') { label = 'Inventory'; color = 'var(--accent-orange)'; bg = 'rgba(249, 115, 22, 0.1)'; }
+                        return (
+                          <span key={appId} style={{ fontSize: '10px', background: bg, border: `1px solid ${color}33`, padding: '1px 6px', borderRadius: '4px', color: color, fontWeight: 600 }}>
+                            {label}
+                          </span>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
@@ -797,6 +819,33 @@ const Tenants = () => {
                     onChange={(e) => setForm({ ...form, address: e.target.value })}
                   />
                 </div>
+
+                <div className="form-group" style={{ marginTop: '16px' }}>
+                  <label className="form-label">Provision Applications</label>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginTop: '8px' }}>
+                    {[
+                      { id: 'crm', name: 'Lead & Sales (CRM)' },
+                      { id: 'hrms', name: 'HR Management (HRMS)' },
+                      { id: 'accounting', name: 'Financial Ledger (Accounting)' },
+                      { id: 'inventory', name: 'Warehouse (Inventory)' }
+                    ].map(app => (
+                      <label key={app.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', color: 'var(--text-primary)' }}>
+                        <input
+                          type="checkbox"
+                          checked={form.apps.includes(app.id)}
+                          onChange={(e) => {
+                            const newApps = e.target.checked
+                              ? [...form.apps, app.id]
+                              : form.apps.filter(x => x !== app.id);
+                            setForm({ ...form, apps: newApps });
+                          }}
+                          style={{ accentColor: 'var(--accent-cyan)' }}
+                        />
+                        {app.name}
+                      </label>
+                    ))}
+                  </div>
+                </div>
               </div>
               
               <div className="modal-footer">
@@ -855,6 +904,21 @@ const Tenants = () => {
               >
                 SMTP Settings
               </button>
+              <button 
+                onClick={() => setConfigTab('Apps')}
+                style={{
+                  padding: '12px 24px',
+                  fontWeight: 600,
+                  fontSize: '13px',
+                  border: 'none',
+                  background: 'none',
+                  color: configTab === 'Apps' ? 'var(--accent-cyan)' : 'var(--text-secondary)',
+                  borderBottom: configTab === 'Apps' ? '2px solid var(--accent-cyan)' : 'none',
+                  cursor: 'pointer'
+                }}
+              >
+                Application Access
+              </button>
             </div>
 
             <div className="modal-body">
@@ -907,7 +971,7 @@ const Tenants = () => {
                     </div>
                   </div>
                 </form>
-              ) : (
+              ) : configTab === 'SMTP' ? (
                 <form onSubmit={handleSaveSmtp}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     <div className="form-row">
@@ -1031,6 +1095,49 @@ const Tenants = () => {
                           {smtpSaving ? 'Saving...' : <><Save size={14} style={{ marginRight: 6 }} /> Save SMTP</>}
                         </button>
                       </div>
+                    </div>
+                  </div>
+                </form>
+              ) : (
+                <form onSubmit={handleSaveOrganization}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                    <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                      Select which applications/modules this tenant has access to. Users of this tenant will only see and be able to open the selected applications.
+                    </p>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', background: 'var(--bg-card-hover)', padding: '20px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
+                      {[
+                        { id: 'crm', name: 'Lead & Sales Intelligence (CRM)', desc: 'Pipeline management, activity logging, and revenue analytics.' },
+                        { id: 'hrms', name: 'Human Resource Management (HRMS)', desc: 'Employee directory, attendance trackers, leaves, and payroll.' },
+                        { id: 'accounting', name: 'Double-Entry Financial Ledger', desc: 'Invoicing, bookkeeping accounts, and tax reporting.' },
+                        { id: 'inventory', name: 'Smart Inventory & Warehouse Control', desc: 'Stock levels, barcode cataloging, and purchase orders.' }
+                      ].map(app => (
+                        <label key={app.id} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'pointer', padding: '12px', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', background: tenantForm.apps.includes(app.id) ? 'rgba(34, 211, 238, 0.04)' : 'transparent', transition: 'all 0.2s' }}>
+                          <input
+                            type="checkbox"
+                            checked={tenantForm.apps.includes(app.id)}
+                            onChange={(e) => {
+                              const newApps = e.target.checked
+                                ? [...tenantForm.apps, app.id]
+                                : tenantForm.apps.filter(x => x !== app.id);
+                              setTenantForm({ ...tenantForm, apps: newApps });
+                            }}
+                            style={{ marginTop: '3px', accentColor: 'var(--accent-cyan)' }}
+                          />
+                          <div>
+                            <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>{app.name}</div>
+                            <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>{app.desc}</div>
+                          </div>
+                        </label>
+                      ))}
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '16px' }}>
+                      <button type="button" className="modal-btn secondary" onClick={() => setIsConfigModalOpen(false)}>
+                        Cancel
+                      </button>
+                      <button type="submit" className="modal-btn primary">
+                        <Save size={14} style={{ marginRight: 6 }} /> Save Application Access
+                      </button>
                     </div>
                   </div>
                 </form>

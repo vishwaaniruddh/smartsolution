@@ -239,6 +239,250 @@ CREATE TABLE IF NOT EXISTS lead_payments (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (lead_id) REFERENCES leads(id) ON DELETE CASCADE
 );
+
+-- Create Tenant Apps table
+CREATE TABLE IF NOT EXISTS tenant_apps (
+    tenant_id INT NOT NULL,
+    app_id VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (tenant_id, app_id),
+    FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE
+);
+
+-- ============================================
+-- HRMS MODULE TABLES
+-- ============================================
+
+-- HRMS Departments
+CREATE TABLE IF NOT EXISTS hrms_departments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(150) NOT NULL,
+    head_employee_id INT NULL,
+    description TEXT NULL,
+    tenant_id INT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- HRMS Designations
+CREATE TABLE IF NOT EXISTS hrms_designations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(150) NOT NULL,
+    department_id INT NULL,
+    tenant_id INT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- HRMS Employees
+CREATE TABLE IF NOT EXISTS hrms_employees (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NULL,
+    emp_code VARCHAR(50) NOT NULL,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    email VARCHAR(150) NULL,
+    phone VARCHAR(50) NULL,
+    gender VARCHAR(20) NULL,
+    dob DATE NULL,
+    blood_group VARCHAR(10) NULL,
+    address TEXT NULL,
+    department_id INT NULL,
+    designation_id INT NULL,
+    date_of_joining DATE NULL,
+    employment_type ENUM('Full-time', 'Part-time', 'Contract', 'Intern') DEFAULT 'Full-time',
+    reporting_manager_id INT NULL,
+    status ENUM('Active', 'On Probation', 'Resigned', 'Terminated') DEFAULT 'Active',
+    profile_photo VARCHAR(255) NULL,
+    tenant_id INT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- HRMS Employee Bank Details
+CREATE TABLE IF NOT EXISTS hrms_employee_bank_details (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    employee_id INT NOT NULL,
+    bank_name VARCHAR(150) NULL,
+    account_number VARCHAR(50) NULL,
+    ifsc_code VARCHAR(20) NULL,
+    pan_number VARCHAR(20) NULL,
+    tenant_id INT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (employee_id) REFERENCES hrms_employees(id) ON DELETE CASCADE
+);
+
+-- HRMS Attendance
+CREATE TABLE IF NOT EXISTS hrms_attendance (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    employee_id INT NOT NULL,
+    date DATE NOT NULL,
+    status ENUM('Present', 'Absent', 'Half-Day', 'Late', 'On Leave') DEFAULT 'Present',
+    clock_in TIME NULL,
+    clock_out TIME NULL,
+    working_hours DECIMAL(5,2) NULL,
+    remarks TEXT NULL,
+    tenant_id INT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (employee_id) REFERENCES hrms_employees(id) ON DELETE CASCADE
+);
+
+-- HRMS Leave Types
+CREATE TABLE IF NOT EXISTS hrms_leave_types (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    default_days INT DEFAULT 12,
+    tenant_id INT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- HRMS Leave Balances
+CREATE TABLE IF NOT EXISTS hrms_leave_balances (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    employee_id INT NOT NULL,
+    leave_type_id INT NOT NULL,
+    allocated INT DEFAULT 0,
+    used INT DEFAULT 0,
+    remaining INT DEFAULT 0,
+    year INT NOT NULL,
+    tenant_id INT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (employee_id) REFERENCES hrms_employees(id) ON DELETE CASCADE,
+    FOREIGN KEY (leave_type_id) REFERENCES hrms_leave_types(id) ON DELETE CASCADE
+);
+
+-- HRMS Leave Requests
+CREATE TABLE IF NOT EXISTS hrms_leave_requests (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    employee_id INT NOT NULL,
+    leave_type_id INT NOT NULL,
+    from_date DATE NOT NULL,
+    to_date DATE NOT NULL,
+    days DECIMAL(4,1) NOT NULL,
+    reason TEXT NULL,
+    status ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending',
+    approved_by INT NULL,
+    tenant_id INT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (employee_id) REFERENCES hrms_employees(id) ON DELETE CASCADE,
+    FOREIGN KEY (leave_type_id) REFERENCES hrms_leave_types(id) ON DELETE CASCADE
+);
+
+-- HRMS Holidays
+CREATE TABLE IF NOT EXISTS hrms_holidays (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(150) NOT NULL,
+    date DATE NOT NULL,
+    tenant_id INT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- HRMS Salary Structures
+CREATE TABLE IF NOT EXISTS hrms_salary_structures (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    employee_id INT NOT NULL,
+    basic DECIMAL(12,2) DEFAULT 0.00,
+    hra DECIMAL(12,2) DEFAULT 0.00,
+    da DECIMAL(12,2) DEFAULT 0.00,
+    special_allowance DECIMAL(12,2) DEFAULT 0.00,
+    pf_deduction DECIMAL(12,2) DEFAULT 0.00,
+    esi_deduction DECIMAL(12,2) DEFAULT 0.00,
+    tax_deduction DECIMAL(12,2) DEFAULT 0.00,
+    other_deductions DECIMAL(12,2) DEFAULT 0.00,
+    net_salary DECIMAL(12,2) DEFAULT 0.00,
+    tenant_id INT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (employee_id) REFERENCES hrms_employees(id) ON DELETE CASCADE
+);
+
+-- HRMS Payroll Runs
+CREATE TABLE IF NOT EXISTS hrms_payroll_runs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    employee_id INT NOT NULL,
+    month INT NOT NULL,
+    year INT NOT NULL,
+    gross_salary DECIMAL(12,2) DEFAULT 0.00,
+    total_deductions DECIMAL(12,2) DEFAULT 0.00,
+    net_salary DECIMAL(12,2) DEFAULT 0.00,
+    status ENUM('Draft', 'Processed', 'Paid') DEFAULT 'Draft',
+    paid_on DATE NULL,
+    tenant_id INT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (employee_id) REFERENCES hrms_employees(id) ON DELETE CASCADE
+);
+
+-- HRMS Documents
+CREATE TABLE IF NOT EXISTS hrms_documents (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    employee_id INT NOT NULL,
+    category VARCHAR(100) DEFAULT 'Other',
+    file_name VARCHAR(255) NOT NULL,
+    file_path VARCHAR(500) NOT NULL,
+    tenant_id INT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (employee_id) REFERENCES hrms_employees(id) ON DELETE CASCADE
+);
+
+-- Seed HRMS Departments
+INSERT INTO hrms_departments (name, description, tenant_id)
+SELECT * FROM (SELECT 'Human Resources' AS name, 'HR and People Operations' AS description, 1 AS tenant_id) AS tmp
+WHERE NOT EXISTS (SELECT id FROM hrms_departments WHERE name = 'Human Resources' AND tenant_id = 1) LIMIT 1;
+
+INSERT INTO hrms_departments (name, description, tenant_id)
+SELECT * FROM (SELECT 'Engineering' AS name, 'Software Development and IT' AS description, 1 AS tenant_id) AS tmp
+WHERE NOT EXISTS (SELECT id FROM hrms_departments WHERE name = 'Engineering' AND tenant_id = 1) LIMIT 1;
+
+INSERT INTO hrms_departments (name, description, tenant_id)
+SELECT * FROM (SELECT 'Sales' AS name, 'Sales and Business Development' AS description, 1 AS tenant_id) AS tmp
+WHERE NOT EXISTS (SELECT id FROM hrms_departments WHERE name = 'Sales' AND tenant_id = 1) LIMIT 1;
+
+INSERT INTO hrms_departments (name, description, tenant_id)
+SELECT * FROM (SELECT 'Finance' AS name, 'Finance and Accounting' AS description, 1 AS tenant_id) AS tmp
+WHERE NOT EXISTS (SELECT id FROM hrms_departments WHERE name = 'Finance' AND tenant_id = 1) LIMIT 1;
+
+-- Seed HRMS Designations
+INSERT INTO hrms_designations (name, department_id, tenant_id)
+SELECT 'HR Manager', d.id, 1 FROM hrms_departments d WHERE d.name = 'Human Resources' AND d.tenant_id = 1
+AND NOT EXISTS (SELECT id FROM hrms_designations WHERE name = 'HR Manager' AND tenant_id = 1) LIMIT 1;
+
+INSERT INTO hrms_designations (name, department_id, tenant_id)
+SELECT 'Software Engineer', d.id, 1 FROM hrms_departments d WHERE d.name = 'Engineering' AND d.tenant_id = 1
+AND NOT EXISTS (SELECT id FROM hrms_designations WHERE name = 'Software Engineer' AND tenant_id = 1) LIMIT 1;
+
+INSERT INTO hrms_designations (name, department_id, tenant_id)
+SELECT 'Sales Executive', d.id, 1 FROM hrms_departments d WHERE d.name = 'Sales' AND d.tenant_id = 1
+AND NOT EXISTS (SELECT id FROM hrms_designations WHERE name = 'Sales Executive' AND tenant_id = 1) LIMIT 1;
+
+INSERT INTO hrms_designations (name, department_id, tenant_id)
+SELECT 'Accountant', d.id, 1 FROM hrms_departments d WHERE d.name = 'Finance' AND d.tenant_id = 1
+AND NOT EXISTS (SELECT id FROM hrms_designations WHERE name = 'Accountant' AND tenant_id = 1) LIMIT 1;
+
+-- Seed HRMS Leave Types
+INSERT INTO hrms_leave_types (name, default_days, tenant_id)
+SELECT * FROM (SELECT 'Casual Leave' AS name, 12 AS default_days, 1 AS tenant_id) AS tmp
+WHERE NOT EXISTS (SELECT id FROM hrms_leave_types WHERE name = 'Casual Leave' AND tenant_id = 1) LIMIT 1;
+
+INSERT INTO hrms_leave_types (name, default_days, tenant_id)
+SELECT * FROM (SELECT 'Sick Leave' AS name, 10 AS default_days, 1 AS tenant_id) AS tmp
+WHERE NOT EXISTS (SELECT id FROM hrms_leave_types WHERE name = 'Sick Leave' AND tenant_id = 1) LIMIT 1;
+
+INSERT INTO hrms_leave_types (name, default_days, tenant_id)
+SELECT * FROM (SELECT 'Earned Leave' AS name, 15 AS default_days, 1 AS tenant_id) AS tmp
+WHERE NOT EXISTS (SELECT id FROM hrms_leave_types WHERE name = 'Earned Leave' AND tenant_id = 1) LIMIT 1;
+
+INSERT INTO hrms_leave_types (name, default_days, tenant_id)
+SELECT * FROM (SELECT 'Unpaid Leave' AS name, 0 AS default_days, 1 AS tenant_id) AS tmp
+WHERE NOT EXISTS (SELECT id FROM hrms_leave_types WHERE name = 'Unpaid Leave' AND tenant_id = 1) LIMIT 1;
+
+-- Seed HRMS Sample Employees for Tenant 1
+INSERT INTO hrms_employees (emp_code, first_name, last_name, email, phone, gender, dob, department_id, designation_id, date_of_joining, employment_type, status, tenant_id)
+SELECT 'EMP001', 'Emily', 'Davis', 'emily.davis@crm.com', '+1 (555) 019-2834', 'Female', '1992-03-15', d.id, des.id, '2024-01-15', 'Full-time', 'Active', 1
+FROM hrms_departments d, hrms_designations des
+WHERE d.name = 'Sales' AND d.tenant_id = 1 AND des.name = 'Sales Executive' AND des.tenant_id = 1
+AND NOT EXISTS (SELECT id FROM hrms_employees WHERE emp_code = 'EMP001' AND tenant_id = 1) LIMIT 1;
+
+INSERT INTO hrms_employees (emp_code, first_name, last_name, email, phone, gender, dob, department_id, designation_id, date_of_joining, employment_type, status, tenant_id)
+SELECT 'EMP002', 'Alex', 'Lee', 'alex.lee@crm.com', '+1 (555) 019-5847', 'Male', '1995-07-22', d.id, des.id, '2024-06-01', 'Full-time', 'Active', 1
+FROM hrms_departments d, hrms_designations des
+WHERE d.name = 'Engineering' AND d.tenant_id = 1 AND des.name = 'Software Engineer' AND des.tenant_id = 1
+AND NOT EXISTS (SELECT id FROM hrms_employees WHERE emp_code = 'EMP002' AND tenant_id = 1) LIMIT 1;
 ";
 
 try {
@@ -291,6 +535,11 @@ try {
             'Superadmin'
         ]);
     }
+
+    // Seed initial apps for existing tenants (Tenant 1 and Tenant 2 get crm and hrms by default)
+    $pdo->exec("INSERT IGNORE INTO tenant_apps (tenant_id, app_id) VALUES 
+        (1, 'crm'), (1, 'hrms'), 
+        (2, 'crm'), (2, 'hrms')");
 
     echo json_encode(["success" => true, "message" => "Database and tables setup successfully."]);
 } catch (PDOException $e) {
