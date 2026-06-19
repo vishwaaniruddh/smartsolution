@@ -7,6 +7,7 @@ import {
   Clock, CalendarDays, Wallet, CalendarHeart, Warehouse, Truck, Package, ClipboardList, History, Upload, UserPlus, ShoppingBag,
   Receipt, Headphones, Ticket, MessageSquare
 } from 'lucide-react';
+import { useSettings } from '../SettingsContext';
 
 const adminNavItems = [
   { isHeader: true, label: 'Overview' },
@@ -124,6 +125,7 @@ const servicedeskNavItems = [
 const AppShell = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { settings } = useSettings();
 
   const userStr = localStorage.getItem('crm_user');
   const user = userStr ? JSON.parse(userStr) : null;
@@ -166,23 +168,31 @@ const AppShell = () => {
       });
   };
 
-  const isImpersonating = !!localStorage.getItem('crm_superadmin_user') && activeRole !== 'Superadmin';
+  const isImpersonatingSuperadmin = !!localStorage.getItem('crm_superadmin_user') && activeRole !== 'Superadmin';
+  const isImpersonatingTenantAdmin = !!localStorage.getItem('crm_tenant_admin_user');
+  const isImpersonating = isImpersonatingSuperadmin || isImpersonatingTenantAdmin;
 
   const handleStopImpersonation = () => {
     const superadminUserStr = localStorage.getItem('crm_superadmin_user');
-    if (!superadminUserStr) return;
+    const tenantAdminUserStr = localStorage.getItem('crm_tenant_admin_user');
 
-    // Restore Superadmin session
-    localStorage.setItem('crm_user', superadminUserStr);
-    localStorage.removeItem('crm_superadmin_user');
-
-    const superadminUser = JSON.parse(superadminUserStr);
-    localStorage.setItem('crm_tenant_id', superadminUser.tenant_id ? superadminUser.tenant_id.toString() : '1');
-    localStorage.setItem('crm_active_role', superadminUser.role);
-
-    // Redirect back to Superadmin dashboard and reload to reset state
-    const targetUrl = window.location.origin + basePath + '/superadmin/tenants';
-    window.location.href = targetUrl;
+    if (tenantAdminUserStr) {
+      localStorage.setItem('crm_user', tenantAdminUserStr);
+      localStorage.removeItem('crm_tenant_admin_user');
+      const tenantAdminUser = JSON.parse(tenantAdminUserStr);
+      localStorage.setItem('crm_tenant_id', tenantAdminUser.tenant_id ? tenantAdminUser.tenant_id.toString() : '1');
+      localStorage.setItem('crm_active_role', tenantAdminUser.role);
+      const targetUrl = window.location.origin + basePath + '/users';
+      window.location.href = targetUrl;
+    } else if (superadminUserStr) {
+      localStorage.setItem('crm_user', superadminUserStr);
+      localStorage.removeItem('crm_superadmin_user');
+      const superadminUser = JSON.parse(superadminUserStr);
+      localStorage.setItem('crm_tenant_id', superadminUser.tenant_id ? superadminUser.tenant_id.toString() : '1');
+      localStorage.setItem('crm_active_role', superadminUser.role);
+      const targetUrl = window.location.origin + basePath + '/superadmin/tenants';
+      window.location.href = targetUrl;
+    }
   };
 
   const handleLogout = () => {
@@ -299,9 +309,9 @@ const AppShell = () => {
       <aside className={`sidebar ${isMobileMenuOpen ? 'open' : ''}`}>
         <div className="sidebar-logo" style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '16px 20px 12px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <img src={`${basePath}/sarlogoremovebg.png`} alt="SAR Workforce Logo" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
+             <img src={settings?.logo_url ? `${apiBaseUrl}/${settings.logo_url.replace(/^\/?api\//, '')}` : `${basePath}/sarlogoremovebg.png`} alt="Logo" style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
             <span className="sidebar-logo-text" style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)' }}>
-              SAR Workforce
+              {settings?.software_name || 'SAR Workforce'}
             </span>
           </div>
         </div>
@@ -393,7 +403,7 @@ const AppShell = () => {
             borderBottom: '1px solid rgba(255,255,255,0.1)',
             flexShrink: 0
           }}>
-            <span>⚠️ You are currently impersonating <strong>{user?.tenant_name || 'Tenant Admin'}</strong>.</span>
+            <span>⚠️ You are currently impersonating <strong>{isImpersonatingTenantAdmin ? `${user?.first_name} ${user?.last_name}` : (user?.tenant_name || 'Tenant Admin')}</strong>.</span>
             <button 
               onClick={handleStopImpersonation}
               style={{
@@ -411,7 +421,7 @@ const AppShell = () => {
               onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.03)'}
               onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
             >
-              Return to Superadmin
+              Return to {isImpersonatingTenantAdmin ? 'Admin' : 'Superadmin'}
             </button>
           </div>
         )}

@@ -53,6 +53,7 @@ export function getAppBasePath() {
     '/settings',
     '/help',
     '/login',
+    '/login2',
     '/reset-password'
   ];
   

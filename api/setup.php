@@ -37,6 +37,26 @@ try {
     // Seed initial tenants
     $pdo->exec("INSERT INTO tenants (id, name) VALUES (1, 'Acme Enterprise'), (2, 'Globex Industries') ON DUPLICATE KEY UPDATE id=id;");
 
+    // CREATE Settings Tables
+    $pdo->exec("CREATE TABLE IF NOT EXISTS superadmin_settings (
+        id INT PRIMARY KEY DEFAULT 1,
+        software_name VARCHAR(255) DEFAULT 'SAR Software Solutions',
+        logo_url VARCHAR(255) NULL,
+        title VARCHAR(255) DEFAULT 'SAR Multitenant System',
+        description TEXT NULL,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    );");
+    $pdo->exec("CREATE TABLE IF NOT EXISTS tenant_settings (
+        tenant_id INT PRIMARY KEY,
+        software_name VARCHAR(255) NULL,
+        logo_url VARCHAR(255) NULL,
+        title VARCHAR(255) NULL,
+        description TEXT NULL,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE
+    );");
+    $pdo->exec("INSERT IGNORE INTO superadmin_settings (id, software_name, title) VALUES (1, 'SAR Software Solutions', 'SAR Multitenant System');");
+
     $pdo->exec("ALTER TABLE leads ADD COLUMN IF NOT EXISTS email VARCHAR(150) NULL;");
     $pdo->exec("ALTER TABLE leads ADD COLUMN IF NOT EXISTS contact_number VARCHAR(50) NULL;");
     $pdo->exec("ALTER TABLE leads ADD COLUMN IF NOT EXISTS agent VARCHAR(255) DEFAULT 'Unassigned';");

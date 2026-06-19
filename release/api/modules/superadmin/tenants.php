@@ -180,7 +180,7 @@ switch ($method) {
                 $email_sent = true;
                 logEmailAttempt($pdo, $email, $mail->Subject, 'Success');
             } catch (\Exception $e) {
-                $email_error = $mail->ErrorInfo;
+                $email_error = isset($mail) ? ($mail->ErrorInfo ?: $e->getMessage()) : $e->getMessage();
                 logEmailAttempt($pdo, $email, 'Welcome to Your CRM Dashboard - Onboarding Credentials', 'Failed', $email_error);
             }
 
@@ -206,7 +206,7 @@ switch ($method) {
         break;
 
     case 'PUT':
-        // Update tenant settings (name, currency_name, currency_symbol)
+        // Update tenant settings (name, currency_name, currency_symbol, is_deleted)
         $data = json_decode(file_get_contents("php://input"), true);
         if (!$data) {
             $data = $_POST;
@@ -217,6 +217,7 @@ switch ($method) {
         $currency_name = isset($data['currency_name']) ? trim($data['currency_name']) : 'Indian Rupee';
         $currency_symbol = isset($data['currency_symbol']) ? trim($data['currency_symbol']) : '₹';
         $apps = isset($data['apps']) && is_array($data['apps']) ? $data['apps'] : null;
+        $is_deleted = isset($data['is_deleted']) ? intval($data['is_deleted']) : 0;
 
         if (empty($name)) {
             http_response_code(400);
@@ -227,8 +228,8 @@ switch ($method) {
         try {
             $pdo->beginTransaction();
 
-            $stmt = $pdo->prepare("UPDATE tenants SET name = ?, currency_name = ?, currency_symbol = ? WHERE id = ?");
-            $stmt->execute([$name, $currency_name, $currency_symbol, $tenant_id]);
+            $stmt = $pdo->prepare("UPDATE tenants SET name = ?, currency_name = ?, currency_symbol = ?, is_deleted = ? WHERE id = ?");
+            $stmt->execute([$name, $currency_name, $currency_symbol, $is_deleted, $tenant_id]);
 
             if ($apps !== null) {
                 // Delete existing tenant apps
@@ -250,6 +251,24 @@ switch ($method) {
             if ($pdo->inTransaction()) {
                 $pdo->rollBack();
             }
+            http_response_code(500);
+            echo json_encode(["success" => false, "error" => $e->getMessage()]);
+        }
+        break;
+
+    case 'DELETE':
+        // Soft delete tenant
+        $id = isset($_GET['id']) ? intval($_GET['id']) : null;
+        if (!$id) {
+            http_response_code(400);
+            echo json_encode(["success" => false, "error" => "Tenant ID is required."]);
+            exit();
+        }
+        try {
+            $stmt = $pdo->prepare("UPDATE tenants SET is_deleted = 1 WHERE id = ?");
+            $stmt->execute([$id]);
+            echo json_encode(["success" => true, "message" => "Tenant soft-deleted successfully."]);
+        } catch (PDOException $e) {
             http_response_code(500);
             echo json_encode(["success" => false, "error" => $e->getMessage()]);
         }

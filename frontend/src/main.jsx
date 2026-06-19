@@ -35,8 +35,12 @@ window.fetch = (url, options = {}) => {
   return originalFetch(url, options);
 };
 
+import { SettingsProvider } from './components/SettingsContext.jsx'
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <App />
+    <SettingsProvider>
+      <App />
+    </SettingsProvider>
   </React.StrictMode>,
 )

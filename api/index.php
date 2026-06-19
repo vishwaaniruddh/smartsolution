@@ -19,7 +19,7 @@ $route = trim($route, '/');
 require_once __DIR__ . '/core/db.php';
 
 // Global check: Block all non-exempt requests if the tenant is soft-deleted (suspended)
-$route_exempt = ['auth', 'change-password', 'reset-password', 'tenants', 'superadmin/analytics', 'superadmin/apps', 'apps'];
+$route_exempt = ['auth', 'change-password', 'reset-password', 'tenants', 'superadmin/analytics', 'superadmin/apps', 'apps', 'settings'];
 if (!in_array($route, $route_exempt)) {
     $tid = getTenantId();
     $chk = $pdo->prepare("SELECT is_deleted FROM tenants WHERE id = ?");
@@ -69,6 +69,9 @@ switch ($route) {
         break;
     case 'apps':
         require_once __DIR__ . '/core/apps.php';
+        break;
+    case 'settings':
+        require_once __DIR__ . '/core/settings.php';
         break;
     case 'tenants':
         require_once __DIR__ . '/modules/superadmin/tenants.php';

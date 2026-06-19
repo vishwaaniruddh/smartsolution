@@ -16,6 +16,22 @@ foreach ($base_paths as $bp) {
 
 $route = trim($route, '/');
 
+require_once __DIR__ . '/core/db.php';
+
+// Global check: Block all non-exempt requests if the tenant is soft-deleted (suspended)
+$route_exempt = ['auth', 'change-password', 'reset-password', 'tenants', 'superadmin/analytics', 'superadmin/apps', 'apps', 'settings'];
+if (!in_array($route, $route_exempt)) {
+    $tid = getTenantId();
+    $chk = $pdo->prepare("SELECT is_deleted FROM tenants WHERE id = ?");
+    $chk->execute([$tid]);
+    $is_deleted = $chk->fetchColumn();
+    if ($is_deleted == 1) {
+        http_response_code(403);
+        echo json_encode(["success" => false, "error" => "This organization workspace has been suspended. Please contact system administrator."]);
+        exit();
+    }
+}
+
 // Simple router routing requests to modules or core
 switch ($route) {
     case 'leads':
@@ -50,6 +66,12 @@ switch ($route) {
         break;
     case 'users':
         require_once __DIR__ . '/core/users.php';
+        break;
+    case 'apps':
+        require_once __DIR__ . '/core/apps.php';
+        break;
+    case 'settings':
+        require_once __DIR__ . '/core/settings.php';
         break;
     case 'tenants':
         require_once __DIR__ . '/modules/superadmin/tenants.php';
@@ -121,6 +143,52 @@ switch ($route) {
         break;
     case 'inventory/sales-orders':
         require_once __DIR__ . '/modules/inventory/sales_orders.php';
+        break;
+    case 'accounting/accounts':
+        require_once __DIR__ . '/modules/accounting/accounts.php';
+        break;
+    case 'accounting/journal-entries':
+        require_once __DIR__ . '/modules/accounting/journal_entries.php';
+        break;
+    case 'accounting/invoices':
+        require_once __DIR__ . '/modules/accounting/invoices.php';
+        break;
+    case 'accounting/bills':
+        require_once __DIR__ . '/modules/accounting/bills.php';
+        break;
+    case 'accounting/transactions':
+        require_once __DIR__ . '/modules/accounting/transactions.php';
+        break;
+    case 'accounting/reports':
+        require_once __DIR__ . '/modules/accounting/reports.php';
+        break;
+    // Service Desk Module Routes
+    case 'servicedesk/tickets':
+        require_once __DIR__ . '/modules/servicedesk/tickets.php';
+        break;
+    case 'servicedesk/comments':
+        require_once __DIR__ . '/modules/servicedesk/comments.php';
+        break;
+    case 'servicedesk/attachments':
+        require_once __DIR__ . '/modules/servicedesk/attachments.php';
+        break;
+    case 'servicedesk/categories':
+        require_once __DIR__ . '/modules/servicedesk/categories.php';
+        break;
+    case 'servicedesk/sla':
+        require_once __DIR__ . '/modules/servicedesk/sla.php';
+        break;
+    case 'servicedesk/dashboard':
+        require_once __DIR__ . '/modules/servicedesk/dashboard.php';
+        break;
+    case 'servicedesk/activity':
+        require_once __DIR__ . '/modules/servicedesk/activity.php';
+        break;
+    case 'servicedesk/materials':
+        require_once __DIR__ . '/modules/servicedesk/materials.php';
+        break;
+    case 'servicedesk/funds':
+        require_once __DIR__ . '/modules/servicedesk/funds.php';
         break;
     default:
         // Try fallback to root facades if route contains .php extension

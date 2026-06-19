@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Search, Plus, X, Mail, Phone, MapPin, User, Lock, Upload, Edit2, Trash2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Search, Plus, X, Mail, Phone, MapPin, User, Lock, Upload, Edit2, Trash2, CheckCircle2, AlertCircle, LayoutGrid } from 'lucide-react';
 import { useToast, useConfirm } from '../components/NotificationContext';
 import { apiBaseUrl } from '../utils/env.js';
 
@@ -69,6 +70,7 @@ const Users = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUserId, setEditingUserId] = useState(null); // null means creating, number means editing
+  const [modalTab, setModalTab] = useState('Profile');
   
   // User creation/edit form state
   const [form, setForm] = useState({
@@ -93,7 +95,35 @@ const Users = () => {
 
   const currentUserStr = localStorage.getItem('crm_user');
   const currentUser = currentUserStr ? JSON.parse(currentUserStr) : null;
+  const activeRole = localStorage.getItem('crm_active_role') || (currentUser ? currentUser.role : '');
   const availableApps = currentUser ? (currentUser.apps || []) : [];
+
+  const appDetails = {
+    'crm': { name: 'Lead & Sales Intelligence (CRM)', desc: 'Pipeline management, activity logging, and revenue analytics.' },
+    'hrms': { name: 'Human Resource Management (HRMS)', desc: 'Employee directory, attendance trackers, leaves, and payroll.' },
+    'accounting': { name: 'Double-Entry Financial Ledger', desc: 'Invoicing, bookkeeping accounts, and tax reporting.' },
+    'inventory': { name: 'Smart Inventory & Warehouse Control', desc: 'Stock levels, barcode cataloging, and purchase orders.' },
+    'servicedesk': { name: 'Service Desk & Ticketing', desc: 'Internal ticketing, SLA tracking, agent queues, and resolution analytics.' }
+  };
+
+  const navigate = useNavigate();
+
+  const handleImpersonateClick = async (userToImpersonate) => {
+    const confirmed = await confirm(`Are you sure you want to impersonate ${userToImpersonate.first_name} ${userToImpersonate.last_name}?`, 'Impersonate User');
+    if (!confirmed) return;
+    
+    // Save current user as original
+    localStorage.setItem('crm_tenant_admin_user', JSON.stringify(currentUser));
+    
+    // Set the selected user as active, ensuring assigned_apps are mapped to apps property
+    const impersonatedUser = { ...userToImpersonate, apps: userToImpersonate.assigned_apps || [] };
+    localStorage.setItem('crm_user', JSON.stringify(impersonatedUser));
+    localStorage.setItem('crm_active_role', impersonatedUser.role);
+    localStorage.removeItem('crm_active_app');
+    
+    toast.success(`Impersonating ${userToImpersonate.first_name}`);
+    window.location.href = '/select-app'; // Hard refresh to ensure all context reloads
+  };
 
   // Fetch users from backend
   const fetchUsers = () => {
@@ -122,10 +152,27 @@ const Users = () => {
     }
   };
 
-  // Click edit button
-  const handleEditClick = (user) => {
-    setEditingUserId(user.id);
+  const handleOpenAddModal = () => {
+    setForm({
+      first_name: '',
+      last_name: '',
+      email: '',
+      contact: '',
+      gender: 'Male',
+      address: '',
+      password: '',
+      role: 'Sales Associate',
+      assigned_apps: []
+    });
     setFormErrors({});
+    setEditingUserId(null);
+    setPhotoPreview(null);
+    setPhotoFile(null);
+    setModalTab('Profile');
+    setIsModalOpen(true);
+  };
+
+  const handleOpenEditModal = (user) => {
     setForm({
       first_name: user.first_name || '',
       last_name: user.last_name || '',
@@ -133,13 +180,15 @@ const Users = () => {
       contact: user.contact || '',
       gender: user.gender || 'Male',
       address: user.address || '',
-      password: '', // Keep empty unless updating password
+      password: '', // blank password means don't change
       role: user.role || 'Sales Associate',
       assigned_apps: user.assigned_apps || []
     });
-    setPhotoFile(null);
+    setFormErrors({});
+    setEditingUserId(user.id);
     setPhotoPreview(user.profile_photo ? getAvatarUrl(user.profile_photo) : null);
     setExistingPhotoPath(user.profile_photo);
+    setModalTab('Profile');
     setIsModalOpen(true);
   };
 
@@ -194,6 +243,7 @@ const Users = () => {
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
+      setModalTab('Profile');
       return;
     }
     setFormErrors({});
@@ -313,6 +363,7 @@ const Users = () => {
     setExistingPhotoPath(null);
     setEditingUserId(null);
     setFormErrors({});
+    setModalTab('Profile');
   };
 
   // Helper to format avatar image URL
@@ -367,10 +418,7 @@ const Users = () => {
         </div>
         <button 
           className="add-lead-btn" 
-          onClick={() => {
-            resetForm();
-            setIsModalOpen(true);
-          }}
+          onClick={handleOpenAddModal}
         >
           <Plus size={16} /> Add User
         </button>
@@ -383,9 +431,19 @@ const Users = () => {
               
               {/* HOVER ACTIONS PANEL */}
               <div className="user-card-actions">
+                {currentUser && currentUser.id !== user.id && (
+                  <button 
+                    className="user-card-action-btn edit" 
+                    style={{ color: 'var(--accent-blue)', background: 'rgba(59, 130, 246, 0.1)', borderColor: 'rgba(59, 130, 246, 0.2)' }}
+                    onClick={() => handleImpersonateClick(user)}
+                    title="Impersonate User"
+                  >
+                    <User size={13} />
+                  </button>
+                )}
                 <button 
                   className="user-card-action-btn edit" 
-                  onClick={() => handleEditClick(user)}
+                  onClick={() => handleOpenEditModal(user)}
                   title="Edit User Profile"
                 >
                   <Edit2 size={13} />
@@ -450,6 +508,28 @@ const Users = () => {
                     {user.address || 'No address provided'}
                   </span>
                 </div>
+                <div className="user-info-row" style={{ alignItems: 'flex-start', marginTop: '8px', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '12px' }}>
+                  <LayoutGrid style={{ marginTop: '2px', color: 'var(--text-muted)' }} size={16} />
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                    {user.assigned_apps && user.assigned_apps.length > 0 ? (
+                      user.assigned_apps.map(appId => (
+                        <span key={appId} style={{ 
+                          background: 'rgba(255,255,255,0.05)', 
+                          color: 'var(--text-secondary)', 
+                          padding: '2px 8px', 
+                          borderRadius: '6px', 
+                          fontSize: '11px', 
+                          fontWeight: 600, 
+                          border: '1px solid rgba(255,255,255,0.1)' 
+                        }}>
+                          {appNames[appId] || appId}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="user-info-text" style={{ fontStyle: 'italic', fontSize: '12px' }}>No apps assigned</span>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           ))
@@ -471,205 +551,253 @@ const Users = () => {
                 <X size={18} />
               </button>
             </div>
+            
+            {/* Tab Navigation */}
+            <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', background: 'var(--bg-card-hover)' }}>
+              <button 
+                onClick={() => setModalTab('Profile')}
+                type="button"
+                style={{
+                  padding: '12px 24px',
+                  fontWeight: 600,
+                  fontSize: '13px',
+                  border: 'none',
+                  background: 'none',
+                  color: modalTab === 'Profile' ? 'var(--accent-cyan)' : 'var(--text-secondary)',
+                  borderBottom: modalTab === 'Profile' ? '2px solid var(--accent-cyan)' : 'none',
+                  cursor: 'pointer'
+                }}
+              >
+                User Profile
+              </button>
+              <button 
+                onClick={() => setModalTab('Apps')}
+                type="button"
+                style={{
+                  padding: '12px 24px',
+                  fontWeight: 600,
+                  fontSize: '13px',
+                  border: 'none',
+                  background: 'none',
+                  color: modalTab === 'Apps' ? 'var(--accent-cyan)' : 'var(--text-secondary)',
+                  borderBottom: modalTab === 'Apps' ? '2px solid var(--accent-cyan)' : 'none',
+                  cursor: 'pointer'
+                }}
+              >
+                Application Access
+              </button>
+            </div>
+
             <form onSubmit={handleSubmit}>
               <div className="modal-body">
-                <div className="form-group">
-                  <label className="form-label">Role</label>
-                  <select
-                    className="form-control"
-                    value={form.role}
-                    onChange={(e) => setForm({ ...form, role: e.target.value })}
-                  >
-                    <option>Admin</option>
-                    <option>Manager</option>
-                    <option>Sales Associate</option>
-                  </select>
-                </div>
-
-                <div className="form-row">
-                  <div className="form-group">
-                    <label className="form-label">First Name *</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. Jane"
-                      className={`form-control ${formErrors.first_name ? 'is-invalid' : ''}`}
-                      value={form.first_name}
-                      onChange={(e) => {
-                        setForm({ ...form, first_name: e.target.value });
-                        if (formErrors.first_name) setFormErrors({ ...formErrors, first_name: null });
-                      }}
-                    />
-                    {formErrors.first_name && <span className="invalid-feedback">{formErrors.first_name}</span>}
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Last Name *</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. Doe"
-                      className={`form-control ${formErrors.last_name ? 'is-invalid' : ''}`}
-                      value={form.last_name}
-                      onChange={(e) => {
-                        setForm({ ...form, last_name: e.target.value });
-                        if (formErrors.last_name) setFormErrors({ ...formErrors, last_name: null });
-                      }}
-                    />
-                    {formErrors.last_name && <span className="invalid-feedback">{formErrors.last_name}</span>}
-                  </div>
-                </div>
-
-                <div className="form-row">
-                  <div className="form-group">
-                    <label className="form-label">Email Address *</label>
-                    <input
-                      type="email"
-                      required
-                      placeholder="jane.doe@company.com"
-                      className={`form-control ${formErrors.email ? 'is-invalid' : ''}`}
-                      value={form.email}
-                      onChange={(e) => {
-                        setForm({ ...form, email: e.target.value });
-                        if (formErrors.email) setFormErrors({ ...formErrors, email: null });
-                      }}
-                    />
-                    {formErrors.email && <span className="invalid-feedback">{formErrors.email}</span>}
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Contact Number</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. +1 (555) 012-3456"
-                      className={`form-control ${formErrors.contact ? 'is-invalid' : ''}`}
-                      value={form.contact}
-                      onChange={(e) => {
-                        setForm({ ...form, contact: e.target.value });
-                        if (formErrors.contact) setFormErrors({ ...formErrors, contact: null });
-                      }}
-                    />
-                    {formErrors.contact && <span className="invalid-feedback">{formErrors.contact}</span>}
-                  </div>
-                </div>
-
-                <div className="form-row">
-                  <div className="form-group">
-                    <label className="form-label">Gender</label>
-                    <select
-                      className="form-control"
-                      value={form.gender}
-                      onChange={(e) => setForm({ ...form, gender: e.target.value })}
-                    >
-                      <option>Male</option>
-                      <option>Female</option>
-                      <option>Other</option>
-                      <option>Prefer not to say</option>
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">
-                      Password {editingUserId !== null ? '(leave blank to keep unchanged)' : '*'}
-                    </label>
-                    <input
-                      type="password"
-                      required={editingUserId === null}
-                      placeholder="••••••••"
-                      className={`form-control ${formErrors.password ? 'is-invalid' : ''}`}
-                      value={form.password}
-                      onChange={(e) => {
-                        setForm({ ...form, password: e.target.value });
-                        if (formErrors.password) setFormErrors({ ...formErrors, password: null });
-                      }}
-                    />
-                    {formErrors.password && <span className="invalid-feedback">{formErrors.password}</span>}
-                  </div>
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Address</label>
-                  <textarea
-                    rows="2"
-                    placeholder="Enter street, city, state, zip code..."
-                    className="form-control"
-                    style={{ resize: 'vertical' }}
-                    value={form.address}
-                    onChange={(e) => setForm({ ...form, address: e.target.value })}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Profile Photo</label>
-                  <div className="photo-upload-container">
-                    <div className="photo-preview">
-                      {photoPreview ? (
-                        <img src={photoPreview} alt="Preview" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
-                      ) : (
-                        <Upload size={20} />
-                      )}
+                {modalTab === 'Profile' ? (
+                  <>
+                    <div className="form-group">
+                      <label className="form-label">Role</label>
+                      <select
+                        className="form-control"
+                        value={form.role}
+                        onChange={(e) => setForm({ ...form, role: e.target.value })}
+                        disabled={editingUserId !== null && activeRole !== 'Superadmin' && form.role === 'Admin'}
+                      >
+                        <option>Admin</option>
+                        <option>Manager</option>
+                        <option>Sales Associate</option>
+                      </select>
                     </div>
-                    <div className="photo-upload-input-wrapper">
-                      <label htmlFor="user-photo-upload" className="photo-upload-btn-label">
-                        Choose Photo
-                      </label>
-                      <input
-                        id="user-photo-upload"
-                        type="file"
-                        accept="image/*"
-                        style={{ display: 'none' }}
-                        onChange={handleFileChange}
-                      />
-                      <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>
-                        Supports JPG, PNG, WEBP, or GIF. Max 2MB.
-                      </span>
-                    </div>
-                  </div>
-                </div>
 
-                <div className="form-group">
-                  <label className="form-label">Assigned Applications</label>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px', marginTop: '5px' }}>
-                    {availableApps.map(appId => (
-                      <label key={appId} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', cursor: 'pointer' }}>
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label className="form-label">First Name *</label>
                         <input
-                          type="checkbox"
-                          checked={form.assigned_apps.includes(appId)}
+                          type="text"
+                          required
+                          placeholder="e.g. Jane"
+                          className={`form-control ${formErrors.first_name ? 'is-invalid' : ''}`}
+                          value={form.first_name}
                           onChange={(e) => {
-                            if (e.target.checked) {
-                              setForm({ ...form, assigned_apps: [...form.assigned_apps, appId] });
-                            } else {
-                              setForm({ ...form, assigned_apps: form.assigned_apps.filter(a => a !== appId) });
-                            }
+                            setForm({ ...form, first_name: e.target.value });
+                            if (formErrors.first_name) setFormErrors({ ...formErrors, first_name: null });
                           }}
                         />
-                        {appNames[appId] || appId}
-                      </label>
-                    ))}
-                  </div>
-                  {availableApps.length === 0 && <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>No applications available for this tenant.</span>}
-                </div>
+                        {formErrors.first_name && <span className="invalid-feedback">{formErrors.first_name}</span>}
+                      </div>
+                      <div className="form-group">
+                        <label className="form-label">Last Name *</label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="e.g. Doe"
+                          className={`form-control ${formErrors.last_name ? 'is-invalid' : ''}`}
+                          value={form.last_name}
+                          onChange={(e) => {
+                            setForm({ ...form, last_name: e.target.value });
+                            if (formErrors.last_name) setFormErrors({ ...formErrors, last_name: null });
+                          }}
+                        />
+                        {formErrors.last_name && <span className="invalid-feedback">{formErrors.last_name}</span>}
+                      </div>
+                    </div>
+
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label className="form-label">Email Address *</label>
+                        <input
+                          type="email"
+                          required
+                          placeholder="jane.doe@company.com"
+                          className={`form-control ${formErrors.email ? 'is-invalid' : ''}`}
+                          value={form.email}
+                          onChange={(e) => {
+                            setForm({ ...form, email: e.target.value });
+                            if (formErrors.email) setFormErrors({ ...formErrors, email: null });
+                          }}
+                        />
+                        {formErrors.email && <span className="invalid-feedback">{formErrors.email}</span>}
+                      </div>
+                      <div className="form-group">
+                        <label className="form-label">Contact Number</label>
+                        <input
+                          type="text"
+                          placeholder="e.g. +1 (555) 012-3456"
+                          className={`form-control ${formErrors.contact ? 'is-invalid' : ''}`}
+                          value={form.contact}
+                          onChange={(e) => {
+                            setForm({ ...form, contact: e.target.value });
+                            if (formErrors.contact) setFormErrors({ ...formErrors, contact: null });
+                          }}
+                        />
+                        {formErrors.contact && <span className="invalid-feedback">{formErrors.contact}</span>}
+                      </div>
+                    </div>
+
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label className="form-label">Gender</label>
+                        <select
+                          className="form-control"
+                          value={form.gender}
+                          onChange={(e) => setForm({ ...form, gender: e.target.value })}
+                        >
+                          <option>Male</option>
+                          <option>Female</option>
+                          <option>Other</option>
+                          <option>Prefer not to say</option>
+                        </select>
+                      </div>
+                      <div className="form-group">
+                        <label className="form-label">
+                          Password {editingUserId !== null ? '(leave blank to keep unchanged)' : '*'}
+                        </label>
+                        <input
+                          type="password"
+                          required={editingUserId === null}
+                          placeholder="••••••••"
+                          className={`form-control ${formErrors.password ? 'is-invalid' : ''}`}
+                          value={form.password}
+                          onChange={(e) => {
+                            setForm({ ...form, password: e.target.value });
+                            if (formErrors.password) setFormErrors({ ...formErrors, password: null });
+                          }}
+                        />
+                        {formErrors.password && <span className="invalid-feedback">{formErrors.password}</span>}
+                      </div>
+                    </div>
+
+                    <div className="form-group">
+                      <label className="form-label">Address</label>
+                      <textarea
+                        rows="2"
+                        placeholder="Enter street, city, state, zip code..."
+                        className="form-control"
+                        style={{ resize: 'vertical' }}
+                        value={form.address}
+                        onChange={(e) => setForm({ ...form, address: e.target.value })}
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label className="form-label">Profile Photo</label>
+                      <div className="photo-upload-container">
+                        <div className="photo-preview">
+                          {photoPreview ? (
+                            <img src={photoPreview} alt="Preview" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                          ) : (
+                            <Upload size={20} />
+                          )}
+                        </div>
+                        <div className="photo-upload-input-wrapper">
+                          <label htmlFor="user-photo-upload" className="photo-upload-btn-label">
+                            Choose Photo
+                          </label>
+                          <input
+                            id="user-photo-upload"
+                            type="file"
+                            accept="image/*"
+                            style={{ display: 'none' }}
+                            onChange={handleFileChange}
+                          />
+                          <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>
+                            Supports JPG, PNG, WEBP, or GIF. Max 2MB.
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="form-group" style={{ marginTop: '16px' }}>
+                      <label className="form-label" style={{ marginBottom: '12px' }}>Provision Applications</label>
+                      {availableApps.length > 0 ? (
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', background: 'var(--bg-card-hover)', padding: '20px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
+                          {availableApps.map(appId => {
+                            const app = appDetails[appId] || { name: appNames[appId] || appId, desc: 'Application module access' };
+                            const isChecked = form.assigned_apps.includes(appId);
+                            return (
+                              <label key={appId} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'pointer', padding: '12px', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', background: isChecked ? 'rgba(34, 211, 238, 0.04)' : 'transparent', transition: 'all 0.2s' }}>
+                                <input
+                                  type="checkbox"
+                                  checked={isChecked}
+                                  onChange={(e) => {
+                                    if (e.target.checked) {
+                                      setForm({ ...form, assigned_apps: [...form.assigned_apps, appId] });
+                                    } else {
+                                      setForm({ ...form, assigned_apps: form.assigned_apps.filter(a => a !== appId) });
+                                    }
+                                  }}
+                                  style={{ marginTop: '3px', accentColor: 'var(--accent-cyan)' }}
+                                />
+                                <div>
+                                  <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>{app.name}</div>
+                                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>{app.desc}</div>
+                                </div>
+                              </label>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>No applications available for this tenant.</span>
+                      )}
+                    </div>
+                  </>
+                )}
               </div>
               
-              <div className="p-6 border-t border-gray-100 flex justify-end space-x-3 bg-gray-50 rounded-b-xl">
+              <div className="modal-footer">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
                   disabled={isSubmitting}
-                  className="px-4 py-2 text-gray-700 hover:bg-gray-200 bg-gray-100 rounded-lg font-medium transition-colors disabled:opacity-50"
+                  className="modal-btn secondary"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex items-center px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium transition-colors shadow-sm disabled:opacity-70"
+                  className="modal-btn primary"
                 >
-                  {isSubmitting ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Saving...
-                    </>
-                  ) : (
-                    editingUserId !== null ? 'Update User' : 'Add User'
-                  )}
+                  {isSubmitting ? 'Saving...' : (editingUserId !== null ? 'Update User' : 'Add User')}
                 </button>
               </div>
             </form>

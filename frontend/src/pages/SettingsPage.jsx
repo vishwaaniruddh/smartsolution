@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { User, Key, Building2, Mail, Save, Activity, Send, CheckCircle2, AlertCircle, X } from 'lucide-react';
+import { User, Key, Building2, Mail, Save, Activity, Send, CheckCircle2, AlertCircle, X, Monitor } from 'lucide-react';
 import { useToast } from '../components/NotificationContext';
 import { apiBaseUrl } from '../utils/env.js';
+import SiteBrandingSettings from './SiteBrandingSettings';
 
 const currenciesList = [
   { name: 'Indian Rupee', symbol: '₹' },
@@ -389,7 +390,10 @@ const SettingsPage = () => {
 
   if (isAdminOrManager) {
     tabs.push({ icon: Building2, label: 'Company' });
+    tabs.push({ icon: Monitor, label: 'Site Branding' });
     tabs.push({ icon: Mail, label: 'SMTP' });
+  } else if (isSuperadmin) {
+    tabs.push({ icon: Monitor, label: 'Site Branding' });
   }
 
   return (
@@ -627,6 +631,11 @@ const SettingsPage = () => {
                 </button>
               </form>
             </div>
+          )}
+
+          {/* SITE BRANDING TAB */}
+          {activeTab === 'Site Branding' && (isAdminOrManager || isSuperadmin) && (
+            <SiteBrandingSettings isSuperadmin={isSuperadmin} />
           )}
 
           {/* SMTP CONFIGURATION TAB */}
