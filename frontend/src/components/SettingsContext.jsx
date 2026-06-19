@@ -10,19 +10,16 @@ export const SettingsProvider = ({ children }) => {
     const fetchSettings = async () => {
         setLoading(true);
         try {
-            // Check if user is logged in
-            const authUser = localStorage.getItem('crm_user');
-            let type = 'superadmin'; // Default fallback
+            let type = 'superadmin';
             
-            if (authUser) {
-                const user = JSON.parse(authUser);
-                if (user.role !== 'Superadmin') {
-                    type = 'tenant';
-                }
-            }
-
-            const token = localStorage.getItem('token') || '';
+            // Check if token exists
+            const token = localStorage.getItem('crm_token') || '';
             const tenantId = localStorage.getItem('crm_tenant_id') || '';
+
+            // We can determine if tenant based on the fact that tenant admins have a tenant_id locally
+            if (tenantId && tenantId !== '1') {
+                type = 'tenant';
+            }
 
             const res = await fetch(`${apiBaseUrl}/settings?type=${type}`, {
                 headers: {

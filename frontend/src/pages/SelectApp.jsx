@@ -4,6 +4,7 @@ import { LayoutGrid, Sparkles, Users, Wallet, Package, LogOut, Lock, ShieldCheck
 import { basePath, apiBaseUrl } from '../utils/env.js';
 import { useToast } from '../components/NotificationContext';
 import { useSettings } from '../components/SettingsContext';
+import { useAuth } from '../context/AuthContext';
 
 const appVisuals = {
   'crm': {
@@ -47,15 +48,7 @@ const SelectApp = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const { settings } = useSettings();
-
-  const userStr = localStorage.getItem('crm_user');
-  const user = userStr ? JSON.parse(userStr) : null;
-
-  useEffect(() => {
-    if (!user) {
-      navigate('/login');
-    }
-  }, [user, navigate]);
+  const { user, logout } = useAuth();
 
   const [dbApps, setDbApps] = useState([]);
   const [launchingApp, setLaunchingApp] = useState(null);
@@ -115,12 +108,7 @@ const SelectApp = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('crm_user');
-    localStorage.removeItem('crm_tenant_id');
-    localStorage.removeItem('crm_active_role');
-    localStorage.removeItem('crm_active_agent');
-    localStorage.removeItem('crm_superadmin_user');
-    localStorage.removeItem('crm_active_app');
+    logout();
     navigate('/login');
   };
 
@@ -585,17 +573,55 @@ const SelectApp = () => {
                 <img src={settings?.logo_url ? `${apiBaseUrl}/${settings.logo_url.replace(/^\/?api\//, '')}` : `${basePath}/sarlogoremovebg.png`} alt="Logo" />
               </div>
               <div className="header-titles">
-                <h1>{settings?.software_name || 'Dhurandhar Setu'}</h1>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <h1>{settings?.software_name || 'Dhurandhar Setu'}</h1>
+                  {localStorage.getItem('crm_superadmin_token') && (
+                    <span style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      background: 'rgba(239, 68, 68, 0.15)',
+                      color: '#fca5a5',
+                      padding: '4px 10px',
+                      borderRadius: '12px',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      border: '1px solid rgba(239, 68, 68, 0.3)'
+                    }}>
+                      <ShieldCheck size={12} /> Impersonating
+                    </span>
+                  )}
+                </div>
                 <span>
                   Tenant Workspace: <strong>{user.tenant_name || 'Superadmin Console'}</strong>
                 </span>
               </div>
             </div>
 
-            <button onClick={handleLogout} className="btn-logout">
-              <LogOut size={16} />
-              Sign Out
-            </button>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+              {localStorage.getItem('crm_superadmin_token') && (
+                <button 
+                  onClick={() => {
+                    const suToken = localStorage.getItem('crm_superadmin_token');
+                    // We need auth.login to take the token
+                    localStorage.setItem('crm_token', suToken);
+                    localStorage.removeItem('crm_superadmin_token');
+                    window.location.href = basePath + '/superadmin/tenants';
+                  }} 
+                  className="btn-logout"
+                  style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#fca5a5', border: '1px solid rgba(239, 68, 68, 0.2)' }}
+                >
+                  <LogOut size={16} />
+                  Return to Admin
+                </button>
+              )}
+              <button onClick={handleLogout} className="btn-logout">
+                <LogOut size={16} />
+                Sign Out
+              </button>
+            </div>
           </div>
 
           {/* Main Glass Card */}

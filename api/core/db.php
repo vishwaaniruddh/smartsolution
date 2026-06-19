@@ -1,5 +1,6 @@
 <?php
 // db.php
+require_once __DIR__ . '/jwt.php';
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: Content-Type, X-Tenant-ID, Authorization");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
@@ -53,6 +54,16 @@ try {
 // Global helper to get tenant ID dynamically
 function getTenantId()
 {
+    // 1. Try to get it from JWT token (most secure)
+    $token = getBearerToken();
+    if ($token) {
+        $decoded = jwt_decode($token);
+        if ($decoded && isset($decoded['tenant_id'])) {
+            return intval($decoded['tenant_id']);
+        }
+    }
+
+    // 2. Fallbacks for existing un-migrated endpoints
     if (isset($_GET['tenant_id'])) {
         return intval($_GET['tenant_id']);
     }

@@ -1,3 +1,4 @@
+import { useAuth } from '../../../context/AuthContext';
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Search, Building, Users, TrendingUp, IndianRupee, Activity, UserCheck, Calendar, ArrowUpDown, Settings, Save, Send, X } from 'lucide-react';
@@ -72,28 +73,38 @@ const TenantReports = () => {
   const handleImpersonate = (tenant) => {
     if (!tenant.admin) return;
 
-    // Save current Superadmin details
-    const currentSuperadmin = localStorage.getItem('crm_user');
-    if (!currentSuperadmin) return;
+    // Save current Superadmin token
+    const currentToken = localStorage.getItem('crm_token');
+    if (!currentToken) return;
 
-    localStorage.setItem('crm_superadmin_user', currentSuperadmin);
+    fetch(`${apiBaseUrl}/superadmin/tenants`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${currentToken}`
+      },
+      body: JSON.stringify({
+        action: 'impersonate',
+        tenant_id: tenant.id
+      })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.token) {
+          localStorage.setItem('crm_superadmin_token', currentToken);
+          localStorage.setItem('crm_token', data.token);
 
-    // Create impersonated user session
-    const impersonatedUser = {
-      ...tenant.admin,
-      role: tenant.admin.role || 'Admin',
-      tenant_name: tenant.name, // Add the tenant's name
-      apps: tenant.apps || [] // Include tenant's provisioned apps
-    };
-
-    // Overwrite session keys
-    localStorage.setItem('crm_user', JSON.stringify(impersonatedUser));
-    localStorage.setItem('crm_tenant_id', tenant.id.toString());
-    localStorage.setItem('crm_active_role', tenant.admin.role || 'Admin');
-
-    // Redirect to dashboard (root path) and reload
-    const targetUrl = window.location.origin + basePath + '/';
-    window.location.href = targetUrl;
+          // Redirect to dashboard (root path) and reload
+          const targetUrl = window.location.origin + basePath + '/';
+          window.location.href = targetUrl;
+        } else {
+          toast.error(data.error || 'Failed to impersonate tenant.');
+        }
+      })
+      .catch(err => {
+        console.error('Impersonation error:', err);
+        toast.error('Network error during impersonation.');
+      });
   };
 
   const handleOpenConfig = (tenant) => {

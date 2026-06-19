@@ -39,6 +39,7 @@ const Tenants = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [appPlans, setAppPlans] = useState([]);
 
   // Config modal state
   const [selectedTenant, setSelectedTenant] = useState(null);
@@ -75,7 +76,7 @@ const Tenants = () => {
     contact: '',
     gender: 'Male',
     address: '',
-    apps: ['crm']
+    apps: [{ app_id: 'crm', plan_id: null }]
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -96,6 +97,15 @@ const Tenants = () => {
       .finally(() => {
         setLoading(false);
       });
+
+    fetch(`${apiBaseUrl}/subscriptions/plans`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.data) {
+          setAppPlans(data.data);
+        }
+      })
+      .catch(err => console.warn('API error fetching plans:', err));
   };
 
   const handleToggleSuspend = (tenant) => {
@@ -137,32 +147,34 @@ const Tenants = () => {
   };
 
   const handleImpersonate = (tenant) => {
-
     if (!tenant.admin) return;
 
-    // Save current Superadmin details
-    const currentSuperadmin = localStorage.getItem('crm_user');
-    if (!currentSuperadmin) return;
+    // Save current Superadmin token
+    const currentToken = localStorage.getItem('crm_token');
+    if (!currentToken) return;
 
-    localStorage.setItem('crm_superadmin_user', currentSuperadmin);
-
-    // Create impersonated user session
-    const impersonatedUser = {
-      ...tenant.admin,
-      role: tenant.admin.role || 'Admin',
-      tenant_name: tenant.name, // Add the tenant's name
-      apps: tenant.apps || [] // Include tenant's provisioned apps
-    };
-
-    // Overwrite session keys
-    localStorage.setItem('crm_user', JSON.stringify(impersonatedUser));
-    localStorage.setItem('crm_tenant_id', tenant.id.toString());
-    localStorage.setItem('crm_active_role', tenant.admin.role || 'Admin');
-
-
-    // Redirect to dashboard (root path) and reload
-    const targetUrl = window.location.origin + basePath + '/';
-    window.location.href = targetUrl;
+    fetch(`${apiBaseUrl}/tenants`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'impersonate',
+        tenant_id: tenant.id
+      })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.token) {
+          localStorage.setItem('crm_superadmin_token', currentToken);
+          localStorage.setItem('crm_token', data.token);
+          // Force a full reload to let App.jsx AuthContext bootstrap the new user
+          window.location.href = basePath + '/';
+        } else {
+          toast.error(data.error || 'Failed to impersonate.');
+        }
+      })
+      .catch(err => {
+        toast.error('Network error while impersonating.');
+      });
   };
 
   const handleOpenConfig = (tenant) => {
@@ -635,12 +647,13 @@ const Tenants = () => {
                           </span>
                         )}
                       </td>
-
+                      
                       {/* Apps */}
                       <td>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-                          {tenant.apps && tenant.apps.map(appId => {
-                            let label = appId.toUpperCase();
+                          {tenant.apps && tenant.apps.map(appObj => {
+                            const appId = typeof appObj === 'string' ? appObj : appObj.app_id;
+                            let label = appId ? String(appId).toUpperCase() : 'UNKNOWN';
                             let color = 'var(--text-muted)';
                             let bg = 'var(--bg-hover)';
                             if (appId === 'crm') { label = 'CRM'; color = 'var(--accent-cyan)'; bg = 'rgba(34, 211, 238, 0.1)'; }
@@ -648,6 +661,7 @@ const Tenants = () => {
                             if (appId === 'accounting') { label = 'Acct'; color = 'var(--accent-purple)'; bg = 'rgba(139, 92, 246, 0.1)'; }
                             if (appId === 'inventory') { label = 'Inv'; color = 'var(--accent-orange)'; bg = 'rgba(249, 115, 22, 0.1)'; }
                             if (appId === 'servicedesk') { label = 'SD'; color = '#a78bfa'; bg = 'rgba(167, 139, 250, 0.1)'; }
+
                             return (
                               <span key={appId} style={{ fontSize: '10px', background: bg, border: `1px solid ${color}22`, padding: '1px 6px', borderRadius: '4px', color: color, fontWeight: 600 }}>
                                 {label}
@@ -964,22 +978,49 @@ const Tenants = () => {
                       { id: 'accounting', name: 'Financial Ledger (Accounting)' },
                       { id: 'inventory', name: 'Warehouse (Inventory)' },
                       { id: 'servicedesk', name: 'Service Desk & Ticketing' }
-                    ].map(app => (
-                      <label key={app.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', color: 'var(--text-primary)' }}>
-                        <input
-                          type="checkbox"
-                          checked={form.apps.includes(app.id)}
-                          onChange={(e) => {
-                            const newApps = e.target.checked
-                              ? [...form.apps, app.id]
-                              : form.apps.filter(x => x !== app.id);
-                            setForm({ ...form, apps: newApps });
-                          }}
-                          style={{ accentColor: 'var(--accent-cyan)' }}
-                        />
-                        {app.name}
-                      </label>
-                    ))}
+                    ].map(app => {
+                      const isSelected = form.apps.some(a => a.app_id === app.id);
+                      const selectedApp = form.apps.find(a => a.app_id === app.id) || {};
+                      const availablePlans = appPlans.filter(p => p.app_id === app.id);
+                      
+                      return (
+                        <div key={app.id} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', color: 'var(--text-primary)' }}>
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={(e) => {
+                                let newApps;
+                                if (e.target.checked) {
+                                  newApps = [...form.apps, { app_id: app.id, plan_id: availablePlans.length > 0 ? availablePlans[0].id : null }];
+                                } else {
+                                  newApps = form.apps.filter(x => x.app_id !== app.id);
+                                }
+                                setForm({ ...form, apps: newApps });
+                              }}
+                              style={{ accentColor: 'var(--accent-cyan)' }}
+                            />
+                            {app.name}
+                          </label>
+                          {isSelected && availablePlans.length > 0 && (
+                            <select
+                              value={selectedApp.plan_id || ''}
+                              onChange={(e) => {
+                                const newApps = form.apps.map(a => a.app_id === app.id ? { ...a, plan_id: parseInt(e.target.value) || null } : a);
+                                setForm({ ...form, apps: newApps });
+                              }}
+                              className="form-control"
+                              style={{ padding: '4px 8px', fontSize: '11px', marginLeft: '22px', height: 'auto', width: 'calc(100% - 22px)' }}
+                            >
+                              <option value="">No Plan</option>
+                              {availablePlans.map(p => (
+                                <option key={p.id} value={p.id}>{p.plan_name} (${p.base_fee}/{p.billing_cycle === 'Monthly' ? 'mo' : 'yr'})</option>
+                              ))}
+                            </select>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -1247,25 +1288,56 @@ const Tenants = () => {
                         { id: 'accounting', name: 'Double-Entry Financial Ledger', desc: 'Invoicing, bookkeeping accounts, and tax reporting.' },
                         { id: 'inventory', name: 'Smart Inventory & Warehouse Control', desc: 'Stock levels, barcode cataloging, and purchase orders.' },
                         { id: 'servicedesk', name: 'Service Desk & Ticketing', desc: 'Internal ticketing, SLA tracking, agent queues, and resolution analytics.' }
-                      ].map(app => (
-                        <label key={app.id} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'pointer', padding: '12px', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', background: tenantForm.apps.includes(app.id) ? 'rgba(34, 211, 238, 0.04)' : 'transparent', transition: 'all 0.2s' }}>
-                          <input
-                            type="checkbox"
-                            checked={tenantForm.apps.includes(app.id)}
-                            onChange={(e) => {
-                              const newApps = e.target.checked
-                                ? [...tenantForm.apps, app.id]
-                                : tenantForm.apps.filter(x => x !== app.id);
-                              setTenantForm({ ...tenantForm, apps: newApps });
-                            }}
-                            style={{ marginTop: '3px', accentColor: 'var(--accent-cyan)' }}
-                          />
-                          <div>
-                            <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>{app.name}</div>
-                            <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>{app.desc}</div>
+                      ].map(app => {
+                        const isSelected = tenantForm.apps.some(a => a.app_id === app.id);
+                        const selectedApp = tenantForm.apps.find(a => a.app_id === app.id) || {};
+                        const availablePlans = appPlans.filter(p => p.app_id === app.id);
+
+                        return (
+                          <div key={app.id} style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '12px', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', background: isSelected ? 'rgba(34, 211, 238, 0.04)' : 'transparent', transition: 'all 0.2s' }}>
+                            <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'pointer' }}>
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={(e) => {
+                                  let newApps;
+                                  if (e.target.checked) {
+                                    newApps = [...tenantForm.apps, { app_id: app.id, plan_id: availablePlans.length > 0 ? availablePlans[0].id : null }];
+                                  } else {
+                                    newApps = tenantForm.apps.filter(x => x.app_id !== app.id);
+                                  }
+                                  setTenantForm({ ...tenantForm, apps: newApps });
+                                }}
+                                style={{ marginTop: '3px', accentColor: 'var(--accent-cyan)' }}
+                              />
+                              <div>
+                                <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>{app.name}</div>
+                                <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>{app.desc}</div>
+                              </div>
+                            </label>
+                            
+                            {isSelected && availablePlans.length > 0 && (
+                              <div style={{ marginLeft: '26px', marginTop: '4px' }}>
+                                <label style={{ fontSize: '11px', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>Pricing Plan Tier:</label>
+                                <select
+                                  value={selectedApp.plan_id || ''}
+                                  onChange={(e) => {
+                                    const newApps = tenantForm.apps.map(a => a.app_id === app.id ? { ...a, plan_id: parseInt(e.target.value) || null } : a);
+                                    setTenantForm({ ...tenantForm, apps: newApps });
+                                  }}
+                                  className="form-control"
+                                  style={{ padding: '6px 10px', fontSize: '12px' }}
+                                >
+                                  <option value="">No Plan Selected</option>
+                                  {availablePlans.map(p => (
+                                    <option key={p.id} value={p.id}>{p.plan_name} (${p.base_fee}/{p.billing_cycle === 'Monthly' ? 'mo' : 'yr'})</option>
+                                  ))}
+                                </select>
+                              </div>
+                            )}
                           </div>
-                        </label>
-                      ))}
+                        );
+                      })}
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '16px' }}>

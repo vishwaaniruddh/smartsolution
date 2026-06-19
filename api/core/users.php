@@ -54,9 +54,49 @@ switch ($method) {
 
 
     case 'POST':
+        // Handle User Impersonation (Admin impersonating employee)
+        $data = json_decode(file_get_contents("php://input"), true);
+        if (isset($data['action']) && $data['action'] === 'impersonate') {
+            $token = getBearerToken();
+            if (!$token) {
+                http_response_code(401);
+                echo json_encode(["success" => false, "error" => "Unauthorized"]);
+                exit();
+            }
+            $decoded = jwt_decode($token);
+            if (!$decoded || ($decoded['role'] !== 'Admin' && $decoded['role'] !== 'Superadmin')) {
+                http_response_code(403);
+                echo json_encode(["success" => false, "error" => "Only Admin can impersonate users."]);
+                exit();
+            }
+
+            $target_user_id = isset($data['user_id']) ? intval($data['user_id']) : 0;
+            $ustmt = $pdo->prepare("SELECT id, role, tenant_id FROM users WHERE id = ? AND tenant_id = ? LIMIT 1");
+            $ustmt->execute([$target_user_id, $decoded['tenant_id']]);
+            $targetUser = $ustmt->fetch();
+
+            if (!$targetUser) {
+                http_response_code(404);
+                echo json_encode(["success" => false, "error" => "User not found or not in your tenant."]);
+                exit();
+            }
+
+            // Create JWT for impersonated user
+            $payload = [
+                'user_id' => $targetUser['id'],
+                'tenant_id' => $targetUser['tenant_id'],
+                'role' => $targetUser['role'],
+                'impersonator' => $decoded['user_id']
+            ];
+            
+            $impersonate_token = jwt_encode($payload);
+            echo json_encode(["success" => true, "token" => $impersonate_token]);
+            exit();
+        }
+
         // Handle User Creation or Update (if ID is provided)
-        $id = isset($_POST['id']) ? intval($_POST['id']) : null;
-        $first_name = isset($_POST['first_name']) ? $_POST['first_name'] : '';
+        $id = isset($_POST['id']) ? intval($_POST['id']) : (isset($data['id']) ? intval($data['id']) : null);
+        $first_name = isset($_POST['first_name']) ? $_POST['first_name'] : (isset($data['first_name']) ? $data['first_name'] : '');
         $last_name = isset($_POST['last_name']) ? $_POST['last_name'] : '';
         $email = isset($_POST['email']) ? $_POST['email'] : '';
         $contact = isset($_POST['contact']) ? $_POST['contact'] : '';

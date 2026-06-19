@@ -21,10 +21,10 @@ switch ($method) {
                 $admin = $ustmt->fetch();
                 $t['admin'] = $admin ? $admin : null;
 
-                // Fetch app_ids from tenant_apps
-                $astmt = $pdo->prepare("SELECT app_id FROM tenant_apps WHERE tenant_id = ?");
+                // Fetch apps and plans from tenant_apps
+                $astmt = $pdo->prepare("SELECT app_id, plan_id FROM tenant_apps WHERE tenant_id = ?");
                 $astmt->execute([$t['id']]);
-                $t['apps'] = $astmt->fetchAll(PDO::FETCH_COLUMN);
+                $t['apps'] = $astmt->fetchAll(PDO::FETCH_ASSOC); // Returns array of {app_id, plan_id}
             }
 
             
@@ -40,6 +40,47 @@ switch ($method) {
         $data = json_decode(file_get_contents("php://input"), true);
         if (!$data) {
             $data = $_POST;
+        }
+
+        // Impersonation feature
+        if (isset($data['action']) && $data['action'] === 'impersonate') {
+            require_once __DIR__ . '/../../core/jwt.php';
+            $token = getBearerToken();
+            if (!$token) {
+                http_response_code(401);
+                echo json_encode(["success" => false, "error" => "Unauthorized"]);
+                exit();
+            }
+            $decoded = jwt_decode($token);
+            if (!$decoded || $decoded['role'] !== 'Superadmin') {
+                http_response_code(403);
+                echo json_encode(["success" => false, "error" => "Only Superadmin can impersonate."]);
+                exit();
+            }
+
+            $target_tenant_id = intval($data['tenant_id']);
+            $ustmt = $pdo->prepare("SELECT id, role FROM users WHERE tenant_id = ? AND role = 'Admin' ORDER BY created_at ASC LIMIT 1");
+            $ustmt->execute([$target_tenant_id]);
+            $adminUser = $ustmt->fetch();
+
+            if (!$adminUser) {
+                http_response_code(404);
+                echo json_encode(["success" => false, "error" => "Tenant Administrator not found."]);
+                exit();
+            }
+
+            // Create JWT for impersonated admin
+            $payload = [
+                'user_id' => $adminUser['id'],
+                'tenant_id' => $target_tenant_id,
+                'role' => $adminUser['role'],
+                'impersonator' => $decoded['user_id'] // audit trail
+            ];
+            
+            $impersonate_token = jwt_encode($payload);
+            
+            echo json_encode(["success" => true, "token" => $impersonate_token]);
+            exit();
         }
 
         $tenant_name = isset($data['tenant_name']) ? trim($data['tenant_name']) : '';
@@ -99,9 +140,11 @@ switch ($method) {
 
             // 3. Insert Tenant Apps
             if (!empty($apps)) {
-                $astmt = $pdo->prepare("INSERT INTO tenant_apps (tenant_id, app_id) VALUES (?, ?)");
-                foreach ($apps as $app_id) {
-                    $astmt->execute([$tenant_id, $app_id]);
+                $astmt = $pdo->prepare("INSERT INTO tenant_apps (tenant_id, app_id, plan_id, status, billing_start_date) VALUES (?, ?, ?, 'Active', CURRENT_DATE)");
+                foreach ($apps as $app) {
+                    $app_id = is_array($app) ? $app['app_id'] : $app;
+                    $plan_id = is_array($app) && !empty($app['plan_id']) ? $app['plan_id'] : null;
+                    $astmt->execute([$tenant_id, $app_id, $plan_id]);
                 }
             }
 
@@ -238,9 +281,11 @@ switch ($method) {
 
                 // Insert new ones
                 if (!empty($apps)) {
-                    $insStmt = $pdo->prepare("INSERT INTO tenant_apps (tenant_id, app_id) VALUES (?, ?)");
-                    foreach ($apps as $app_id) {
-                        $insStmt->execute([$tenant_id, $app_id]);
+                    $insStmt = $pdo->prepare("INSERT INTO tenant_apps (tenant_id, app_id, plan_id, status, billing_start_date) VALUES (?, ?, ?, 'Active', CURRENT_DATE)");
+                    foreach ($apps as $app) {
+                        $app_id = is_array($app) ? $app['app_id'] : $app;
+                        $plan_id = is_array($app) && !empty($app['plan_id']) ? $app['plan_id'] : null;
+                        $insStmt->execute([$tenant_id, $app_id, $plan_id]);
                     }
                 }
             }

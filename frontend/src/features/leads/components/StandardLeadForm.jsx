@@ -1,3 +1,4 @@
+import { useAuth } from '../../../context/AuthContext';
 import React, { useState, useEffect } from 'react';
 import { apiBaseUrl } from '../../../utils/env.js';
 

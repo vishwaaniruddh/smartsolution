@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import AppShell from './components/layout/AppShell';
-import { basePath } from './utils/env.js';
+import { basePath, apiBaseUrl } from './utils/env.js';
 import { NotificationProvider } from './components/NotificationContext';
 import Dashboard from './features/leads/pages/Dashboard';
 import LeadsTable from './features/leads/pages/LeadsTable';
@@ -31,10 +31,24 @@ import HRMSHolidays from './features/hrms/pages/Holidays';
 import HRMSBulkOperations from './features/hrms/pages/BulkOperations';
 import HRMSRecruitment from './features/hrms/pages/Recruitment';
 import SelectApp from './pages/SelectApp';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { CRMProvider } from './features/leads/context/CRMContext';
 import { HRMSProvider } from './features/hrms/context/HRMSContext';
 import { Outlet } from 'react-router-dom';
 import { InventoryProvider } from './features/inventory/context/InventoryContext';
+
+// Global Fetch Interceptor to attach JWT token
+const originalFetch = window.fetch;
+window.fetch = async function () {
+  let [resource, config] = arguments;
+  const token = localStorage.getItem('crm_token');
+  if (token && typeof resource === 'string' && resource.includes(apiBaseUrl)) {
+    if (!config) config = {};
+    if (!config.headers) config.headers = {};
+    config.headers['Authorization'] = `Bearer ${token}`;
+  }
+  return originalFetch(resource, config);
+};
 import InventoryDashboard from './features/inventory/pages/InventoryDashboard';
 import InventoryProducts from './features/inventory/pages/Products';
 import InventoryWarehouses from './features/inventory/pages/Warehouses';
@@ -89,11 +103,15 @@ const ServiceDeskLayout = () => (
 );
 
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
-  const userStr = localStorage.getItem('crm_user');
-  if (!userStr) {
+  const { user, loading } = useAuth();
+  
+  if (loading) {
+    return <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>Loading Workspace...</div>;
+  }
+  
+  if (!user) {
     return <Navigate to="/login" replace />;
   }
-  const user = JSON.parse(userStr);
   
   // Guard role
   if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
@@ -127,11 +145,11 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
 };
 
 const RootRedirect = () => {
-  const userStr = localStorage.getItem('crm_user');
-  if (!userStr) {
-    return <Navigate to="/login" replace />;
-  }
-  const user = JSON.parse(userStr);
+  const { user, loading } = useAuth();
+  
+  if (loading) return null;
+  if (!user) return <Navigate to="/login" replace />;
+  
   if (user.role === 'Superadmin') {
     return <Navigate to="/superadmin/tenants" replace />;
   }
@@ -149,41 +167,21 @@ const RootRedirect = () => {
 
   const activeApp = localStorage.getItem('crm_active_app');
   if (activeApp && apps.includes(activeApp)) {
-    if (activeApp === 'hrms') {
-      return <Navigate to="/feature/hrms" replace />;
-    }
-    if (activeApp === 'inventory') {
-      return <Navigate to="/feature/inventory" replace />;
-    }
-    if (activeApp === 'accounting') {
-      return <Navigate to="/feature/accounting" replace />;
-    }
-    if (activeApp === 'servicedesk') {
-      return <Navigate to="/feature/servicedesk" replace />;
-    }
-    if (user.role === 'Sales Associate') {
-      return <Navigate to="/feature/leads/sa/dashboard" replace />;
-    }
+    if (activeApp === 'hrms') return <Navigate to="/feature/hrms" replace />;
+    if (activeApp === 'inventory') return <Navigate to="/feature/inventory" replace />;
+    if (activeApp === 'accounting') return <Navigate to="/feature/accounting" replace />;
+    if (activeApp === 'servicedesk') return <Navigate to="/feature/servicedesk" replace />;
+    if (user.role === 'Sales Associate') return <Navigate to="/feature/leads/sa/dashboard" replace />;
     return <Navigate to="/feature/leads" replace />;
   }
 
   if (apps.length === 1) {
     localStorage.setItem('crm_active_app', apps[0]);
-    if (apps[0] === 'hrms') {
-      return <Navigate to="/feature/hrms" replace />;
-    }
-    if (apps[0] === 'inventory') {
-      return <Navigate to="/feature/inventory" replace />;
-    }
-    if (apps[0] === 'accounting') {
-      return <Navigate to="/feature/accounting" replace />;
-    }
-    if (apps[0] === 'servicedesk') {
-      return <Navigate to="/feature/servicedesk" replace />;
-    }
-    if (user.role === 'Sales Associate') {
-      return <Navigate to="/feature/leads/sa/dashboard" replace />;
-    }
+    if (apps[0] === 'hrms') return <Navigate to="/feature/hrms" replace />;
+    if (apps[0] === 'inventory') return <Navigate to="/feature/inventory" replace />;
+    if (apps[0] === 'accounting') return <Navigate to="/feature/accounting" replace />;
+    if (apps[0] === 'servicedesk') return <Navigate to="/feature/servicedesk" replace />;
+    if (user.role === 'Sales Associate') return <Navigate to="/feature/leads/sa/dashboard" replace />;
     return <Navigate to="/feature/leads" replace />;
   }
 
@@ -192,10 +190,11 @@ const RootRedirect = () => {
 
 function App() {
   return (
-    <BrowserRouter basename={basePath}>
-      <NotificationProvider>
-        <Routes>
-          <Route path="/login" element={<Login />} />
+    <AuthProvider>
+      <BrowserRouter basename={basePath}>
+        <NotificationProvider>
+          <Routes>
+            <Route path="/login" element={<Login />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/select-app" element={
             <ProtectedRoute>
@@ -478,8 +477,9 @@ function App() {
 
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
-      </NotificationProvider>
-    </BrowserRouter>
+        </NotificationProvider>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

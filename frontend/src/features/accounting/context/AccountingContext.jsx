@@ -1,3 +1,4 @@
+import { useAuth } from '../../../context/AuthContext';
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useToast } from '../../../components/NotificationContext';
@@ -28,8 +29,7 @@ export const AccountingProvider = ({ children }) => {
     // Not in outlet context
   }
 
-  const userStr = localStorage.getItem('crm_user');
-  const user = userStr ? JSON.parse(userStr) : null;
+  const { user } = useAuth();
   const tenantId = localStorage.getItem('crm_tenant_id') || '1';
   const currencySymbol = user?.currency_symbol || '₹';
 

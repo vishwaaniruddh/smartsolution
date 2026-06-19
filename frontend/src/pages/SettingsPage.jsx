@@ -1,8 +1,10 @@
+import { useAuth } from '../context/AuthContext';
 import React, { useState, useEffect } from 'react';
 import { User, Key, Building2, Mail, Save, Activity, Send, CheckCircle2, AlertCircle, X, Monitor } from 'lucide-react';
 import { useToast } from '../components/NotificationContext';
 import { apiBaseUrl } from '../utils/env.js';
 import SiteBrandingSettings from './SiteBrandingSettings';
+import TenantBillingSettings from './TenantBillingSettings';
 
 const currenciesList = [
   { name: 'Indian Rupee', symbol: '₹' },
@@ -17,8 +19,8 @@ const currenciesList = [
 
 const SettingsPage = () => {
   const toast = useToast();
-  const userStr = localStorage.getItem('crm_user');
-  const currentUser = userStr ? JSON.parse(userStr) : null;
+  const { user: currentUser } = useAuth();
+  
   const isSuperadmin = currentUser?.role === 'Superadmin';
   const isAdminOrManager = currentUser?.role === 'Admin' || currentUser?.role === 'Manager';
 
@@ -93,9 +95,7 @@ const SettingsPage = () => {
               });
             }
 
-            // Sync session
-            const updatedSession = { ...currentUser, ...dbUser };
-            localStorage.setItem('crm_user', JSON.stringify(updatedSession));
+            // Session is handled by AuthContext now
           }
         })
         .catch(err => console.warn('Error fetching fresh profile info:', err));
@@ -156,8 +156,7 @@ const SettingsPage = () => {
       .then(data => {
         if (data.success) {
           toast.success('Profile updated successfully!');
-          const updatedSession = { ...currentUser, ...payload };
-          localStorage.setItem('crm_user', JSON.stringify(updatedSession));
+          // Let useAuth handle session fetching on reload
           // Refresh layouts shortly after save
           setTimeout(() => {
             window.location.reload();
@@ -259,7 +258,7 @@ const SettingsPage = () => {
             currency_name: companyForm.currency_name,
             currency_symbol: companyForm.currency_symbol
           };
-          localStorage.setItem('crm_user', JSON.stringify(updatedSession));
+          // Let useAuth handle session fetching on reload
           
           setTimeout(() => {
             window.location.reload();
@@ -392,6 +391,7 @@ const SettingsPage = () => {
     tabs.push({ icon: Building2, label: 'Company' });
     tabs.push({ icon: Monitor, label: 'Site Branding' });
     tabs.push({ icon: Mail, label: 'SMTP' });
+    tabs.push({ icon: Activity, label: 'Billing' });
   } else if (isSuperadmin) {
     tabs.push({ icon: Monitor, label: 'Site Branding' });
   }
@@ -417,7 +417,7 @@ const SettingsPage = () => {
                 }}
               >
                 <item.icon size={18} />
-                <span>{item.label === 'SMTP' ? 'SMTP Server' : (item.label === 'Company' ? 'Company Settings' : item.label)}</span>
+                <span>{item.label === 'SMTP' ? 'SMTP Server' : (item.label === 'Company' ? 'Company Settings' : item.label === 'Billing' ? 'Billing & Subscriptions' : item.label)}</span>
               </button>
             );
           })}
@@ -635,7 +635,12 @@ const SettingsPage = () => {
 
           {/* SITE BRANDING TAB */}
           {activeTab === 'Site Branding' && (isAdminOrManager || isSuperadmin) && (
-            <SiteBrandingSettings isSuperadmin={isSuperadmin} />
+            <SiteBrandingSettings tenantId={currentUser?.tenant_id} isSuperadmin={isSuperadmin} />
+          )}
+
+          {/* BILLING TAB */}
+          {activeTab === 'Billing' && isAdminOrManager && (
+            <TenantBillingSettings />
           )}
 
           {/* SMTP CONFIGURATION TAB */}

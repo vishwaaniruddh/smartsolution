@@ -1,14 +1,11 @@
-import React, { useState } from 'react';
-import { LayoutGrid, Users, Wallet, Package, Search, Sparkles, ShieldCheck, CheckCircle2, Play, Lock, ExternalLink, Headphones } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { LayoutGrid, Users, Wallet, Package, Search, Sparkles, ShieldCheck, CheckCircle2, Play, Lock, ExternalLink, Headphones, CircleDollarSign } from 'lucide-react';
 import { useToast } from '../../../components/NotificationContext';
+import { apiBaseUrl } from '../../../utils/env.js';
+import AppPricingModal from './AppPricingModal';
 
-const appsList = [
-  {
-    id: 'crm',
-    name: 'Lead & Sales Intelligence',
-    description: 'Enterprise pipeline management, lead assignment trackers, activity logger, and real-time revenue analytics dashboard.',
-    category: 'Sales & Marketing',
-    status: 'Active',
+const appVisuals = {
+  'crm': {
     icon: Sparkles,
     color: 'var(--accent-cyan)',
     bg: 'rgba(34, 211, 238, 0.1)',
@@ -18,12 +15,7 @@ const appsList = [
     badgeText: 'Active Module',
     launchPath: '/feature/leads'
   },
-  {
-    id: 'hrms',
-    name: 'Human Resource Management (HRMS)',
-    description: 'Complete employee directory, shift scheduling, real-time clock-in trackers, leave planner, payroll ledger, and task sheets.',
-    category: 'Human Resources',
-    status: 'Active',
+  'hrms': {
     icon: Users,
     color: 'var(--accent-blue)',
     bg: 'rgba(59, 130, 246, 0.1)',
@@ -33,12 +25,7 @@ const appsList = [
     badgeText: 'Active Module',
     launchPath: '/feature/hrms'
   },
-  {
-    id: 'accounting',
-    name: 'Double-Entry Financial Ledger',
-    description: 'Cohesive bookkeeping accounts, custom invoicing, vendor logs, cashflow forecasts, financial statement generator, and tax reports.',
-    category: 'Finance',
-    status: 'Inactive',
+  'accounting': {
     icon: Wallet,
     color: 'var(--accent-purple)',
     bg: 'rgba(139, 92, 246, 0.1)',
@@ -47,12 +34,7 @@ const appsList = [
     badgeBg: 'rgba(245, 158, 11, 0.1)',
     badgeText: 'Available'
   },
-  {
-    id: 'inventory',
-    name: 'Smart Inventory & Warehouse Control',
-    description: 'Multi-warehouse stock logs, barcode/RFID cataloging, automated purchase ordering, supply logs, and courier trackers.',
-    category: 'Logistics',
-    status: 'Inactive',
+  'inventory': {
     icon: Package,
     color: 'var(--accent-orange)',
     bg: 'rgba(249, 115, 22, 0.1)',
@@ -61,12 +43,7 @@ const appsList = [
     badgeBg: 'rgba(245, 158, 11, 0.1)',
     badgeText: 'Available'
   },
-  {
-    id: 'servicedesk',
-    name: 'Service Desk & Ticketing',
-    description: 'Internal support ticketing system with SLA tracking, priority escalation, agent queues, comment threads, file attachments, and resolution analytics.',
-    category: 'Operations & IT',
-    status: 'Active',
+  'servicedesk': {
     icon: Headphones,
     color: '#a78bfa',
     bg: 'rgba(167, 139, 250, 0.1)',
@@ -76,12 +53,41 @@ const appsList = [
     badgeText: 'Active Module',
     launchPath: '/feature/servicedesk'
   }
-];
+};
 
 const Apps = () => {
   const toast = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
+  const [dbApps, setDbApps] = useState([]);
+  const [pricingModalApp, setPricingModalApp] = useState(null);
+
+  useEffect(() => {
+    fetch(`${apiBaseUrl}/apps`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.data) {
+          setDbApps(data.data);
+        }
+      });
+  }, []);
+
+  const appsList = dbApps.map(app => {
+    const visuals = appVisuals[app.id] || {
+      icon: LayoutGrid,
+      color: '#ffffff',
+      bg: 'rgba(255, 255, 255, 0.1)',
+      border: 'rgba(255, 255, 255, 0.2)',
+      badgeColor: 'var(--accent-emerald)',
+      badgeBg: 'rgba(16, 185, 129, 0.1)',
+      badgeText: 'Active Module'
+    };
+    return {
+      ...app,
+      ...visuals,
+      status: app.is_active ? 'Active' : 'Inactive'
+    };
+  });
 
   const filteredApps = appsList.filter(app => {
     const matchesSearch = app.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -251,90 +257,44 @@ const Apps = () => {
                   {app.description}
                 </p>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
                   <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Developer: SAR Solutions</span>
-                  <span style={{ 
-                    fontSize: '11px', 
-                    background: app.badgeBg, 
-                    color: app.badgeColor, 
-                    padding: '2px 8px', 
-                    borderRadius: '12px', 
-                    fontWeight: 600,
-                    border: `1px solid rgba(255,255,255,0.05)` 
-                  }}>
-                    {app.badgeText}
-                  </span>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1px', background: 'var(--border)', borderTop: '1px solid var(--border)' }}>
-                {app.status === 'Active' ? (
-                  <>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-card-hover)', fontSize: '11px', color: 'var(--accent-green)', gap: '4px', fontWeight: 600 }}>
-                      <CheckCircle2 size={12} /> Active License
-                    </div>
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                     <button 
-                      onClick={() => {
-                        const path = app.launchPath || '#/superadmin/tenants';
-                        if (path.startsWith('/')) {
-                          window.location.href = window.location.origin + (window.location.pathname.split('/feature')[0] || '') + path;
-                        } else {
-                          window.location.href = path;
-                        }
-                      }}
-                      className="add-lead-btn"
+                      onClick={() => setPricingModalApp(app)}
+                      title="Configure Pricing"
                       style={{
-                        padding: '14px',
-                        fontSize: '12px',
-                        fontWeight: 600,
-                        height: 'auto',
-                        minHeight: '0',
-                        gap: '8px',
-                        borderRadius: '0',
-                        border: 'none',
-                        background: 'var(--gradient-blue)',
-                        color: 'white',
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        border: '1px solid var(--border)',
+                        color: 'var(--text-secondary)',
+                        padding: '6px',
+                        borderRadius: '6px',
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center'
                       }}
+                      onMouseEnter={e => { e.currentTarget.style.color = 'var(--accent-cyan)'; e.currentTarget.style.borderColor = 'var(--accent-cyan)'; }}
+                      onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
                     >
-                      <Play size={12} /> Launch Module
+                      <CircleDollarSign size={14} />
                     </button>
-                  </>
-                ) : (
-                  <>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-card-hover)', fontSize: '11px', color: 'var(--text-muted)', gap: '4px', fontWeight: 500 }}>
-                      <Lock size={12} /> Module Locked
-                    </div>
-                    <button 
-                      onClick={() => handleRequestAccess(app.name)}
-                      className="add-lead-btn"
-                      style={{
-                        padding: '14px',
-                        fontSize: '12px',
-                        fontWeight: 600,
-                        height: 'auto',
-                        minHeight: '0',
-                        gap: '8px',
-                        borderRadius: '0',
-                        border: 'none',
-                        background: 'linear-gradient(135deg, rgba(34, 211, 238, 0.2) 0%, rgba(59, 130, 246, 0.1) 100%)',
-                        color: 'var(--accent-cyan)',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        borderLeft: '1px solid var(--border)'
-                      }}
-                    >
-                      <ExternalLink size={12} /> Request Setup
-                    </button>
-                  </>
-                )}
+                    <span style={{ 
+                      fontSize: '11px', 
+                      background: app.badgeBg, 
+                      color: app.badgeColor, 
+                      padding: '2px 8px', 
+                      borderRadius: '12px', 
+                      fontWeight: 600,
+                      border: `1px solid rgba(255,255,255,0.05)` 
+                    }}>
+                      {app.badgeText}
+                    </span>
+                  </div>
+                </div>
               </div>
+
+
 
             </div>
           ))
@@ -344,6 +304,12 @@ const Apps = () => {
           </div>
         )}
       </div>
+
+      <AppPricingModal 
+        isOpen={!!pricingModalApp} 
+        onClose={() => setPricingModalApp(null)} 
+        app={pricingModalApp} 
+      />
 
     </div>
   );

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { basePath, apiBaseUrl } from '../../utils/env.js';
+import { useAuth } from '../../context/AuthContext';
 import {
   LayoutDashboard, Users, GitBranch, UserCircle, BarChart3,
   Settings, UserCheck, CheckSquare, IndianRupee, Building, LogOut, Menu, ChevronDown, ChevronRight, Shield, LayoutGrid,
@@ -126,9 +127,9 @@ const AppShell = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { settings } = useSettings();
+  const { user, logout } = useAuth();
 
-  const userStr = localStorage.getItem('crm_user');
-  const user = userStr ? JSON.parse(userStr) : null;
+  if (!user) return null;
   const activeRole = user ? user.role : 'Admin/Manager';
   const activeAgent = user ? `${user.first_name} ${user.last_name}` : 'Emily Davis';
 
@@ -157,9 +158,9 @@ const AppShell = () => {
       .then(res => res.json())
       .then(data => {
         if (data.success) {
-          // Update local session
+          // Update local session via useAuth fetch on reload or just locally
           user.is_first_login = 0;
-          localStorage.setItem('crm_user', JSON.stringify(user));
+          // localStorage.setItem('crm_user', JSON.stringify(user));
         }
       })
       .catch(err => console.warn('Error updating first login flag:', err))
@@ -168,39 +169,29 @@ const AppShell = () => {
       });
   };
 
-  const isImpersonatingSuperadmin = !!localStorage.getItem('crm_superadmin_user') && activeRole !== 'Superadmin';
-  const isImpersonatingTenantAdmin = !!localStorage.getItem('crm_tenant_admin_user');
+  const isImpersonatingSuperadmin = !!localStorage.getItem('crm_superadmin_token') && activeRole !== 'Superadmin';
+  const isImpersonatingTenantAdmin = !!localStorage.getItem('crm_tenant_admin_token');
   const isImpersonating = isImpersonatingSuperadmin || isImpersonatingTenantAdmin;
 
   const handleStopImpersonation = () => {
-    const superadminUserStr = localStorage.getItem('crm_superadmin_user');
-    const tenantAdminUserStr = localStorage.getItem('crm_tenant_admin_user');
+    const superadminToken = localStorage.getItem('crm_superadmin_token');
+    const tenantAdminToken = localStorage.getItem('crm_tenant_admin_token');
 
-    if (tenantAdminUserStr) {
-      localStorage.setItem('crm_user', tenantAdminUserStr);
-      localStorage.removeItem('crm_tenant_admin_user');
-      const tenantAdminUser = JSON.parse(tenantAdminUserStr);
-      localStorage.setItem('crm_tenant_id', tenantAdminUser.tenant_id ? tenantAdminUser.tenant_id.toString() : '1');
-      localStorage.setItem('crm_active_role', tenantAdminUser.role);
+    if (tenantAdminToken) {
+      localStorage.setItem('crm_token', tenantAdminToken);
+      localStorage.removeItem('crm_tenant_admin_token');
       const targetUrl = window.location.origin + basePath + '/users';
       window.location.href = targetUrl;
-    } else if (superadminUserStr) {
-      localStorage.setItem('crm_user', superadminUserStr);
-      localStorage.removeItem('crm_superadmin_user');
-      const superadminUser = JSON.parse(superadminUserStr);
-      localStorage.setItem('crm_tenant_id', superadminUser.tenant_id ? superadminUser.tenant_id.toString() : '1');
-      localStorage.setItem('crm_active_role', superadminUser.role);
+    } else if (superadminToken) {
+      localStorage.setItem('crm_token', superadminToken);
+      localStorage.removeItem('crm_superadmin_token');
       const targetUrl = window.location.origin + basePath + '/superadmin/tenants';
       window.location.href = targetUrl;
     }
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('crm_user');
-    localStorage.removeItem('crm_tenant_id');
-    localStorage.removeItem('crm_active_role');
-    localStorage.removeItem('crm_active_agent');
-    localStorage.removeItem('crm_superadmin_user');
+    logout();
     navigate('/login');
   };
 

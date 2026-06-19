@@ -1,3 +1,4 @@
+import { useAuth } from '../context/AuthContext';
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
@@ -93,8 +94,7 @@ const Users = () => {
   const confirm = useConfirm();
   const [existingPhotoPath, setExistingPhotoPath] = useState(null);
 
-  const currentUserStr = localStorage.getItem('crm_user');
-  const currentUser = currentUserStr ? JSON.parse(currentUserStr) : null;
+  const { user: currentUser } = useAuth();
   const activeRole = localStorage.getItem('crm_active_role') || (currentUser ? currentUser.role : '');
   const availableApps = currentUser ? (currentUser.apps || []) : [];
 
@@ -112,17 +112,27 @@ const Users = () => {
     const confirmed = await confirm(`Are you sure you want to impersonate ${userToImpersonate.first_name} ${userToImpersonate.last_name}?`, 'Impersonate User');
     if (!confirmed) return;
     
-    // Save current user as original
-    localStorage.setItem('crm_tenant_admin_user', JSON.stringify(currentUser));
+    const currentToken = localStorage.getItem('crm_token');
     
-    // Set the selected user as active, ensuring assigned_apps are mapped to apps property
-    const impersonatedUser = { ...userToImpersonate, apps: userToImpersonate.assigned_apps || [] };
-    localStorage.setItem('crm_user', JSON.stringify(impersonatedUser));
-    localStorage.setItem('crm_active_role', impersonatedUser.role);
-    localStorage.removeItem('crm_active_app');
-    
-    toast.success(`Impersonating ${userToImpersonate.first_name}`);
-    window.location.href = '/select-app'; // Hard refresh to ensure all context reloads
+    fetch(`${apiBaseUrl}/users`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'impersonate', user_id: userToImpersonate.id })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.token) {
+          localStorage.setItem('crm_tenant_admin_token', currentToken);
+          localStorage.setItem('crm_token', data.token);
+          toast.success(`Impersonating ${userToImpersonate.first_name}`);
+          setTimeout(() => {
+            window.location.href = '/select-app'; // Hard refresh to ensure all context reloads
+          }, 500);
+        } else {
+          toast.error(data.error || 'Failed to impersonate.');
+        }
+      })
+      .catch(err => toast.error('Network error.'));
   };
 
   // Fetch users from backend

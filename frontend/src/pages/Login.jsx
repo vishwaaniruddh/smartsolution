@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, LogIn, AlertCircle, Fingerprint, ArrowRight, ArrowLeft } from 'lucide-react';
 import { basePath, apiBaseUrl } from '../utils/env.js';
 import { useSettings } from '../components/SettingsContext';
+import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
   const navigate = useNavigate();
   const { settings, refetchSettings } = useSettings();
+  const { login: authLogin, user: existingUser } = useAuth();
   
   const [showLoader, setShowLoader] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -66,55 +68,27 @@ const Login = () => {
     })
       .then(res => res.json())
       .then(data => {
-        if (data.success && data.user) {
-          localStorage.setItem('crm_user', JSON.stringify(data.user));
-          localStorage.setItem('crm_tenant_id', data.user.tenant_id ? data.user.tenant_id.toString() : '1');
-          localStorage.setItem('crm_active_role', data.user.role);
-          localStorage.removeItem('crm_superadmin_user');
-          
-          refetchSettings().then(() => {
-            setShowLoader(true);
-            
-            setTimeout(() => {
-              if (data.user.role === 'Superadmin') {
-                navigate('/superadmin/tenants');
-              } else {
-                const apps = data.user.apps || [];
-                if (apps.length === 1) {
-                  localStorage.setItem('crm_active_app', apps[0]);
-                  if (apps[0] === 'hrms') {
-                    navigate('/feature/hrms');
-                  } else if (apps[0] === 'crm') {
-                    if (data.user.role === 'Sales Associate') {
-                      localStorage.setItem('crm_active_agent', `${data.user.first_name} ${data.user.last_name}`);
-                      navigate('/feature/leads/sa/dashboard');
-                    } else {
-                      navigate('/feature/leads');
-                    }
-                  } else if (apps[0] === 'inventory') {
-                    navigate('/feature/inventory');
-                  } else if (apps[0] === 'accounting') {
-                    navigate('/feature/accounting');
-                  } else if (apps[0] === 'servicedesk') {
-                    navigate('/feature/servicedesk');
-                  } else {
-                    navigate('/select-app');
-                  }
-                } else {
-                  navigate('/select-app');
-                }
-              }
-            }, 3000);
+        if (data.success && data.token) {
+          authLogin(data.token).then(() => {
+            // Need to read the decoded token role/apps from the endpoint response, 
+            // but `authLogin` fetches it async into Context.
+            // Let's manually fetch /me here just to do the redirect, or just redirect to '/' 
+            // and let App.jsx's RootRedirect handle all the logic!
+            refetchSettings().then(() => {
+              setShowLoader(true);
+              setTimeout(() => {
+                navigate('/');
+              }, 1500);
+            });
           });
         } else {
-          setError(data.error || 'Invalid credentials.');
+          setError(data.error || 'Login failed.');
+          setLoading(false);
         }
       })
       .catch((err) => {
         console.error('Login error:', err);
         setError('Unable to connect to the authentication server.');
-      })
-      .finally(() => {
         setLoading(false);
       });
   };
