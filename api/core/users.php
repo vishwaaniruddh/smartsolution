@@ -16,6 +16,10 @@ switch ($method) {
                 $stmt->execute([$id]);
                 $user = $stmt->fetch();
                 if ($user) {
+                    $astmt = $pdo->prepare("SELECT app_id FROM user_apps WHERE user_id = ?");
+                    $astmt->execute([$user['id']]);
+                    $user['assigned_apps'] = $astmt->fetchAll(PDO::FETCH_COLUMN);
+
                     echo json_encode(["success" => true, "data" => $user]);
                 } else {
                     http_response_code(404);
@@ -34,6 +38,13 @@ switch ($method) {
             $stmt = $pdo->prepare("SELECT id, first_name, last_name, email, contact, gender, address, profile_photo, role, created_at FROM users WHERE tenant_id = ? ORDER BY created_at DESC");
             $stmt->execute([$tenant_id]);
             $users = $stmt->fetchAll();
+
+            $astmt = $pdo->prepare("SELECT app_id FROM user_apps WHERE user_id = ?");
+            foreach ($users as &$u) {
+                $astmt->execute([$u['id']]);
+                $u['assigned_apps'] = $astmt->fetchAll(PDO::FETCH_COLUMN);
+            }
+
             echo json_encode(["success" => true, "data" => $users]);
         } catch (PDOException $e) {
             http_response_code(500);
@@ -53,6 +64,7 @@ switch ($method) {
         $address = isset($_POST['address']) ? $_POST['address'] : '';
         $password = isset($_POST['password']) ? $_POST['password'] : '';
         $role = isset($_POST['role']) ? $_POST['role'] : '';
+        $assigned_apps = isset($_POST['assigned_apps']) ? json_decode($_POST['assigned_apps'], true) : [];
 
         // If JSON was sent instead of Form Data (fallback)
         if (empty($first_name)) {
@@ -67,6 +79,7 @@ switch ($method) {
                 $address = isset($json['address']) ? $json['address'] : '';
                 $password = isset($json['password']) ? $json['password'] : '';
                 $role = isset($json['role']) ? $json['role'] : '';
+                $assigned_apps = isset($json['assigned_apps']) ? $json['assigned_apps'] : [];
             }
         }
 
@@ -162,6 +175,24 @@ switch ($method) {
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute($params);
 
+                if (is_array($assigned_apps)) {
+                    $delStmt = $pdo->prepare("DELETE FROM user_apps WHERE user_id = ?");
+                    $delStmt->execute([$id]);
+
+                    if (!empty($assigned_apps)) {
+                        $t_stmt = $pdo->prepare("SELECT tenant_id FROM users WHERE id = ?");
+                        $t_stmt->execute([$id]);
+                        $actual_tenant_id = $t_stmt->fetchColumn();
+
+                        if ($actual_tenant_id) {
+                            $insStmt = $pdo->prepare("INSERT INTO user_apps (user_id, app_id, tenant_id) VALUES (?, ?, ?)");
+                            foreach ($assigned_apps as $app_id) {
+                                $insStmt->execute([$id, $app_id, $actual_tenant_id]);
+                            }
+                        }
+                    }
+                }
+
                 echo json_encode([
                     "success" => true,
                     "message" => "User updated successfully",
@@ -191,6 +222,13 @@ switch ($method) {
                 $stmt = $pdo->prepare("INSERT INTO users (first_name, last_name, email, contact, gender, address, profile_photo, password, role, tenant_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                 $stmt->execute([$first_name, $last_name, $email, $contact, $gender, $address, $profile_photo_path, $hashed_password, $role, $tenant_id]);
                 $newId = $pdo->lastInsertId();
+                
+                if (is_array($assigned_apps) && !empty($assigned_apps)) {
+                    $insStmt = $pdo->prepare("INSERT INTO user_apps (user_id, app_id, tenant_id) VALUES (?, ?, ?)");
+                    foreach ($assigned_apps as $app_id) {
+                        $insStmt->execute([$newId, $app_id, $tenant_id]);
+                    }
+                }
                 
                 // --- Send Welcome Email ---
                 $email_sent = false;
@@ -257,7 +295,7 @@ switch ($method) {
                     $email_sent = true;
                     logEmailAttempt($pdo, $email, $mail->Subject, 'Success');
                 } catch (\Exception $e) {
-                    $email_error = $mail->ErrorInfo;
+                    $email_error = isset($mail) ? ($mail->ErrorInfo ?: $e->getMessage()) : $e->getMessage();
                     logEmailAttempt($pdo, $email, 'Welcome to SAR Workforce - Your Account Details', 'Failed', $email_error);
                 }
 

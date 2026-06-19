@@ -1,0 +1,1077 @@
+[
+  {
+    "id": "TC001",
+    "title": "Sign in and reach tenant management",
+    "description": "This verifies a superadmin can authenticate and land on tenant management after signing in.",
+    "category": "Superadmin tenants management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the tenant management page is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify tenant summary content is visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC002",
+    "title": "Sign in and enter tenant management",
+    "description": "A superadmin can sign in with valid credentials and reach the tenant management area.",
+    "category": "Superadmin Login",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the tenant management page is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC003",
+    "title": "Create a new tenant with apps and admin credentials",
+    "description": "This verifies a superadmin can create a tenant by entering the organization details, choosing apps, providing initial admin credentials, and seeing confirmation.",
+    "category": "Superadmin tenants management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Start creating a new tenant"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the organization name field with a unique tenant name"
+      },
+      {
+        "type": "action",
+        "description": "Select one or more available apps for the tenant"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the initial admin name field with a valid name"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the initial admin email field with a valid email address"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the initial admin password field with a valid password"
+      },
+      {
+        "type": "action",
+        "description": "Submit the tenant creation form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a tenant creation confirmation is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify onboarding email status is visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC004",
+    "title": "Create a tenant with admin access and apps",
+    "description": "A superadmin can create a tenant by providing organization details, selecting apps, and entering initial admin credentials, and the new tenant is created with onboarding confirmation.",
+    "category": "Create Tenant",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open the tenant creation flow"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the organization name field with Acme Holdings"
+      },
+      {
+        "type": "action",
+        "description": "Select at least one available app"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the admin first name field with Ava"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the admin last name field with Patel"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the admin email field with ava.patel@example.com"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the admin password field with TempPass123!"
+      },
+      {
+        "type": "action",
+        "description": "Submit the tenant creation form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the new tenant is shown in the tenant directory"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an onboarding confirmation is visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC005",
+    "title": "Suspend an active tenant",
+    "description": "A superadmin can suspend an active tenant from the directory and see the tenant marked as suspended.",
+    "category": "Tenant Directory Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login form with {{LOGIN_USER}} and {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the tenants management link"
+      },
+      {
+        "type": "action",
+        "description": "Open an active tenant action menu"
+      },
+      {
+        "type": "action",
+        "description": "Suspend the tenant"
+      },
+      {
+        "type": "action",
+        "description": "Confirm the suspension"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the tenant is marked as suspended"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC006",
+    "title": "Activate a suspended tenant",
+    "description": "A superadmin can activate a suspended tenant from the directory and see the tenant marked as active.",
+    "category": "Tenant Directory Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login form with {{LOGIN_USER}} and {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the tenants management link"
+      },
+      {
+        "type": "action",
+        "description": "Open a suspended tenant action menu"
+      },
+      {
+        "type": "action",
+        "description": "Activate the tenant"
+      },
+      {
+        "type": "action",
+        "description": "Confirm the activation"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the tenant is marked as active"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC007",
+    "title": "Start and end tenant impersonation",
+    "description": "This verifies a support user can start impersonation from the tenant list, see the impersonation state, and return to the original session.",
+    "category": "Superadmin tenants management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Start impersonating a tenant from the tenant list"
+      },
+      {
+        "type": "action",
+        "description": "Verify the impersonation banner is visible"
+      },
+      {
+        "type": "action",
+        "description": "Perform a tenant-admin action from the impersonated session"
+      },
+      {
+        "type": "action",
+        "description": "Return to the original superadmin session"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the impersonation banner is no longer visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the superadmin session is restored"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC008",
+    "title": "Configure tenant SMTP settings and send a test email",
+    "description": "A superadmin can update SMTP settings for a tenant, verify the connection, send a test email, and save the configuration.",
+    "category": "Tenant SMTP Mail Configuration",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open the tenant settings for a tenant"
+      },
+      {
+        "type": "action",
+        "description": "Switch to the SMTP settings section"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the SMTP host field with smtp.example.com"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the SMTP port field with a valid port"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid encryption option"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with smtp-user"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with SmtpPass123!"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the from name field with Acme Mail"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the from email field with mailer@example.com"
+      },
+      {
+        "type": "action",
+        "description": "Test the SMTP connection"
+      },
+      {
+        "type": "action",
+        "description": "Send a test email to a valid recipient address"
+      },
+      {
+        "type": "action",
+        "description": "Save the SMTP settings"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a successful SMTP connection confirmation is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a test email sent confirmation is visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC009",
+    "title": "Update tenant SMTP settings and save them",
+    "description": "This verifies a superadmin can edit SMTP configuration fields and save the tenant settings successfully.",
+    "category": "Superadmin tenants management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open a tenant's settings from the tenant list"
+      },
+      {
+        "type": "action",
+        "description": "Open the SMTP configuration section"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the SMTP host field with a valid host value"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the SMTP port field with a valid port value"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid encryption option"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the SMTP username field with a valid username"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the SMTP password field with a valid password"
+      },
+      {
+        "type": "action",
+        "description": "Save the SMTP settings"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the SMTP settings are saved successfully"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated SMTP configuration is visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC010",
+    "title": "Return to the superadmin session",
+    "description": "A superadmin can exit an impersonated tenant session and regain the original superadmin view.",
+    "category": "Tenant Impersonation",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login form with {{LOGIN_USER}} and {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the tenants management link"
+      },
+      {
+        "type": "action",
+        "description": "Choose an active tenant"
+      },
+      {
+        "type": "action",
+        "description": "Start impersonation"
+      },
+      {
+        "type": "action",
+        "description": "Return to superadmin"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the impersonation banner is no longer displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the original superadmin session is restored"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC011",
+    "title": "Suspend and reactivate a tenant",
+    "description": "This verifies a superadmin can suspend an active tenant and later reactivate it from the tenant directory.",
+    "category": "Superadmin tenants management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open the tenant action menu for an active tenant"
+      },
+      {
+        "type": "action",
+        "description": "Suspend the tenant"
+      },
+      {
+        "type": "action",
+        "description": "Open the same tenant action menu again"
+      },
+      {
+        "type": "action",
+        "description": "Reactivate the tenant"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the tenant returns to an active state"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the tenant status indicator is visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC012",
+    "title": "Search the tenant directory and open tenant settings",
+    "description": "A superadmin can search for a tenant in the directory and open that tenant's settings from the results.",
+    "category": "Tenant Directory Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Enter a tenant search term"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the filtered tenant results to appear"
+      },
+      {
+        "type": "action",
+        "description": "Open the tenant settings from a matching tenant row"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the tenant settings view is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC013",
+    "title": "View tenant summary and directory",
+    "description": "A superadmin can access the tenants page and review the summary widgets and tenant directory.",
+    "category": "Tenant Directory Management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login form with {{LOGIN_USER}} and {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the tenants management link"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify tenant summary widgets are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the tenant directory table is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC014",
+    "title": "Search and filter the tenant directory",
+    "description": "This verifies a superadmin can search and filter tenants and see the directory update to matching results.",
+    "category": "Superadmin tenants management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Enter a tenant search term"
+      },
+      {
+        "type": "action",
+        "description": "Choose a tenant status filter"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the tenant list updates to matching results"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify filtered tenant entries are visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC015",
+    "title": "Test tenant SMTP connection and send a test email",
+    "description": "This verifies a superadmin can run SMTP connectivity checks and send a test email from tenant settings.",
+    "category": "Superadmin tenants management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open a tenant's settings from the tenant list"
+      },
+      {
+        "type": "action",
+        "description": "Open the SMTP configuration section"
+      },
+      {
+        "type": "action",
+        "description": "Trigger an SMTP connection test"
+      },
+      {
+        "type": "action",
+        "description": "Trigger a test email send"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify SMTP test results are visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify test email confirmation is visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC016",
+    "title": "Open tenant settings from the directory",
+    "description": "This verifies a superadmin can open a tenant's settings from the tenant directory and reach the tenant configuration view.",
+    "category": "Superadmin tenants management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open a tenant's settings from the tenant list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the tenant settings view is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify tenant configuration sections are visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC017",
+    "title": "Start tenant impersonation and return to the superadmin session",
+    "description": "A support user can start impersonation from a tenant row, see the impersonation banner, perform tenant actions, and return to the original superadmin session.",
+    "category": "Tenant Impersonation",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open the tenant action menu for a tenant"
+      },
+      {
+        "type": "action",
+        "description": "Start tenant impersonation"
+      },
+      {
+        "type": "action",
+        "description": "Verify the impersonation banner is displayed"
+      },
+      {
+        "type": "action",
+        "description": "Return to the original superadmin session"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the superadmin tenant management view is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC018",
+    "title": "View tenant analytics dashboard",
+    "description": "A superadmin can open the analytics page and see aggregated tenant growth and platform usage analytics.",
+    "category": "Tenant Analytics",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login form with {{LOGIN_USER}} and {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the analytics link"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify tenant growth analytics are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify platform usage analytics are displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC019",
+    "title": "See validation when required tenant fields are missing",
+    "description": "A superadmin sees validation messages when attempting to create a tenant without filling required details.",
+    "category": "Create Tenant",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open the tenant creation flow"
+      },
+      {
+        "type": "action",
+        "description": "Submit the tenant creation form without entering required details"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify validation messages for missing tenant details are visible"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC020",
+    "title": "Reject tenant creation with missing required information",
+    "description": "This verifies tenant creation shows validation when required organization or admin fields are left incomplete.",
+    "category": "Superadmin tenants management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Start creating a new tenant"
+      },
+      {
+        "type": "action",
+        "description": "Submit the tenant creation form without completing required fields"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify required field validation is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the tenant is not created"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC021",
+    "title": "Reject tenant creation with duplicate admin email",
+    "description": "This verifies tenant creation blocks submission when the initial admin email already exists and shows a validation error.",
+    "category": "Superadmin tenants management",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Start creating a new tenant"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the organization name field with a unique tenant name"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the initial admin email field with an email already used by an existing admin"
+      },
+      {
+        "type": "action",
+        "description": "Complete the remaining required tenant fields"
+      },
+      {
+        "type": "action",
+        "description": "Submit the tenant creation form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a duplicate email validation error is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the tenant is not created"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC022",
+    "title": "Prevent tenant creation with a duplicate admin email",
+    "description": "A superadmin sees a duplicate-email validation message when the tenant admin email is already in use.",
+    "category": "Create Tenant",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open the tenant creation flow"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the organization name field with Duplicate Email Org"
+      },
+      {
+        "type": "action",
+        "description": "Select at least one available app"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the admin first name field with Jordan"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the admin last name field with Lee"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the admin email field with ava.patel@example.com"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the admin password field with TempPass123!"
+      },
+      {
+        "type": "action",
+        "description": "Submit the tenant creation form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a duplicate email validation message is visible"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC023",
+    "title": "Block invalid SMTP settings",
+    "description": "A superadmin sees validation feedback when SMTP settings are incomplete or invalid.",
+    "category": "Tenant SMTP Mail Configuration",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open the tenant settings for a tenant"
+      },
+      {
+        "type": "action",
+        "description": "Switch to the SMTP settings section"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the SMTP port field with an invalid value"
+      },
+      {
+        "type": "action",
+        "description": "Save the SMTP settings"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify SMTP validation feedback is visible"
+      }
+    ],
+    "priority": "Low"
+  }
+]

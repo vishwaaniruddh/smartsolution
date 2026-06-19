@@ -14,7 +14,26 @@ try {
     // Add currency columns if they do not exist
     $pdo->exec("ALTER TABLE tenants ADD COLUMN IF NOT EXISTS currency_name VARCHAR(50) DEFAULT 'Indian Rupee';");
     $pdo->exec("ALTER TABLE tenants ADD COLUMN IF NOT EXISTS currency_symbol VARCHAR(10) DEFAULT '₹';");
+    $pdo->exec("ALTER TABLE tenants ADD COLUMN IF NOT EXISTS is_deleted TINYINT DEFAULT 0;");
     
+    // Add GST columns to accounting tables if they do not exist
+    $pdo->exec("ALTER TABLE accounting_invoices ADD COLUMN IF NOT EXISTS tax_rate DECIMAL(5,2) DEFAULT 0.00;");
+    $pdo->exec("ALTER TABLE accounting_invoices ADD COLUMN IF NOT EXISTS tax_amount DECIMAL(12,2) DEFAULT 0.00;");
+    $pdo->exec("ALTER TABLE accounting_bills ADD COLUMN IF NOT EXISTS tax_rate DECIMAL(5,2) DEFAULT 0.00;");
+    $pdo->exec("ALTER TABLE accounting_bills ADD COLUMN IF NOT EXISTS tax_amount DECIMAL(12,2) DEFAULT 0.00;");
+
+    // Service Desk migrations for existing installations
+    $pdo->exec("ALTER TABLE servicedesk_tickets ADD COLUMN IF NOT EXISTS linked_module VARCHAR(50) NULL;");
+    $pdo->exec("ALTER TABLE servicedesk_tickets ADD COLUMN IF NOT EXISTS linked_id INT NULL;");
+    $pdo->exec("ALTER TABLE servicedesk_tickets ADD COLUMN IF NOT EXISTS is_sla_breached TINYINT DEFAULT 0;");
+    $pdo->exec("ALTER TABLE servicedesk_comments ADD COLUMN IF NOT EXISTS is_internal TINYINT DEFAULT 0;");
+    $pdo->exec("ALTER TABLE servicedesk_tickets ADD COLUMN IF NOT EXISTS scheduled_visit_at DATETIME NULL;");
+    $pdo->exec("ALTER TABLE servicedesk_tickets ADD COLUMN IF NOT EXISTS scheduled_status VARCHAR(50) DEFAULT 'None';");
+    $pdo->exec("ALTER TABLE servicedesk_tickets ADD COLUMN IF NOT EXISTS scheduled_confirmed_by VARCHAR(255) NULL;");
+    $pdo->exec("ALTER TABLE servicedesk_attachments ADD COLUMN IF NOT EXISTS attachment_type VARCHAR(50) DEFAULT 'General';");
+    $pdo->exec("ALTER TABLE servicedesk_attachments ADD COLUMN IF NOT EXISTS description VARCHAR(255) NULL;");
+
+
     // Seed initial tenants
     $pdo->exec("INSERT INTO tenants (id, name) VALUES (1, 'Acme Enterprise'), (2, 'Globex Industries') ON DUPLICATE KEY UPDATE id=id;");
 
@@ -238,6 +257,36 @@ CREATE TABLE IF NOT EXISTS lead_payments (
     tenant_id INT DEFAULT 1,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (lead_id) REFERENCES leads(id) ON DELETE CASCADE
+);
+
+-- Create Apps table
+CREATE TABLE IF NOT EXISTS apps (
+    id VARCHAR(50) PRIMARY KEY,
+    seq_id INT AUTO_INCREMENT UNIQUE,
+    name VARCHAR(150) NOT NULL,
+    description TEXT NULL,
+    category VARCHAR(100) NULL,
+    is_active TINYINT DEFAULT 1,
+    weight INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insert default Apps
+INSERT IGNORE INTO apps (id, name, description, category, weight) VALUES 
+('crm', 'Lead & Sales Intelligence (CRM)', 'Enterprise pipeline management, lead assignment trackers, activity logger, and real-time revenue analytics dashboard.', 'Sales & Marketing', 1),
+('hrms', 'Human Resource Management (HRMS)', 'Complete employee directory, shift scheduling, real-time clock-in trackers, leave planner, payroll ledger, and task sheets.', 'Human Resources', 2),
+('inventory', 'Smart Inventory & Warehouse Control', 'Multi-warehouse stock logs, barcode/RFID cataloging, automated purchase ordering, supply logs, and courier trackers.', 'Logistics', 3),
+('accounting', 'Double-Entry Financial Ledger', 'Cohesive bookkeeping accounts, custom invoicing, vendor logs, cashflow forecasts, financial statement generator, and tax reports.', 'Finance', 4),
+('servicedesk', 'Service Desk & Ticketing', 'Internal support ticketing system with SLA tracking, agent queues, priority escalation, comment threads, and resolution analytics.', 'Operations & IT', 5);
+
+-- Create User Apps table
+CREATE TABLE IF NOT EXISTS user_apps (
+    user_id INT NOT NULL,
+    app_id VARCHAR(50) NOT NULL,
+    tenant_id INT NOT NULL,
+    PRIMARY KEY (user_id, app_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE
 );
 
 -- Create Tenant Apps table
@@ -748,10 +797,286 @@ CREATE TABLE IF NOT EXISTS hrms_interviews (
 INSERT INTO hrms_interviews (id, candidate_id, interviewer_employee_id, interview_date, round_name, rating, feedback, status, tenant_id)
 SELECT * FROM (SELECT 1 AS id, 2 AS candidate_id, 1 AS interviewer_employee_id, '2026-06-18 11:00:00' AS interview_date, 'Technical Round 1' AS round_name, 4 AS rating, 'Strong coding foundations. Good problem solver.' AS feedback, 'Scheduled' AS status, 1 AS tenant_id) AS tmp
 WHERE NOT EXISTS (SELECT id FROM hrms_interviews WHERE id = 1) LIMIT 1;
+
+-- ============================================
+-- ACCOUNTING MODULE TABLES
+-- ============================================
+
+CREATE TABLE IF NOT EXISTS accounting_accounts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    code VARCHAR(50) NOT NULL,
+    name VARCHAR(150) NOT NULL,
+    type ENUM('Asset', 'Liability', 'Equity', 'Revenue', 'Expense') NOT NULL,
+    parent_id INT NULL,
+    is_active TINYINT DEFAULT 1,
+    tenant_id INT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uq_account_code (code, tenant_id),
+    FOREIGN KEY (parent_id) REFERENCES accounting_accounts(id) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS accounting_journal_entries (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    entry_date DATE NOT NULL,
+    reference VARCHAR(100) NULL,
+    description VARCHAR(255) NOT NULL,
+    tenant_id INT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS accounting_journal_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    journal_entry_id INT NOT NULL,
+    account_id INT NOT NULL,
+    debit DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+    credit DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+    tenant_id INT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (journal_entry_id) REFERENCES accounting_journal_entries(id) ON DELETE CASCADE,
+    FOREIGN KEY (account_id) REFERENCES accounting_accounts(id)
+);
+
+CREATE TABLE IF NOT EXISTS accounting_invoices (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    invoice_number VARCHAR(100) NOT NULL,
+    customer_name VARCHAR(255) NOT NULL,
+    issue_date DATE NOT NULL,
+    due_date DATE NOT NULL,
+    status ENUM('Draft', 'Open', 'Paid', 'Overdue', 'Void') DEFAULT 'Draft',
+    total_amount DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+    amount_due DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+    tax_rate DECIMAL(5,2) DEFAULT 0.00,
+    tax_amount DECIMAL(12,2) DEFAULT 0.00,
+    sales_order_id INT NULL,
+    tenant_id INT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uq_invoice_num (invoice_number, tenant_id)
+);
+
+CREATE TABLE IF NOT EXISTS accounting_invoice_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    invoice_id INT NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    quantity INT NOT NULL DEFAULT 1,
+    unit_price DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+    amount DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+    product_id INT NULL,
+    tenant_id INT DEFAULT 1,
+    FOREIGN KEY (invoice_id) REFERENCES accounting_invoices(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS accounting_bills (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    bill_number VARCHAR(100) NOT NULL,
+    vendor_name VARCHAR(255) NOT NULL,
+    issue_date DATE NOT NULL,
+    due_date DATE NOT NULL,
+    status ENUM('Draft', 'Open', 'Paid', 'Void') DEFAULT 'Draft',
+    total_amount DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+    amount_due DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+    tax_rate DECIMAL(5,2) DEFAULT 0.00,
+    tax_amount DECIMAL(12,2) DEFAULT 0.00,
+    purchase_order_id INT NULL,
+    attachment_path VARCHAR(255) NULL,
+    tenant_id INT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uq_bill_num (bill_number, tenant_id)
+);
+
+CREATE TABLE IF NOT EXISTS accounting_bill_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    bill_id INT NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    quantity INT NOT NULL DEFAULT 1,
+    unit_cost DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+    amount DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+    product_id INT NULL,
+    tenant_id INT DEFAULT 1,
+    FOREIGN KEY (bill_id) REFERENCES accounting_bills(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS accounting_transactions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    payment_date DATE NOT NULL,
+    payment_method VARCHAR(50) NOT NULL,
+    type ENUM('Receipt', 'Payment') NOT NULL,
+    amount DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+    reference VARCHAR(150) NULL,
+    invoice_id INT NULL,
+    bill_id INT NULL,
+    payroll_run_id INT NULL,
+    tenant_id INT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (invoice_id) REFERENCES accounting_invoices(id) ON DELETE SET NULL,
+    FOREIGN KEY (bill_id) REFERENCES accounting_bills(id) ON DELETE SET NULL
+);
+
+-- Seed default CoA for Tenant 1
+INSERT IGNORE INTO accounting_accounts (code, name, type, tenant_id) VALUES
+('1010', 'Cash on Hand', 'Asset', 1),
+('1020', 'Bank Account', 'Asset', 1),
+('1200', 'Accounts Receivable', 'Asset', 1),
+('1400', 'Inventory Asset', 'Asset', 1),
+('2000', 'Accounts Payable', 'Liability', 1),
+('2200', 'Sales Tax Payable', 'Liability', 1),
+('3000', 'Owner Equity', 'Equity', 1),
+('3100', 'Retained Earnings', 'Equity', 1),
+('4000', 'Sales Revenue', 'Revenue', 1),
+('5000', 'Salary Expense', 'Expense', 1),
+('5100', 'Rent Expense', 'Expense', 1),
+('5200', 'Inventory Purchases', 'Expense', 1);
+
+-- Seed default CoA for Tenant 2
+INSERT IGNORE INTO accounting_accounts (code, name, type, tenant_id) VALUES
+('1010', 'Cash on Hand', 'Asset', 2),
+('1020', 'Bank Account', 'Asset', 2),
+('1200', 'Accounts Receivable', 'Asset', 2),
+('1400', 'Inventory Asset', 'Asset', 2),
+('2000', 'Accounts Payable', 'Liability', 2),
+('2200', 'Sales Tax Payable', 'Liability', 2),
+('3000', 'Owner Equity', 'Equity', 2),
+('3100', 'Retained Earnings', 'Equity', 2),
+('4000', 'Sales Revenue', 'Revenue', 2),
+('5000', 'Salary Expense', 'Expense', 2),
+('5100', 'Rent Expense', 'Expense', 2),
+('5200', 'Inventory Purchases', 'Expense', 2);
+
+-- ============================================
+-- SERVICE DESK MODULE TABLES
+-- ============================================
+
+CREATE TABLE IF NOT EXISTS servicedesk_categories (
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    name        VARCHAR(100) NOT NULL,
+    description TEXT NULL,
+    color       VARCHAR(20) DEFAULT '#6366f1',
+    is_active   TINYINT DEFAULT 1,
+    tenant_id   INT DEFAULT 1,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS servicedesk_sla_policies (
+    id                   INT AUTO_INCREMENT PRIMARY KEY,
+    priority             ENUM('Low','Medium','High','Critical') NOT NULL,
+    first_response_hours INT DEFAULT 24,
+    resolution_hours     INT DEFAULT 72,
+    tenant_id            INT DEFAULT 1,
+    UNIQUE KEY uq_sla_priority (priority, tenant_id)
+);
+
+CREATE TABLE IF NOT EXISTS servicedesk_tickets (
+    id              INT AUTO_INCREMENT PRIMARY KEY,
+    ticket_number   VARCHAR(30) NOT NULL,
+    subject         VARCHAR(255) NOT NULL,
+    description     TEXT NOT NULL,
+    category        VARCHAR(100) DEFAULT 'General',
+    priority        ENUM('Low','Medium','High','Critical') DEFAULT 'Medium',
+    status          ENUM('Open','In Progress','On Hold','Resolved','Closed') DEFAULT 'Open',
+    requester_id    INT NOT NULL,
+    requester_name  VARCHAR(255) NOT NULL,
+    assigned_to     INT NULL,
+    agent_name      VARCHAR(255) NULL,
+    sla_due_at      DATETIME NULL,
+    resolved_at     DATETIME NULL,
+    closed_at       DATETIME NULL,
+    is_sla_breached TINYINT DEFAULT 0,
+    linked_module   VARCHAR(50) NULL,
+    linked_id       INT NULL,
+    scheduled_visit_at      DATETIME NULL,
+    scheduled_status        VARCHAR(50) DEFAULT 'None',
+    scheduled_confirmed_by  VARCHAR(255) NULL,
+    tenant_id       INT DEFAULT 1,
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY uq_ticket_num (ticket_number, tenant_id)
+);
+
+CREATE TABLE IF NOT EXISTS servicedesk_comments (
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    ticket_id   INT NOT NULL,
+    author_id   INT NOT NULL,
+    author_name VARCHAR(255) NOT NULL,
+    author_role VARCHAR(50) DEFAULT 'User',
+    body        TEXT NOT NULL,
+    is_internal TINYINT DEFAULT 0,
+    tenant_id   INT DEFAULT 1,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (ticket_id) REFERENCES servicedesk_tickets(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS servicedesk_attachments (
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    ticket_id   INT NOT NULL,
+    comment_id  INT NULL,
+    file_name   VARCHAR(255) NOT NULL,
+    file_path   VARCHAR(255) NOT NULL,
+    file_type   VARCHAR(100) NOT NULL,
+    file_size   INT DEFAULT 0,
+    uploaded_by INT NOT NULL,
+    attachment_type VARCHAR(50) DEFAULT 'General',
+    description     VARCHAR(255) NULL,
+    tenant_id   INT DEFAULT 1,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (ticket_id) REFERENCES servicedesk_tickets(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS servicedesk_activity_log (
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    ticket_id   INT NOT NULL,
+    actor_name  VARCHAR(255) NOT NULL,
+    action      VARCHAR(100) NOT NULL,
+    old_value   VARCHAR(255) NULL,
+    new_value   VARCHAR(255) NULL,
+    tenant_id   INT DEFAULT 1,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (ticket_id) REFERENCES servicedesk_tickets(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS servicedesk_material_requests (
+    id                INT AUTO_INCREMENT PRIMARY KEY,
+    ticket_id         INT NOT NULL,
+    material_name     VARCHAR(255) NOT NULL,
+    quantity          DECIMAL(10,2) NOT NULL,
+    unit              VARCHAR(50) DEFAULT 'pcs',
+    status            VARCHAR(50) DEFAULT 'Pending',
+    requested_by      INT NOT NULL,
+    requested_by_name VARCHAR(255) NOT NULL,
+    remarks           TEXT NULL,
+    tenant_id         INT DEFAULT 1,
+    created_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (ticket_id) REFERENCES servicedesk_tickets(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS servicedesk_fund_requests (
+    id                INT AUTO_INCREMENT PRIMARY KEY,
+    ticket_id         INT NOT NULL,
+    amount            DECIMAL(12,2) NOT NULL,
+    payment_method    VARCHAR(50) DEFAULT 'Cash',
+    payment_details   TEXT NULL,
+    status            VARCHAR(50) DEFAULT 'Pending',
+    requested_by      INT NOT NULL,
+    requested_by_name VARCHAR(255) NOT NULL,
+    remarks           TEXT NULL,
+    tenant_id         INT DEFAULT 1,
+    created_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (ticket_id) REFERENCES servicedesk_tickets(id) ON DELETE CASCADE
+);
+
 ";
 
 try {
+    $pdo->exec("SET FOREIGN_KEY_CHECKS = 0;");
     $pdo->exec($query);
+    $pdo->exec("SET FOREIGN_KEY_CHECKS = 1;");
+
+    // Dynamic Alterations to add GST columns to existing installations
+    $pdo->exec("ALTER TABLE accounting_invoices ADD COLUMN IF NOT EXISTS tax_rate DECIMAL(5,2) DEFAULT 0.00;");
+    $pdo->exec("ALTER TABLE accounting_invoices ADD COLUMN IF NOT EXISTS tax_amount DECIMAL(12,2) DEFAULT 0.00;");
+    $pdo->exec("ALTER TABLE accounting_bills ADD COLUMN IF NOT EXISTS tax_rate DECIMAL(5,2) DEFAULT 0.00;");
+    $pdo->exec("ALTER TABLE accounting_bills ADD COLUMN IF NOT EXISTS tax_amount DECIMAL(12,2) DEFAULT 0.00;");
+    $pdo->exec("ALTER TABLE accounting_bills ADD COLUMN IF NOT EXISTS attachment_path VARCHAR(255) NULL;");
 
     // Migrate existing lead payment details into lead_payments table
     $stmt = $pdo->query("SHOW TABLES LIKE 'lead_payments'");
@@ -801,10 +1126,37 @@ try {
         ]);
     }
 
-    // Seed initial apps for existing tenants (Tenant 1 and Tenant 2 get crm, hrms, and inventory by default)
+    // Seed initial apps for existing tenants (Tenant 1 and Tenant 2 get crm, hrms, inventory, accounting, and servicedesk by default)
     $pdo->exec("INSERT IGNORE INTO tenant_apps (tenant_id, app_id) VALUES 
-        (1, 'crm'), (1, 'hrms'), (1, 'inventory'),
-        (2, 'crm'), (2, 'hrms'), (2, 'inventory')");
+        (1, 'crm'), (1, 'hrms'), (1, 'inventory'), (1, 'accounting'), (1, 'servicedesk'),
+        (2, 'crm'), (2, 'hrms'), (2, 'inventory'), (2, 'accounting'), (2, 'servicedesk')");
+
+    // Seed user_apps for existing users based on tenant apps
+    $pdo->exec("INSERT IGNORE INTO user_apps (user_id, app_id, tenant_id)
+        SELECT u.id, ta.app_id, u.tenant_id
+        FROM users u
+        JOIN tenant_apps ta ON u.tenant_id = ta.tenant_id
+        WHERE u.role != 'Superadmin'
+    ");
+
+    // Seed default Service Desk categories
+    $pdo->exec("INSERT IGNORE INTO servicedesk_categories (id, name, description, color, tenant_id) VALUES
+        (1, 'IT Support', 'Hardware, software, and technical issues', '#6366f1', 1),
+        (2, 'HR Query', 'Leave, payroll, policy, and HR questions', '#10b981', 1),
+        (3, 'Finance', 'Billing, reimbursements, and accounts', '#f59e0b', 1),
+        (4, 'Operations', 'Office supplies, facilities, logistics', '#3b82f6', 1),
+        (5, 'General', 'All other queries and requests', '#64748b', 1),
+        (6, 'IT Support', 'Hardware, software, and technical issues', '#6366f1', 2),
+        (7, 'HR Query', 'Leave, payroll, policy, and HR questions', '#10b981', 2),
+        (8, 'Finance', 'Billing, reimbursements, and accounts', '#f59e0b', 2),
+        (9, 'Operations', 'Office supplies, facilities, logistics', '#3b82f6', 2),
+        (10, 'General', 'All other queries and requests', '#64748b', 2)");
+
+    // Seed default SLA policies (hours to resolution)
+    $pdo->exec("INSERT IGNORE INTO servicedesk_sla_policies (priority, first_response_hours, resolution_hours, tenant_id) VALUES
+        ('Low', 24, 120, 1), ('Medium', 8, 48, 1), ('High', 4, 8, 1), ('Critical', 1, 2, 1),
+        ('Low', 24, 120, 2), ('Medium', 8, 48, 2), ('High', 4, 8, 2), ('Critical', 1, 2, 2)");
+
 
     echo json_encode(["success" => true, "message" => "Database and tables setup successfully."]);
 } catch (PDOException $e) {

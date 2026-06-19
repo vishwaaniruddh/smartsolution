@@ -295,7 +295,7 @@ const Warehouses = () => {
             Stock Levels in {activeWarehouse.name}
           </h3>
 
-          <div className="table-wrapper" style={{ borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', overflow: 'hidden' }}>
+          <div className="table-wrapper" style={{ borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', overflowX: 'auto' }}>
             <table className="leads-table">
               <thead>
                 <tr>

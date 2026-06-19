@@ -1,0 +1,65 @@
+version: "2"
+type: frontend
+tech_stack:
+  - React
+  - Vite
+  - React Router
+  - PHP
+  - MySQL
+routes:
+  - path: /login
+    file: frontend/src/pages/Login.tsx
+    auth_required: false
+    description: User login page
+  - path: /superadmin/tenants
+    file: frontend/src/pages/superadmin/Tenants.tsx
+    auth_required: true
+    description: Superadmin tenants management page
+features:
+  - name: Superadmin Login
+    description: Login to superadmin account with email and password
+    files:
+      - frontend/src/pages/Login.tsx
+    entry_route: /login
+    user_interactions:
+      - Fill email input field with vishwaaniruddh@gmail.com
+      - Fill password input field with rootroot
+      - Click Log In button
+      - Redirect to /superadmin/tenants
+    api_calls:
+      - method: POST
+        endpoint: /api/auth
+    auth_required: false
+  - name: Create Tenant
+    description: Superadmin creates a new tenant organization
+    files:
+      - frontend/src/pages/superadmin/Tenants.tsx
+    entry_route: /superadmin/tenants
+    user_interactions:
+      - Click Add Tenant button
+      - Fill Organization Name
+      - Select Apps
+      - Fill Admin First Name, Last Name, Email, Password
+      - Click Submit
+      - Tenant is created and onboarding email is sent
+    api_calls:
+      - method: POST
+        endpoint: /api/tenants
+    auth_required: true
+  - name: Tenant SMTP Mail Configuration
+    description: Superadmin configures SMTP settings for a tenant
+    files:
+      - frontend/src/pages/superadmin/Tenants.tsx
+    entry_route: /superadmin/tenants
+    user_interactions:
+      - Click Settings (⚙) button on a tenant row
+      - Go to SMTP Tab
+      - Fill SMTP Host, Port, Encryption, Username, Password, From Name, From Email
+      - Click Test Connection
+      - Click Send Test Email
+      - Click Save Settings
+    api_calls:
+      - method: POST
+        endpoint: /api/smtp-config
+    auth_required: true
+known_limitations: []

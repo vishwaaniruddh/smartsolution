@@ -1,55 +1,46 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LayoutGrid, Sparkles, Users, Wallet, Package, LogOut, Lock, ShieldCheck, ArrowRight } from 'lucide-react';
-import { basePath } from '../utils/env.js';
+import { LayoutGrid, Sparkles, Users, Wallet, Package, LogOut, Lock, ShieldCheck, ArrowRight, Headphones } from 'lucide-react';
+import { basePath, apiBaseUrl } from '../utils/env.js';
 import { useToast } from '../components/NotificationContext';
 
-const appsData = [
-  {
-    id: 'crm',
-    name: 'Lead & Sales Intelligence (CRM)',
-    description: 'Enterprise pipeline management, lead assignment trackers, activity logger, and real-time revenue analytics dashboard.',
-    category: 'Sales & Marketing',
+const appVisuals = {
+  'crm': {
     icon: Sparkles,
     color: 'var(--accent-cyan)',
     bg: 'rgba(34, 211, 238, 0.08)',
     border: 'rgba(34, 211, 238, 0.2)',
     launchPath: '/feature/leads'
   },
-  {
-    id: 'hrms',
-    name: 'Human Resource Management (HRMS)',
-    description: 'Complete employee directory, shift scheduling, real-time clock-in trackers, leave planner, payroll ledger, and task sheets.',
-    category: 'Human Resources',
+  'hrms': {
     icon: Users,
     color: 'var(--accent-blue)',
     bg: 'rgba(59, 130, 246, 0.08)',
     border: 'rgba(59, 130, 246, 0.2)',
     launchPath: '/feature/hrms'
   },
-  {
-    id: 'accounting',
-    name: 'Double-Entry Financial Ledger',
-    description: 'Cohesive bookkeeping accounts, custom invoicing, vendor logs, cashflow forecasts, financial statement generator, and tax reports.',
-    category: 'Finance',
+  'accounting': {
     icon: Wallet,
     color: 'var(--accent-purple)',
     bg: 'rgba(139, 92, 246, 0.08)',
     border: 'rgba(139, 92, 246, 0.2)',
     launchPath: '/feature/accounting'
   },
-  {
-    id: 'inventory',
-    name: 'Smart Inventory & Warehouse Control',
-    description: 'Multi-warehouse stock logs, barcode/RFID cataloging, automated purchase ordering, supply logs, and courier trackers.',
-    category: 'Logistics',
+  'inventory': {
     icon: Package,
     color: 'var(--accent-orange)',
     bg: 'rgba(249, 115, 22, 0.08)',
     border: 'rgba(249, 115, 22, 0.2)',
     launchPath: '/feature/inventory'
+  },
+  'servicedesk': {
+    icon: Headphones,
+    color: '#a78bfa',
+    bg: 'rgba(167, 139, 250, 0.08)',
+    border: 'rgba(167, 139, 250, 0.2)',
+    launchPath: '/feature/servicedesk'
   }
-];
+};
 
 const SelectApp = () => {
   const navigate = useNavigate();
@@ -64,7 +55,30 @@ const SelectApp = () => {
     }
   }, [user, navigate]);
 
+  const [dbApps, setDbApps] = useState([]);
+
+  useEffect(() => {
+    fetch(`${apiBaseUrl}/apps`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.data) {
+          setDbApps(data.data);
+        }
+      });
+  }, []);
+
   if (!user) return null;
+
+  const appsData = dbApps.map(app => {
+    const visuals = appVisuals[app.id] || {
+      icon: LayoutGrid,
+      color: '#ffffff',
+      bg: 'rgba(255, 255, 255, 0.08)',
+      border: 'rgba(255, 255, 255, 0.2)',
+      launchPath: '#'
+    };
+    return { ...app, ...visuals };
+  });
 
   const userApps = user.apps || [];
   const isSuperadmin = user.role === 'Superadmin';

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Plus, X, Search, Building, ShieldAlert, Mail, Phone, Calendar, User, UserCheck, Settings, Save, Send } from 'lucide-react';
+import { Plus, X, Search, Building, ShieldAlert, ShieldCheck, Mail, Phone, Calendar, User, UserCheck, Settings, Save, Send, Ban, MoreVertical } from 'lucide-react';
 import { basePath, apiBaseUrl } from '../../../utils/env.js';
 import { useToast } from '../../../components/NotificationContext';
 
@@ -79,6 +79,7 @@ const Tenants = () => {
   });
 
   const [formErrors, setFormErrors] = useState({});
+  const [openActionMenu, setOpenActionMenu] = useState(null);
 
   const fetchTenants = () => {
     setLoading(true);
@@ -97,6 +98,44 @@ const Tenants = () => {
       });
   };
 
+  const handleToggleSuspend = (tenant) => {
+    const isSuspended = tenant.is_deleted === 1 || tenant.is_deleted === '1';
+    const nextDeleted = isSuspended ? 0 : 1;
+    const actionText = nextDeleted === 1 ? 'suspend' : 'activate';
+    
+    if (!window.confirm(`Are you sure you want to ${actionText} organization '${tenant.name}' and all associated user accounts?`)) {
+      return;
+    }
+    
+    fetch(`${apiBaseUrl}/tenants`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Tenant-ID': tenant.id.toString()
+      },
+      body: JSON.stringify({
+        name: tenant.name,
+        currency_name: tenant.currency_name,
+        currency_symbol: tenant.currency_symbol,
+        apps: tenant.apps,
+        is_deleted: nextDeleted
+      })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          toast.success(`Organization ${nextDeleted === 1 ? 'suspended' : 'activated'} successfully.`);
+          fetchTenants();
+        } else {
+          toast.error(data.error || 'Failed to update tenant status.');
+        }
+      })
+      .catch((err) => {
+        console.error("Error toggling tenant status:", err);
+        toast.error('Network error while toggling organization status.');
+      });
+  };
+
   const handleImpersonate = (tenant) => {
 
     if (!tenant.admin) return;
@@ -111,7 +150,8 @@ const Tenants = () => {
     const impersonatedUser = {
       ...tenant.admin,
       role: tenant.admin.role || 'Admin',
-      tenant_name: tenant.name // Add the tenant's name
+      tenant_name: tenant.name, // Add the tenant's name
+      apps: tenant.apps || [] // Include tenant's provisioned apps
     };
 
     // Overwrite session keys
@@ -366,6 +406,9 @@ const Tenants = () => {
           window.location.reload();
         } else {
           toast.error('Error: ' + data.error);
+          if (data.error && data.error.toLowerCase().includes('email')) {
+            setFormErrors({ email: data.error });
+          }
         }
       })
       .catch((err) => {
@@ -406,71 +449,59 @@ const Tenants = () => {
 
   return (
     <>
-      <div className="animate-in">
-      {/* Top summary metrics widgets */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px', marginBottom: '32px' }}>
-        <div style={{ 
-          background: 'var(--bg-card)', 
-          padding: '24px', 
-          borderRadius: 'var(--radius-lg)', 
-          border: '1px solid var(--border)', 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: '20px',
-          boxShadow: 'var(--shadow-sm)'
-        }}>
-          <div style={{ 
-            width: '52px', 
-            height: '52px', 
-            borderRadius: 'var(--radius-md)', 
-            background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.05) 100%)', 
-            color: 'var(--accent-blue)', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            border: '1px solid rgba(59, 130, 246, 0.2)'
-          }}>
-            <Building size={26} />
+      <div className="animate-in" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+
+      {/* Summary Metric Widgets */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+        <div style={{ background: 'var(--bg-card)', padding: '20px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <div style={{ width: '44px', height: '44px', borderRadius: 'var(--radius-md)', background: 'rgba(59, 130, 246, 0.1)', color: 'var(--accent-blue)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(59, 130, 246, 0.15)' }}>
+            <Building size={22} />
           </div>
           <div>
-            <div style={{ fontSize: '28px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.1 }}>{tenants.length}</div>
-            <div style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 600, marginTop: '4px' }}>Total Organizations</div>
+            <div style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.1 }}>{tenants.length}</div>
+            <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500, marginTop: '2px' }}>Total Organizations</div>
           </div>
         </div>
 
-        <div style={{ 
-          background: 'var(--bg-card)', 
-          padding: '24px', 
-          borderRadius: 'var(--radius-lg)', 
-          border: '1px solid var(--border)', 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: '20px',
-          boxShadow: 'var(--shadow-sm)'
-        }}>
-          <div style={{ 
-            width: '52px', 
-            height: '52px', 
-            borderRadius: 'var(--radius-md)', 
-            background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.05) 100%)', 
-            color: 'var(--accent-emerald)', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            border: '1px solid rgba(16, 185, 129, 0.2)'
-          }}>
-            <UserCheck size={26} />
+        <div style={{ background: 'var(--bg-card)', padding: '20px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <div style={{ width: '44px', height: '44px', borderRadius: 'var(--radius-md)', background: 'rgba(16, 185, 129, 0.1)', color: 'var(--accent-emerald)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(16, 185, 129, 0.15)' }}>
+            <ShieldCheck size={22} />
           </div>
           <div>
-            <div style={{ fontSize: '28px', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.1 }}>
+            <div style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.1 }}>
+              {tenants.filter(t => !(t.is_deleted === 1 || t.is_deleted === '1')).length}
+            </div>
+            <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500, marginTop: '2px' }}>Active Tenants</div>
+          </div>
+        </div>
+
+        <div style={{ background: 'var(--bg-card)', padding: '20px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <div style={{ width: '44px', height: '44px', borderRadius: 'var(--radius-md)', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--accent-red)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(239, 68, 68, 0.15)' }}>
+            <Ban size={22} />
+          </div>
+          <div>
+            <div style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.1 }}>
+              {tenants.filter(t => t.is_deleted === 1 || t.is_deleted === '1').length}
+            </div>
+            <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500, marginTop: '2px' }}>Suspended</div>
+          </div>
+        </div>
+
+        <div style={{ background: 'var(--bg-card)', padding: '20px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <div style={{ width: '44px', height: '44px', borderRadius: 'var(--radius-md)', background: 'rgba(34, 211, 238, 0.1)', color: 'var(--accent-cyan)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(34, 211, 238, 0.15)' }}>
+            <UserCheck size={22} />
+          </div>
+          <div>
+            <div style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.1 }}>
               {tenants.filter(t => t.admin).length}
             </div>
-            <div style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 600, marginTop: '4px' }}>Active Administrators</div>
+            <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500, marginTop: '2px' }}>With Admins</div>
           </div>
         </div>
       </div>
 
-      <div className="leads-page-header">
+      {/* Toolbar */}
+      <div className="leads-page-header" style={{ marginBottom: 0 }}>
         <div className="leads-toolbar">
           <div className="leads-search">
             <Search size={16} />
@@ -487,195 +518,299 @@ const Tenants = () => {
         </button>
       </div>
 
-      <div className="users-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '24px' }}>
-        {filteredTenants.length > 0 ? (
-          filteredTenants.map((tenant) => {
-            const tenantInitials = tenant.name
-              ? tenant.name.split(' ').filter(Boolean).map(w => w[0]).join('').slice(0, 2).toUpperCase()
-              : 'TO';
-            return (
-              <div 
-                key={tenant.id} 
-                className="user-card" 
-                style={{ 
-                  display: 'flex', 
-                  flexDirection: 'column', 
-                  height: '100%', 
-                  background: 'var(--bg-card)', 
-                  border: '1px solid var(--border)', 
-                  borderRadius: 'var(--radius-lg)',
-                  boxShadow: 'var(--shadow-sm)',
-                  overflow: 'hidden',
-                  transition: 'all 0.2s ease'
-                }}
-              >
-                {/* Header */}
-                <div style={{ padding: '20px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '16px' }}>
-                  <div style={{ 
-                    width: '48px', 
-                    height: '48px', 
-                    borderRadius: 'var(--radius-md)', 
-                    background: 'linear-gradient(135deg, rgba(34, 211, 238, 0.15) 0%, rgba(59, 130, 246, 0.1) 100%)', 
-                    color: 'var(--accent-cyan)', 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center', 
-                    fontWeight: 700,
-                    fontSize: '16px',
-                    border: '1px solid rgba(34, 211, 238, 0.2)',
-                    flexShrink: 0 
-                  }}>
-                    {tenantInitials}
-                  </div>
-                  <div style={{ minWidth: 0, flex: 1 }}>
-                    <h3 style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: '16px', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={tenant.name}>
-                      {tenant.name}
-                    </h3>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
-                      <span style={{ fontSize: '11px', background: 'var(--bg-card-hover)', border: '1px solid var(--border)', padding: '2px 8px', borderRadius: '12px', color: 'var(--text-muted)', fontWeight: 600 }}>
-                        ID: #{tenant.id}
-                      </span>
-                      <span style={{ fontSize: '11px', background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.2)', padding: '2px 8px', borderRadius: '12px', color: 'var(--accent-emerald)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent-emerald)' }}></span>
-                        {tenant.currency_symbol || '₹'} ({tenant.currency_name || 'Indian Rupee'})
-                      </span>
-                    </div>
-                    {/* Active Provisioned Application Badges */}
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '8px' }}>
-                      {tenant.apps && tenant.apps.map(appId => {
-                        let label = appId.toUpperCase();
-                        let color = 'var(--text-muted)';
-                        let bg = 'var(--bg-hover)';
-                        if (appId === 'crm') { label = 'CRM'; color = 'var(--accent-cyan)'; bg = 'rgba(34, 211, 238, 0.1)'; }
-                        if (appId === 'hrms') { label = 'HRMS'; color = 'var(--accent-blue)'; bg = 'rgba(59, 130, 246, 0.1)'; }
-                        if (appId === 'accounting') { label = 'Accounting'; color = 'var(--accent-purple)'; bg = 'rgba(139, 92, 246, 0.1)'; }
-                        if (appId === 'inventory') { label = 'Inventory'; color = 'var(--accent-orange)'; bg = 'rgba(249, 115, 22, 0.1)'; }
-                        return (
-                          <span key={appId} style={{ fontSize: '10px', background: bg, border: `1px solid ${color}33`, padding: '1px 6px', borderRadius: '4px', color: color, fontWeight: 600 }}>
-                            {label}
-                          </span>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
+      {/* Tenant Table */}
+      <div className="leads-table-card">
+        <h2 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '16px', padding: '16px 24px' }}>
+          <span>Tenant Directory</span>
+          <span style={{ fontSize: '12px', fontWeight: 500, color: 'var(--text-muted)' }}>
+            Showing {filteredTenants.length} of {tenants.length} organizations
+          </span>
+        </h2>
 
-                {/* Body */}
-                <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifySelf: 'stretch', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                      Administrator Profile
-                    </span>
-                    <span style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <Calendar size={12} />
-                      Registered: {new Date(tenant.created_at).toLocaleDateString()}
-                    </span>
-                  </div>
-
-                  {tenant.admin ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'var(--bg-card-hover)', padding: '10px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
-                        <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--gradient-blue)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 600 }}>
-                          {getInitials(tenant.admin)}
-                        </div>
-                        <div style={{ minWidth: 0 }}>
-                          <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>
-                            {tenant.admin.first_name} {tenant.admin.last_name}
+        <div style={{ overflowX: 'auto' }}>
+          <table className="leads-table">
+            <thead>
+              <tr>
+                <th>Organization</th>
+                <th>Status</th>
+                <th>Primary Administrator</th>
+                <th>Applications</th>
+                <th>Currency</th>
+                <th>Registered</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredTenants.length > 0 ? (
+                filteredTenants.map((tenant) => {
+                  const isSuspended = tenant.is_deleted === 1 || tenant.is_deleted === '1';
+                  const tenantInitials = tenant.name
+                    ? tenant.name.split(' ').filter(Boolean).map(w => w[0]).join('').slice(0, 2).toUpperCase()
+                    : 'TO';
+                  return (
+                    <tr key={tenant.id} style={{ opacity: isSuspended ? 0.65 : 1, transition: 'opacity 0.2s ease' }}>
+                      {/* Organization */}
+                      <td>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <div style={{
+                            width: '36px',
+                            height: '36px',
+                            borderRadius: 'var(--radius-sm)',
+                            background: isSuspended
+                              ? 'linear-gradient(135deg, rgba(239, 68, 68, 0.12) 0%, rgba(220, 38, 38, 0.04) 100%)'
+                              : 'linear-gradient(135deg, rgba(34, 211, 238, 0.12) 0%, rgba(59, 130, 246, 0.08) 100%)',
+                            color: isSuspended ? 'var(--accent-red)' : 'var(--accent-cyan)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontWeight: 700,
+                            fontSize: '13px',
+                            flexShrink: 0,
+                            border: isSuspended ? '1px solid rgba(239, 68, 68, 0.2)' : '1px solid rgba(34, 211, 238, 0.15)'
+                          }}>
+                            {tenantInitials}
                           </div>
-                          <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Primary Owner</div>
-                        </div>
-                      </div>
-
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingLeft: '4px' }}>
-                        <div className="user-info-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)' }}>
-                          <Mail size={14} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
-                          <span style={{ fontSize: '13px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={tenant.admin.email}>
-                            {tenant.admin.email}
-                          </span>
-                        </div>
-                        <div className="user-info-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)' }}>
-                          <Phone size={14} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
-                          <span style={{ fontSize: '13px' }}>{tenant.admin.contact || 'No contact number'}</span>
-                        </div>
-                        {tenant.admin.address && (
-                          <div className="user-info-row" style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', color: 'var(--text-secondary)' }}>
-                            <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', marginTop: '2px', width: '35px', flexShrink: 0 }}>Loc:</span>
-                            <span style={{ fontSize: '13px', lineHeight: 1.4 }}>{tenant.admin.address}</span>
+                          <div>
+                            <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '14px' }}>{tenant.name}</div>
+                            <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '1px' }}>ID: #{tenant.id}</div>
                           </div>
+                        </div>
+                      </td>
+
+                      {/* Status */}
+                      <td>
+                        <span style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '5px',
+                          fontSize: '11px',
+                          fontWeight: 600,
+                          padding: '3px 10px',
+                          borderRadius: '20px',
+                          background: isSuspended ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
+                          color: isSuspended ? 'var(--accent-red)' : 'var(--accent-emerald)',
+                          border: isSuspended ? '1px solid rgba(239, 68, 68, 0.2)' : '1px solid rgba(16, 185, 129, 0.2)'
+                        }}>
+                          <span style={{
+                            width: '6px',
+                            height: '6px',
+                            borderRadius: '50%',
+                            background: isSuspended ? 'var(--accent-red)' : 'var(--accent-emerald)'
+                          }}></span>
+                          {isSuspended ? 'Suspended' : 'Active'}
+                        </span>
+                      </td>
+
+                      {/* Primary Admin */}
+                      <td>
+                        {tenant.admin ? (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <div style={{
+                              width: '30px',
+                              height: '30px',
+                              borderRadius: '50%',
+                              background: isSuspended ? 'var(--border)' : 'var(--gradient-blue)',
+                              color: 'white',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '11px',
+                              fontWeight: 600,
+                              flexShrink: 0
+                            }}>
+                              {getInitials(tenant.admin)}
+                            </div>
+                            <div style={{ minWidth: 0 }}>
+                              <div style={{ fontWeight: 500, color: 'var(--text-primary)', fontSize: '13px' }}>
+                                {tenant.admin.first_name} {tenant.admin.last_name}
+                              </div>
+                              <div style={{ fontSize: '11px', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '200px' }} title={tenant.admin.email}>
+                                {tenant.admin.email}
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <span style={{ color: 'var(--accent-red)', fontSize: '12px', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <ShieldAlert size={13} /> No Administrator
+                          </span>
                         )}
-                      </div>
-                    </div>
-                  ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px 16px', background: 'rgba(239, 68, 68, 0.03)', border: '1px dashed rgba(239, 68, 68, 0.2)', borderRadius: 'var(--radius-md)', gap: '10px', flex: 1 }}>
-                      <ShieldAlert size={28} style={{ color: 'var(--accent-red)' }} />
-                      <span style={{ color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 500, textAlign: 'center' }}>
-                        No administrator registered.
-                      </span>
-                    </div>
-                  )}
-                </div>
+                      </td>
 
-                {/* Footer Actions */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1px', background: 'var(--border)', borderTop: '1px solid var(--border)' }}>
-                  <button 
-                    onClick={() => handleOpenConfig(tenant)}
-                    className="modal-btn secondary"
-                    style={{
-                      padding: '14px',
-                      fontSize: '12px',
-                      fontWeight: 600,
-                      height: 'auto',
-                      minHeight: '0',
-                      gap: '8px',
-                      borderRadius: '0',
-                      border: 'none',
-                      background: 'var(--bg-card-hover)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      cursor: 'pointer',
-                      transition: 'background 0.2s ease',
-                      color: 'var(--text-primary)'
-                    }}
-                  >
-                    <Settings size={14} /> Settings
-                  </button>
-                  <button 
-                    onClick={() => handleImpersonate(tenant)}
-                    disabled={!tenant.admin}
-                    className="add-lead-btn"
-                    style={{
-                      padding: '14px',
-                      fontSize: '12px',
-                      fontWeight: 600,
-                      height: 'auto',
-                      minHeight: '0',
-                      gap: '8px',
-                      borderRadius: '0',
-                      border: 'none',
-                      background: tenant.admin ? 'var(--gradient-blue)' : 'var(--bg-card-hover)',
-                      color: tenant.admin ? 'white' : 'var(--text-muted)',
-                      opacity: tenant.admin ? 1 : 0.5,
-                      cursor: tenant.admin ? 'pointer' : 'not-allowed',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      transition: 'all 0.2s ease'
-                    }}
-                  >
-                    <UserCheck size={14} /> Impersonate
-                  </button>
-                </div>
-              </div>
-            );
-          })
-        ) : (
-          <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px', color: 'var(--text-muted)', background: 'var(--bg-card)', border: '1px dashed var(--border)', borderRadius: 'var(--radius-lg)' }}>
-            No tenants found matching search criteria.
-          </div>
-        )}
+                      {/* Apps */}
+                      <td>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                          {tenant.apps && tenant.apps.map(appId => {
+                            let label = appId.toUpperCase();
+                            let color = 'var(--text-muted)';
+                            let bg = 'var(--bg-hover)';
+                            if (appId === 'crm') { label = 'CRM'; color = 'var(--accent-cyan)'; bg = 'rgba(34, 211, 238, 0.1)'; }
+                            if (appId === 'hrms') { label = 'HRMS'; color = 'var(--accent-blue)'; bg = 'rgba(59, 130, 246, 0.1)'; }
+                            if (appId === 'accounting') { label = 'Acct'; color = 'var(--accent-purple)'; bg = 'rgba(139, 92, 246, 0.1)'; }
+                            if (appId === 'inventory') { label = 'Inv'; color = 'var(--accent-orange)'; bg = 'rgba(249, 115, 22, 0.1)'; }
+                            if (appId === 'servicedesk') { label = 'SD'; color = '#a78bfa'; bg = 'rgba(167, 139, 250, 0.1)'; }
+                            return (
+                              <span key={appId} style={{ fontSize: '10px', background: bg, border: `1px solid ${color}22`, padding: '1px 6px', borderRadius: '4px', color: color, fontWeight: 600 }}>
+                                {label}
+                              </span>
+                            );
+                          })}
+                          {(!tenant.apps || tenant.apps.length === 0) && (
+                            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>—</span>
+                          )}
+                        </div>
+                      </td>
+
+                      {/* Currency */}
+                      <td>
+                        <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                          {tenant.currency_symbol || '₹'} {tenant.currency_name || 'INR'}
+                        </span>
+                      </td>
+
+                      {/* Registered */}
+                      <td>
+                        <span style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <Calendar size={12} />
+                          {new Date(tenant.created_at).toLocaleDateString()}
+                        </span>
+                      </td>
+
+                      {/* Actions */}
+                      <td>
+                        <div style={{ position: 'relative', display: 'flex', gap: '6px', alignItems: 'center' }}>
+                          <button
+                            className="modal-btn secondary"
+                            title="Tenant Action Menu"
+                            onClick={() => setOpenActionMenu(openActionMenu === tenant.id ? null : tenant.id)}
+                            style={{ padding: '6px', borderRadius: 'var(--radius-sm)' }}
+                          >
+                            <MoreVertical size={16} />
+                          </button>
+                          
+                          {openActionMenu === tenant.id && (
+                            <div style={{
+                              position: 'absolute',
+                              top: '100%',
+                              right: 0,
+                              zIndex: 10,
+                              background: 'var(--bg-card)',
+                              border: '1px solid var(--border)',
+                              borderRadius: 'var(--radius-md)',
+                              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                              padding: '8px',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: '4px',
+                              minWidth: '160px'
+                            }}>
+                              <button
+                                onClick={() => { handleOpenConfig(tenant); setOpenActionMenu(null); }}
+                                className="modal-btn secondary"
+                                title="Organization Settings"
+                                style={{
+                                  padding: '5px 8px',
+                                  fontSize: '11px',
+                                  height: 'auto',
+                                  minHeight: '0',
+                                  gap: '8px',
+                                  borderRadius: 'var(--radius-sm)',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  width: '100%',
+                                  justifyContent: 'flex-start',
+                                  border: 'none',
+                                  background: 'transparent'
+                                }}
+                              >
+                                <Settings size={14} /> Settings
+                              </button>
+
+                              <button
+                                onClick={() => { handleToggleSuspend(tenant); setOpenActionMenu(null); }}
+                                title={isSuspended ? 'Activate Organization' : 'Suspend Organization'}
+                                style={{
+                                  padding: '5px 8px',
+                                  fontSize: '11px',
+                                  fontWeight: 600,
+                                  height: 'auto',
+                                  minHeight: '0',
+                                  gap: '8px',
+                                  borderRadius: 'var(--radius-sm)',
+                                  border: 'none',
+                                  background: 'transparent',
+                                  color: isSuspended ? 'var(--accent-emerald)' : 'var(--accent-red)',
+                                  cursor: 'pointer',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  width: '100%',
+                                  justifyContent: 'flex-start',
+                                  transition: 'all 0.15s ease'
+                                }}
+                              >
+                                {isSuspended ? <ShieldCheck size={14} /> : <Ban size={14} />}
+                                {isSuspended ? 'Activate' : 'Suspend'}
+                              </button>
+
+                              {tenant.admin && !isSuspended ? (
+                                <button
+                                  onClick={() => { handleImpersonate(tenant); setOpenActionMenu(null); }}
+                                  className="add-lead-btn"
+                                  style={{
+                                    padding: '5px 10px',
+                                    fontSize: '11px',
+                                    height: 'auto',
+                                    minHeight: '0',
+                                    gap: '8px',
+                                    width: '100%',
+                                    justifyContent: 'flex-start'
+                                  }}
+                                >
+                                  <UserCheck size={14} /> Impersonate
+                                </button>
+                              ) : (
+                                <button
+                                  disabled
+                                  className="modal-btn secondary"
+                                  style={{
+                                    padding: '5px 10px',
+                                    fontSize: '11px',
+                                    height: 'auto',
+                                    minHeight: '0',
+                                    gap: '8px',
+                                    borderRadius: 'var(--radius-sm)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    opacity: 0.4,
+                                    cursor: 'not-allowed',
+                                    width: '100%',
+                                    justifyContent: 'flex-start',
+                                    border: 'none',
+                                    background: 'transparent'
+                                  }}
+                                >
+                                  <UserCheck size={14} /> Impersonate
+                                </button>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan="7" style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)' }}>
+                    No tenants found matching search criteria.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
       </div>
+
 
       {/* CREATE TENANT + ADMIN MODAL */}
       {isModalOpen && createPortal(
@@ -827,7 +962,8 @@ const Tenants = () => {
                       { id: 'crm', name: 'Lead & Sales (CRM)' },
                       { id: 'hrms', name: 'HR Management (HRMS)' },
                       { id: 'accounting', name: 'Financial Ledger (Accounting)' },
-                      { id: 'inventory', name: 'Warehouse (Inventory)' }
+                      { id: 'inventory', name: 'Warehouse (Inventory)' },
+                      { id: 'servicedesk', name: 'Service Desk & Ticketing' }
                     ].map(app => (
                       <label key={app.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', color: 'var(--text-primary)' }}>
                         <input
@@ -1109,7 +1245,8 @@ const Tenants = () => {
                         { id: 'crm', name: 'Lead & Sales Intelligence (CRM)', desc: 'Pipeline management, activity logging, and revenue analytics.' },
                         { id: 'hrms', name: 'Human Resource Management (HRMS)', desc: 'Employee directory, attendance trackers, leaves, and payroll.' },
                         { id: 'accounting', name: 'Double-Entry Financial Ledger', desc: 'Invoicing, bookkeeping accounts, and tax reporting.' },
-                        { id: 'inventory', name: 'Smart Inventory & Warehouse Control', desc: 'Stock levels, barcode cataloging, and purchase orders.' }
+                        { id: 'inventory', name: 'Smart Inventory & Warehouse Control', desc: 'Stock levels, barcode cataloging, and purchase orders.' },
+                        { id: 'servicedesk', name: 'Service Desk & Ticketing', desc: 'Internal ticketing, SLA tracking, agent queues, and resolution analytics.' }
                       ].map(app => (
                         <label key={app.id} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'pointer', padding: '12px', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', background: tenantForm.apps.includes(app.id) ? 'rgba(34, 211, 238, 0.04)' : 'transparent', transition: 'all 0.2s' }}>
                           <input

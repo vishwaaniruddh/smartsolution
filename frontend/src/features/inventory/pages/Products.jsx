@@ -320,7 +320,7 @@ const Products = () => {
         </button>
       </div>
 
-      <div className="table-wrapper" style={{ borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', overflow: 'hidden' }}>
+      <div className="table-wrapper" style={{ borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', overflowX: 'auto' }}>
         <table className="leads-table">
           <thead>
             <tr>

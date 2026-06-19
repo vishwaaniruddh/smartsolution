@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LayoutGrid, Users, Wallet, Package, Search, Sparkles, ShieldCheck, CheckCircle2, Play, Lock, ExternalLink } from 'lucide-react';
+import { LayoutGrid, Users, Wallet, Package, Search, Sparkles, ShieldCheck, CheckCircle2, Play, Lock, ExternalLink, Headphones } from 'lucide-react';
 import { useToast } from '../../../components/NotificationContext';
 
 const appsList = [
@@ -60,6 +60,21 @@ const appsList = [
     badgeColor: 'var(--accent-yellow)',
     badgeBg: 'rgba(245, 158, 11, 0.1)',
     badgeText: 'Available'
+  },
+  {
+    id: 'servicedesk',
+    name: 'Service Desk & Ticketing',
+    description: 'Internal support ticketing system with SLA tracking, priority escalation, agent queues, comment threads, file attachments, and resolution analytics.',
+    category: 'Operations & IT',
+    status: 'Active',
+    icon: Headphones,
+    color: '#a78bfa',
+    bg: 'rgba(167, 139, 250, 0.1)',
+    border: 'rgba(167, 139, 250, 0.2)',
+    badgeColor: 'var(--accent-emerald)',
+    badgeBg: 'rgba(16, 185, 129, 0.1)',
+    badgeText: 'Active Module',
+    launchPath: '/feature/servicedesk'
   }
 ];
 

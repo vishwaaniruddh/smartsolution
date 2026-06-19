@@ -4,30 +4,37 @@ import { basePath, apiBaseUrl } from '../../utils/env.js';
 import {
   LayoutDashboard, Users, GitBranch, UserCircle, BarChart3,
   Settings, UserCheck, CheckSquare, IndianRupee, Building, LogOut, Menu, ChevronDown, ChevronRight, Shield, LayoutGrid,
-  Clock, CalendarDays, Wallet, CalendarHeart, Warehouse, Truck, Package, ClipboardList, History, Upload, UserPlus, ShoppingBag
+  Clock, CalendarDays, Wallet, CalendarHeart, Warehouse, Truck, Package, ClipboardList, History, Upload, UserPlus, ShoppingBag,
+  Receipt, Headphones, Ticket, MessageSquare
 } from 'lucide-react';
 
 const adminNavItems = [
+  { isHeader: true, label: 'Overview' },
   { to: '/feature/leads', icon: LayoutDashboard, label: 'Dashboard' },
-  {
-    isDropdown: true,
-    icon: Shield,
-    label: 'Admin',
-    subItems: [
-      { to: '/feature/leads/lead-sources', icon: GitBranch, label: 'Lead Sources' },
-      { to: '/users', icon: UserCheck, label: 'Users' }
-    ]
-  },
+  { isHeader: true, label: 'Sales & Relations' },
   { to: '/feature/leads/leads', icon: Users, label: 'Leads' },
   { to: '/feature/leads/pipeline', icon: GitBranch, label: 'Sales Pipeline' },
   { to: '/feature/leads/sales', icon: IndianRupee, label: 'Sales' },
   { to: '/contacts', icon: UserCircle, label: 'Contacts' },
   { to: '/feature/leads/reports', icon: BarChart3, label: 'Reports' },
+  { isHeader: true, label: 'Administration' },
+  {
+    isDropdown: true,
+    icon: Shield,
+    label: 'Admin Settings',
+    subItems: [
+      { to: '/feature/leads/lead-sources', icon: GitBranch, label: 'Lead Sources' },
+      { to: '/users', icon: UserCheck, label: 'Users' }
+    ]
+  },
+  { isHeader: true, label: 'System' },
   { to: '/settings', icon: Settings, label: 'Settings' },
 ];
 
 const saNavItems = [
+  { isHeader: true, label: 'Overview' },
   { to: '/feature/leads/sa/dashboard', icon: LayoutDashboard, label: 'SA Dashboard' },
+  { isHeader: true, label: 'My Workspace' },
   { to: '/feature/leads/sa/leads', icon: Users, label: 'My Leads' },
   { to: '/feature/leads/sa/pipeline', icon: GitBranch, label: 'My Pipeline' },
   { to: '/feature/leads/sa/sales', icon: IndianRupee, label: 'My Sales' },
@@ -35,15 +42,25 @@ const saNavItems = [
 ];
 
 const superadminNavItems = [
+  { isHeader: true, label: 'Tenant Administration' },
   { to: '/superadmin/tenants', icon: Building, label: 'Tenants' },
   { to: '/superadmin/analytics', icon: BarChart3, label: 'Tenant Reports' },
   { to: '/superadmin/apps', icon: LayoutGrid, label: 'Apps' },
+  { isHeader: true, label: 'System' },
   { to: '/settings', icon: Settings, label: 'Settings' }
 ];
 
 const hrmsNavItems = [
+  { isHeader: true, label: 'Overview' },
   { to: '/feature/hrms', icon: LayoutDashboard, label: 'HR Dashboard' },
+  { isHeader: true, label: 'Personnel & Payroll' },
   { to: '/feature/hrms/employees', icon: Users, label: 'Employees' },
+  { to: '/feature/hrms/attendance', icon: Clock, label: 'Attendance' },
+  { to: '/feature/hrms/leaves', icon: CalendarDays, label: 'Leave Management' },
+  { to: '/feature/hrms/payroll', icon: Wallet, label: 'Payroll' },
+  { isHeader: true, label: 'Recruitment' },
+  { to: '/feature/hrms/recruitment', icon: UserPlus, label: 'Recruitment' },
+  { isHeader: true, label: 'Administration' },
   {
     isDropdown: true,
     icon: Shield,
@@ -53,27 +70,55 @@ const hrmsNavItems = [
       { to: '/feature/hrms/holidays', icon: CalendarHeart, label: 'Holidays' },
     ]
   },
-  { to: '/feature/hrms/attendance', icon: Clock, label: 'Attendance' },
-  { to: '/feature/hrms/leaves', icon: CalendarDays, label: 'Leave Management' },
-  { to: '/feature/hrms/payroll', icon: Wallet, label: 'Payroll' },
-  { to: '/feature/hrms/recruitment', icon: UserPlus, label: 'Recruitment' },
   { to: '/feature/hrms/bulk-operations', icon: Upload, label: 'Bulk Operations' },
+  { isHeader: true, label: 'System' },
   { to: '/settings', icon: Settings, label: 'Settings' },
 ];
 
 const inventoryNavItems = [
+  { isHeader: true, label: 'Overview' },
   { to: '/feature/inventory', icon: LayoutDashboard, label: 'Dashboard' },
+  { isHeader: true, label: 'Product & Stock' },
   { to: '/feature/inventory/products', icon: Package, label: 'Product Catalog' },
   { to: '/feature/inventory/warehouses', icon: Warehouse, label: 'Warehouses' },
+  { to: '/feature/inventory/logs', icon: History, label: 'Stock Logs' },
+  { isHeader: true, label: 'Orders & Partners' },
   { to: '/feature/inventory/orders', icon: ClipboardList, label: 'Purchase Orders' },
   { to: '/feature/inventory/sales-orders', icon: ShoppingBag, label: 'Sales Orders' },
-  { to: '/feature/inventory/logs', icon: History, label: 'Stock Logs' },
   { to: '/feature/inventory/suppliers', icon: Users, label: 'Suppliers' },
+  { isHeader: true, label: 'Logistics & Ops' },
   { to: '/feature/inventory/couriers', icon: Truck, label: 'Courier Tracker' },
   { to: '/feature/inventory/bulk-operations', icon: Upload, label: 'Bulk Operations' },
+  { isHeader: true, label: 'System' },
   { to: '/settings', icon: Settings, label: 'Settings' },
 ];
 
+const accountingNavItems = [
+  { isHeader: true, label: 'Overview' },
+  { to: '/feature/accounting', icon: LayoutDashboard, label: 'Dashboard' },
+  { isHeader: true, label: 'Transactions & Ledger' },
+  { to: '/feature/accounting/accounts', icon: Building, label: 'Chart of Accounts' },
+  { to: '/feature/accounting/journals', icon: ClipboardList, label: 'Journal Ledger' },
+  { to: '/feature/accounting/transactions', icon: Wallet, label: 'Bank Transactions' },
+  { isHeader: true, label: 'Sales & Purchases' },
+  { to: '/feature/accounting/invoices', icon: Receipt, label: 'Invoices' },
+  { to: '/feature/accounting/bills', icon: ClipboardList, label: 'Supplier Bills' },
+  { to: '/feature/accounting/suppliers', icon: Users, label: 'Suppliers' },
+  { isHeader: true, label: 'Financial Reports' },
+  { to: '/feature/accounting/reports', icon: BarChart3, label: 'Financial Statements' },
+  { isHeader: true, label: 'System' },
+  { to: '/settings', icon: Settings, label: 'Settings' }
+];
+
+const servicedeskNavItems = [
+  { isHeader: true, label: 'Overview' },
+  { to: '/feature/servicedesk', icon: LayoutDashboard, label: 'Dashboard' },
+  { isHeader: true, label: 'Tickets' },
+  { to: '/feature/servicedesk/tickets', icon: Ticket, label: 'All Tickets' },
+  { to: '/feature/servicedesk/my-tickets', icon: MessageSquare, label: 'My Tickets' },
+  { isHeader: true, label: 'System' },
+  { to: '/settings', icon: Settings, label: 'Settings' },
+];
 
 
 const AppShell = () => {
@@ -150,11 +195,15 @@ const AppShell = () => {
   };
 
 
-  const activeApp = location.pathname.startsWith('/feature/hrms') 
-    ? 'hrms' 
+  const activeApp = location.pathname.startsWith('/feature/hrms')
+    ? 'hrms'
     : (location.pathname.startsWith('/feature/inventory')
       ? 'inventory'
-      : (location.pathname.startsWith('/feature/leads') ? 'crm' : (localStorage.getItem('crm_active_app') || 'crm')));
+      : (location.pathname.startsWith('/feature/accounting')
+        ? 'accounting'
+        : (location.pathname.startsWith('/feature/servicedesk')
+          ? 'servicedesk'
+          : (location.pathname.startsWith('/feature/leads') ? 'crm' : (localStorage.getItem('crm_active_app') || 'crm')))));
 
   const currentNavItems = activeRole === 'Superadmin'
     ? superadminNavItems
@@ -162,7 +211,11 @@ const AppShell = () => {
       ? hrmsNavItems
       : (activeApp === 'inventory'
         ? inventoryNavItems
-        : (activeRole === 'Sales Associate' ? saNavItems : adminNavItems)));
+        : (activeApp === 'accounting'
+          ? accountingNavItems
+          : (activeApp === 'servicedesk'
+            ? servicedeskNavItems
+            : (activeRole === 'Sales Associate' ? saNavItems : adminNavItems)))));
 
   const getHeaderTitle = () => {
     const path = location.pathname;
@@ -178,14 +231,29 @@ const AppShell = () => {
     if (path === '/feature/inventory/orders') return 'Purchase Order Registry';
     if (path === '/feature/inventory/sales-orders') return 'Sales Order Dispatch Hub';
     if (path === '/feature/inventory/logs') return 'Stock Movement Logs';
-    if (path === '/feature/inventory/suppliers') return 'Supplier Directory';
+    if (path === '/feature/inventory/suppliers' || path === '/feature/accounting/suppliers') return 'Supplier Directory';
     if (path === '/feature/inventory/couriers') return 'Courier Shipments Tracking';
     if (path === '/feature/inventory/bulk-operations') return 'Inventory Bulk Operations';
+
+    // Accounting Routes
+    if (path === '/feature/accounting') return 'Accounting Dashboard Overview';
+    if (path === '/feature/accounting/accounts') return 'Chart of Accounts';
+    if (path === '/feature/accounting/journals') return 'General Ledger Journal Entries';
+    if (path === '/feature/accounting/invoices') return 'Customer Billing & Invoices';
+    if (path === '/feature/accounting/bills') return 'Supplier Bills Directory';
+    if (path === '/feature/accounting/transactions') return 'Bank & Cash Transactions Ledger';
+    if (path === '/feature/accounting/reports') return 'Financial Statements';
     if (path === '/contacts') return 'Contacts';
     if (path === '/users') return 'User Management';
     if (path === '/feature/leads/reports') return 'Reports';
     if (path === '/settings') return 'Settings';
     if (path === '/feature/leads/lead-sources') return 'Lead Sources Management';
+
+    // Service Desk Routes
+    if (path === '/feature/servicedesk') return 'Service Desk Dashboard';
+    if (path === '/feature/servicedesk/tickets') return 'All Support Tickets';
+    if (path === '/feature/servicedesk/my-tickets') return 'My Tickets';
+    if (path.startsWith('/feature/servicedesk/tickets/')) return 'Ticket Detail';
     
     // Superadmin Routes
     if (path === '/superadmin/tenants') return 'Superadmin Tenant Management';
@@ -242,6 +310,14 @@ const AppShell = () => {
 
         <nav className="sidebar-nav">
           {currentNavItems.map(item => {
+            if (item.isHeader) {
+              return (
+                <div key={item.label} className="sidebar-nav-header">
+                  {item.label}
+                </div>
+              );
+            }
+
             if (item.isDropdown) {
               const isOpen = openDropdowns[item.label];
               return (
@@ -387,7 +463,7 @@ const AppShell = () => {
                 }}
               >
                 <LayoutGrid size={14} style={{ color: 'var(--accent-cyan)' }} />
-                <span>{activeApp === 'hrms' ? 'HRMS Module' : (activeApp === 'inventory' ? 'Inventory Module' : 'CRM Module')}</span>
+                <span>{activeApp === 'hrms' ? 'HRMS Module' : (activeApp === 'inventory' ? 'Inventory Module' : (activeApp === 'accounting' ? 'Accounting Module' : 'CRM Module'))}</span>
               </button>
             )}
 

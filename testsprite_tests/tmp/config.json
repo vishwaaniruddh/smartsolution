@@ -1,0 +1,23 @@
+{
+  "status": "commited",
+  "type": "frontend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:5173",
+  "loginUser": "vishwaaniruddh@gmail.com",
+  "loginPassword": "rootroot",
+  "executionArgs": {
+    "projectName": "lead",
+    "projectPath": "c:\\xampp\\htdocs\\lead",
+    "testIds": [
+      "TC006",
+      "TC011",
+      "TC022"
+    ],
+    "additionalInstruction": "",
+    "serverMode": "development",
+    "envs": {
+      "API_KEY": "sk-user-ZOyC7qhMMS1hLThVs2x3cNg9EYgugERAYzPzBJltwW1hx15g84m_uHh7mUXtYWrO58HHNNc6MHj-vTMU-rb2EXsMZiswB1TDGFXjL2Ix1R4WHZF3yr-5jlsPdGVUe8jP5cA"
+    }
+  },
+  "serverPort": 59141
+}

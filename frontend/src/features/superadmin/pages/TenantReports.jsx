@@ -82,7 +82,8 @@ const TenantReports = () => {
     const impersonatedUser = {
       ...tenant.admin,
       role: tenant.admin.role || 'Admin',
-      tenant_name: tenant.name // Add the tenant's name
+      tenant_name: tenant.name, // Add the tenant's name
+      apps: tenant.apps || [] // Include tenant's provisioned apps
     };
 
     // Overwrite session keys

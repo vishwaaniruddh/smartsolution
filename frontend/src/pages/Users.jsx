@@ -4,6 +4,14 @@ import { Search, Plus, X, Mail, Phone, MapPin, User, Lock, Upload, Edit2, Trash2
 import { useToast, useConfirm } from '../components/NotificationContext';
 import { apiBaseUrl } from '../utils/env.js';
 
+const appNames = {
+  crm: 'Lead & Sales Intelligence (CRM)',
+  hrms: 'Human Resource Management (HRMS)',
+  accounting: 'Double-Entry Financial Ledger',
+  inventory: 'Smart Inventory & Warehouse Control',
+  servicedesk: 'Service Desk & Ticketing'
+};
+
 const defaultUsers = [
   {
     id: 1,
@@ -71,7 +79,8 @@ const Users = () => {
     gender: 'Male',
     address: '',
     password: '',
-    role: 'Sales Associate'
+    role: 'Sales Associate',
+    assigned_apps: []
   });
   
   const [photoFile, setPhotoFile] = useState(null);
@@ -81,6 +90,10 @@ const Users = () => {
   const toast = useToast();
   const confirm = useConfirm();
   const [existingPhotoPath, setExistingPhotoPath] = useState(null);
+
+  const currentUserStr = localStorage.getItem('crm_user');
+  const currentUser = currentUserStr ? JSON.parse(currentUserStr) : null;
+  const availableApps = currentUser ? (currentUser.apps || []) : [];
 
   // Fetch users from backend
   const fetchUsers = () => {
@@ -121,7 +134,8 @@ const Users = () => {
       gender: user.gender || 'Male',
       address: user.address || '',
       password: '', // Keep empty unless updating password
-      role: user.role || 'Sales Associate'
+      role: user.role || 'Sales Associate',
+      assigned_apps: user.assigned_apps || []
     });
     setPhotoFile(null);
     setPhotoPreview(user.profile_photo ? getAvatarUrl(user.profile_photo) : null);
@@ -195,6 +209,7 @@ const Users = () => {
     formData.append('gender', form.gender);
     formData.append('address', form.address);
     formData.append('role', form.role);
+    formData.append('assigned_apps', JSON.stringify(form.assigned_apps));
     
     // Only send password if filled (or if creating a new user)
     if (form.password) {
@@ -252,7 +267,8 @@ const Users = () => {
                 gender: form.gender,
                 address: form.address,
                 profile_photo: photoPreview || existingPhotoPath,
-                role: form.role
+                role: form.role,
+                assigned_apps: form.assigned_apps
               }
             : u
         ));
@@ -267,7 +283,8 @@ const Users = () => {
           gender: form.gender,
           address: form.address,
           profile_photo: photoPreview,
-          role: form.role
+          role: form.role,
+          assigned_apps: form.assigned_apps
         };
         setUsers([localNewUser, ...users]);
       }
@@ -288,7 +305,8 @@ const Users = () => {
       gender: 'Male',
       address: '',
       password: '',
-      role: 'Sales Associate'
+      role: 'Sales Associate',
+      assigned_apps: []
     });
     setPhotoFile(null);
     setPhotoPreview(null);
@@ -604,6 +622,29 @@ const Users = () => {
                       </span>
                     </div>
                   </div>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Assigned Applications</label>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px', marginTop: '5px' }}>
+                    {availableApps.map(appId => (
+                      <label key={appId} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', cursor: 'pointer' }}>
+                        <input
+                          type="checkbox"
+                          checked={form.assigned_apps.includes(appId)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setForm({ ...form, assigned_apps: [...form.assigned_apps, appId] });
+                            } else {
+                              setForm({ ...form, assigned_apps: form.assigned_apps.filter(a => a !== appId) });
+                            }
+                          }}
+                        />
+                        {appNames[appId] || appId}
+                      </label>
+                    ))}
+                  </div>
+                  {availableApps.length === 0 && <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>No applications available for this tenant.</span>}
                 </div>
               </div>
               

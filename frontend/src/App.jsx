@@ -44,6 +44,19 @@ import InventoryPurchaseOrders from './features/inventory/pages/PurchaseOrders';
 import InventoryCourierTracker from './features/inventory/pages/CourierTracker';
 import InventorySalesOrders from './features/inventory/pages/SalesOrders';
 import InventoryBulkOperations from './features/inventory/pages/InventoryBulk';
+import { AccountingProvider } from './features/accounting/context/AccountingContext';
+import AccountingDashboard from './features/accounting/pages/AccountingDashboard';
+import ChartOfAccounts from './features/accounting/pages/ChartOfAccounts';
+import JournalLedger from './features/accounting/pages/JournalLedger';
+import Invoices from './features/accounting/pages/Invoices';
+import Bills from './features/accounting/pages/Bills';
+import Transactions from './features/accounting/pages/Transactions';
+import FinancialStatements from './features/accounting/pages/FinancialStatements';
+import { ServiceDeskProvider } from './features/servicedesk/context/ServiceDeskContext';
+import ServiceDeskDashboard from './features/servicedesk/pages/ServiceDeskDashboard';
+import SDTickets from './features/servicedesk/pages/Tickets';
+import SDTicketDetail from './features/servicedesk/pages/TicketDetail';
+import SDMyTickets from './features/servicedesk/pages/MyTickets';
 
 const CRMLayout = () => (
   <CRMProvider>
@@ -61,6 +74,18 @@ const InventoryLayout = () => (
   <InventoryProvider>
     <Outlet />
   </InventoryProvider>
+);
+
+const AccountingLayout = () => (
+  <AccountingProvider>
+    <Outlet />
+  </AccountingProvider>
+);
+
+const ServiceDeskLayout = () => (
+  <ServiceDeskProvider>
+    <Outlet />
+  </ServiceDeskProvider>
 );
 
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
@@ -88,6 +113,12 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
       return <Navigate to="/select-app" replace />;
     }
     if (path.includes('/feature/inventory') && !userApps.includes('inventory')) {
+      return <Navigate to="/select-app" replace />;
+    }
+    if (path.includes('/feature/accounting') && !userApps.includes('accounting')) {
+      return <Navigate to="/select-app" replace />;
+    }
+    if (path.includes('/feature/servicedesk') && !userApps.includes('servicedesk')) {
       return <Navigate to="/select-app" replace />;
     }
   }
@@ -124,6 +155,12 @@ const RootRedirect = () => {
     if (activeApp === 'inventory') {
       return <Navigate to="/feature/inventory" replace />;
     }
+    if (activeApp === 'accounting') {
+      return <Navigate to="/feature/accounting" replace />;
+    }
+    if (activeApp === 'servicedesk') {
+      return <Navigate to="/feature/servicedesk" replace />;
+    }
     if (user.role === 'Sales Associate') {
       return <Navigate to="/feature/leads/sa/dashboard" replace />;
     }
@@ -137,6 +174,12 @@ const RootRedirect = () => {
     }
     if (apps[0] === 'inventory') {
       return <Navigate to="/feature/inventory" replace />;
+    }
+    if (apps[0] === 'accounting') {
+      return <Navigate to="/feature/accounting" replace />;
+    }
+    if (apps[0] === 'servicedesk') {
+      return <Navigate to="/feature/servicedesk" replace />;
     }
     if (user.role === 'Sales Associate') {
       return <Navigate to="/feature/leads/sa/dashboard" replace />;
@@ -323,6 +366,76 @@ function App() {
               <Route path="bulk-operations" element={
                 <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
                   <InventoryBulkOperations />
+                </ProtectedRoute>
+              } />
+            </Route>
+
+            {/* Accounting Module Routes */}
+            <Route path="feature/accounting" element={<AccountingLayout />}>
+              <Route index element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                  <AccountingDashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="accounts" element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                  <ChartOfAccounts />
+                </ProtectedRoute>
+              } />
+              <Route path="journals" element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                  <JournalLedger />
+                </ProtectedRoute>
+              } />
+              <Route path="invoices" element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                  <Invoices />
+                </ProtectedRoute>
+              } />
+              <Route path="bills" element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                  <Bills />
+                </ProtectedRoute>
+              } />
+              <Route path="transactions" element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                  <Transactions />
+                </ProtectedRoute>
+              } />
+              <Route path="suppliers" element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                  <InventoryProvider>
+                    <InventorySuppliers />
+                  </InventoryProvider>
+                </ProtectedRoute>
+              } />
+              <Route path="reports" element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                  <FinancialStatements />
+                </ProtectedRoute>
+              } />
+            </Route>
+
+            {/* Service Desk Module Routes */}
+            <Route path="feature/servicedesk" element={<ServiceDeskLayout />}>
+              <Route index element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager', 'Sales Associate']}>
+                  <ServiceDeskDashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="tickets" element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                  <SDTickets />
+                </ProtectedRoute>
+              } />
+              <Route path="tickets/:id" element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager', 'Sales Associate']}>
+                  <SDTicketDetail />
+                </ProtectedRoute>
+              } />
+              <Route path="my-tickets" element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager', 'Sales Associate']}>
+                  <SDMyTickets />
                 </ProtectedRoute>
               } />
             </Route>
