@@ -1,5 +1,6 @@
 <?php
 // db.php
+require_once __DIR__ . '/jwt.php';
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: Content-Type, X-Tenant-ID, Authorization");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
@@ -53,6 +54,16 @@ try {
 // Global helper to get tenant ID dynamically
 function getTenantId()
 {
+    // 1. Try to get it from JWT token (most secure)
+    $token = getBearerToken();
+    if ($token) {
+        $decoded = jwt_decode($token);
+        if ($decoded && isset($decoded['tenant_id'])) {
+            return intval($decoded['tenant_id']);
+        }
+    }
+
+    // 2. Fallbacks for existing un-migrated endpoints
     if (isset($_GET['tenant_id'])) {
         return intval($_GET['tenant_id']);
     }
@@ -77,6 +88,36 @@ function getTenantId()
     }
 
     return 1; // Fallback to Tenant 1
+}
+
+// Global helper to get the full decoded user token context
+function getCurrentUserContext() {
+    $token = getBearerToken();
+    if ($token) {
+        $decoded = jwt_decode($token);
+        if ($decoded) {
+            return $decoded;
+        }
+    }
+    return null;
+}
+
+// Global helper to get the currently logged-in HRMS employee ID (based on their email)
+function getCurrentEmployeeId($pdo, $tenant_id) {
+    $user = getCurrentUserContext();
+    if (!$user || !isset($user['user_id'])) return null;
+    
+    // Fetch email from users table
+    $ustmt = $pdo->prepare("SELECT email FROM users WHERE id = ?");
+    $ustmt->execute([$user['user_id']]);
+    $u = $ustmt->fetch();
+    
+    if (!$u || empty($u['email'])) return null;
+    
+    $stmt = $pdo->prepare("SELECT id FROM hrms_employees WHERE email = ? AND tenant_id = ?");
+    $stmt->execute([$u['email'], $tenant_id]);
+    $emp = $stmt->fetch();
+    return $emp ? $emp['id'] : null;
 }
 
 // Function to handle preflight CORS requests

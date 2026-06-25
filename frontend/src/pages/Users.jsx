@@ -103,7 +103,6 @@ const Users = () => {
     'hrms': { name: 'Human Resource Management (HRMS)', desc: 'Employee directory, attendance trackers, leaves, and payroll.' },
     'accounting': { name: 'Double-Entry Financial Ledger', desc: 'Invoicing, bookkeeping accounts, and tax reporting.' },
     'inventory': { name: 'Smart Inventory & Warehouse Control', desc: 'Stock levels, barcode cataloging, and purchase orders.' },
-    'servicedesk': { name: 'Service Desk & Ticketing', desc: 'Internal ticketing, SLA tracking, agent queues, and resolution analytics.' }
   };
 
   const navigate = useNavigate();

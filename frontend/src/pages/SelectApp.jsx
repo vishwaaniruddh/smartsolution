@@ -5,6 +5,7 @@ import { basePath, apiBaseUrl } from '../utils/env.js';
 import { useToast } from '../components/NotificationContext';
 import { useSettings } from '../components/SettingsContext';
 import { useAuth } from '../context/AuthContext';
+import ImpersonationBanner from '../components/layout/ImpersonationBanner';
 
 const appVisuals = {
   'crm': {
@@ -283,7 +284,7 @@ const SelectApp = () => {
             font-size: 16px;
             color: var(--text-secondary);
             margin: 0;
-            max-width: 600px;
+            max-width: 100%;
             line-height: 1.6;
           }
 
@@ -534,6 +535,8 @@ const SelectApp = () => {
         `}
       </style>
 
+      <ImpersonationBanner />
+
       {launchingApp ? (
         <div className="loader-container">
           <div className="mesh-bg">
@@ -626,28 +629,10 @@ const SelectApp = () => {
 
           {/* Main Glass Card */}
           <div className="glass-main">
-            <div className="welcome-section" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px' }}>
-              <div style={{ flex: '1 1 300px' }}>
+            <div className="welcome-section">
+              <div>
                 <h2>Welcome back, {user.first_name}!</h2>
                 <p>Choose an enterprise application to open your customized dashboard and workspace.</p>
-              </div>
-              <div style={{ 
-                background: 'rgba(255, 255, 255, 0.03)', 
-                padding: '12px 20px', 
-                borderRadius: '12px', 
-                border: '1px solid rgba(255, 255, 255, 0.05)',
-                textAlign: 'right',
-                minWidth: '200px'
-              }}>
-                <div style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)' }}>
-                  {user.first_name} {user.last_name}
-                </div>
-                <div style={{ fontSize: '12px', color: 'var(--accent-cyan)', marginTop: '4px', fontWeight: 500, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-                  {user.role}
-                </div>
-                <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
-                  {user.email}
-                </div>
               </div>
             </div>
 

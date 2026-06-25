@@ -10,6 +10,8 @@ export function getAppBasePath() {
     '/superadmin/tenants',
     '/superadmin/analytics',
     '/superadmin/apps',
+    '/chat',
+    '/superadmin/contacts',
     '/feature/leads/lead-sources',
     '/feature/leads/sa/dashboard',
     '/feature/leads/sa/leads',
@@ -85,3 +87,17 @@ export function getApiBaseUrl() {
 }
 
 export const apiBaseUrl = getApiBaseUrl();
+
+export function getSocketUrl() {
+  if (import.meta.env.VITE_SOCKET_URL) {
+    return import.meta.env.VITE_SOCKET_URL;
+  }
+  
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    return 'http://localhost:3001';
+  }
+  
+  return window.location.origin;
+}
+
+export const socketUrl = getSocketUrl();

@@ -14,6 +14,50 @@ $today = date('Y-m-d');
 $current_month = date('n');
 $current_year = date('Y');
 
+$user_context = getCurrentUserContext();
+$is_admin_or_manager = $user_context && in_array($user_context['role'], ['Admin', 'Manager', 'Superadmin']);
+$current_emp_id = getCurrentEmployeeId($pdo, $tenant_id);
+
+if (!$is_admin_or_manager) {
+    if (!$current_emp_id) {
+        echo json_encode(["success" => true, "data" => ["is_ess" => true, "error" => "No employee record linked to your user account."]]);
+        exit;
+    }
+    
+    // ESS Dashboard Data
+    // My Attendance today
+    $att = $pdo->prepare("SELECT status, clock_in, clock_out FROM hrms_attendance WHERE employee_id = ? AND date = ? AND tenant_id = ?");
+    $att->execute([$current_emp_id, $today, $tenant_id]);
+    $my_attendance = $att->fetch();
+    
+    // My Leave Balances
+    $lb = $pdo->prepare("SELECT lb.*, lt.name as leave_type_name FROM hrms_leave_balances lb JOIN hrms_leave_types lt ON lb.leave_type_id = lt.id WHERE lb.employee_id = ? AND lb.year = ? AND lb.tenant_id = ?");
+    $lb->execute([$current_emp_id, $current_year, $tenant_id]);
+    $my_leaves = $lb->fetchAll();
+    
+    // My Recent Payslips
+    $ps = $pdo->prepare("SELECT month, year, net_salary, status FROM hrms_payroll_runs WHERE employee_id = ? AND tenant_id = ? ORDER BY year DESC, month DESC LIMIT 3");
+    $ps->execute([$current_emp_id, $tenant_id]);
+    $my_payslips = $ps->fetchAll();
+    
+    // Upcoming Holidays
+    $hol = $pdo->prepare("SELECT name as title, date as from_date, date as to_date FROM hrms_holidays WHERE date >= ? AND tenant_id = ? ORDER BY date ASC LIMIT 3");
+    $hol->execute([$today, $tenant_id]);
+    $upcoming_holidays = $hol->fetchAll();
+
+    echo json_encode([
+        "success" => true,
+        "data" => [
+            "is_ess" => true,
+            "my_attendance" => $my_attendance,
+            "my_leaves" => $my_leaves,
+            "my_payslips" => $my_payslips,
+            "upcoming_holidays" => $upcoming_holidays
+        ]
+    ]);
+    exit;
+}
+
 // Total employees
 $total_emp = $pdo->prepare("SELECT COUNT(*) as count FROM hrms_employees WHERE tenant_id = ? AND status = 'Active'");
 $total_emp->execute([$tenant_id]);

@@ -2,10 +2,14 @@ import { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { apiBaseUrl } from '../../../utils/env.js';
 import { useHRMS } from '../context/HRMSContext';
+import { useAuth } from '../../../context/AuthContext';
 import { Plus, Check, X, Clock } from 'lucide-react';
 
 const LeaveManagement = () => {
   const { toast, tenantId } = useHRMS();
+
+  const { user } = useAuth();
+  const isHRMSAdmin = ['Admin', 'Manager', 'Superadmin'].includes(user?.role);
 
   const [leaves, setLeaves] = useState([]);
   const [leaveTypes, setLeaveTypes] = useState([]);
@@ -19,7 +23,7 @@ const LeaveManagement = () => {
   const [activeTab, setActiveTab] = useState('requests');
 
   const [applyForm, setApplyForm] = useState({
-    employee_id: '', leave_type_id: '', from_date: '', to_date: '', reason: ''
+    employee_id: isHRMSAdmin ? '' : 'me', leave_type_id: '', from_date: '', to_date: '', reason: ''
   });
 
   const fetchData = useCallback(() => {
@@ -57,7 +61,7 @@ const LeaveManagement = () => {
         if (data.success) {
           toast.success('Leave request submitted!');
           setShowApplyModal(false);
-          setApplyForm({ employee_id: '', leave_type_id: '', from_date: '', to_date: '', reason: '' });
+          setApplyForm({ employee_id: isHRMSAdmin ? '' : 'me', leave_type_id: '', from_date: '', to_date: '', reason: '' });
           fetchData();
         } else {
           toast.error(data.error || 'Failed to submit.');
@@ -148,7 +152,7 @@ const LeaveManagement = () => {
       {/* Toolbar */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
         <div style={{ display: 'flex', gap: '8px' }}>
-          {['requests', 'types'].map(tab => (
+          {['requests', ...(isHRMSAdmin ? ['types'] : [])].map(tab => (
             <button key={tab} onClick={() => setActiveTab(tab)} className="modal-btn secondary" style={{
               padding: '8px 18px', fontSize: '12px', fontWeight: 600,
               background: activeTab === tab ? 'var(--bg-hover)' : 'transparent',
@@ -187,7 +191,7 @@ const LeaveManagement = () => {
                 <th>Days</th>
                 <th>Reason</th>
                 <th>Status</th>
-                <th style={{ textAlign: 'center' }}>Actions</th>
+                {isHRMSAdmin && <th style={{ textAlign: 'center' }}>Actions</th>}
               </tr>
             </thead>
             <tbody>
@@ -215,16 +219,18 @@ const LeaveManagement = () => {
                       color: lr.status === 'Pending' ? 'var(--accent-yellow)' : lr.status === 'Approved' ? 'var(--accent-emerald)' : 'var(--accent-red)'
                     }}>{lr.status}</span>
                   </td>
-                  <td style={{ textAlign: 'center' }}>
-                    {lr.status === 'Pending' ? (
-                      <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
-                        <button onClick={() => handleAction(lr.id, 'Approved')} style={{ background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)', color: 'var(--accent-emerald)', cursor: 'pointer', padding: '4px 10px', borderRadius: 'var(--radius-sm)', fontSize: '11px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}><Check size={12} /> Approve</button>
-                        <button onClick={() => handleAction(lr.id, 'Rejected')} style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', color: 'var(--accent-red)', cursor: 'pointer', padding: '4px 10px', borderRadius: 'var(--radius-sm)', fontSize: '11px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}><X size={12} /> Reject</button>
-                      </div>
-                    ) : (
-                      <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{lr.approver_name ? `By ${lr.approver_name}` : '—'}</span>
-                    )}
-                  </td>
+                  {isHRMSAdmin && (
+                    <td style={{ textAlign: 'center' }}>
+                      {lr.status === 'Pending' ? (
+                        <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
+                          <button onClick={() => handleAction(lr.id, 'Approved')} style={{ background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)', color: 'var(--accent-emerald)', cursor: 'pointer', padding: '4px 10px', borderRadius: 'var(--radius-sm)', fontSize: '11px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}><Check size={12} /> Approve</button>
+                          <button onClick={() => handleAction(lr.id, 'Rejected')} style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', color: 'var(--accent-red)', cursor: 'pointer', padding: '4px 10px', borderRadius: 'var(--radius-sm)', fontSize: '11px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}><X size={12} /> Reject</button>
+                        </div>
+                      ) : (
+                        <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{lr.approver_name ? `By ${lr.approver_name}` : '—'}</span>
+                      )}
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
@@ -261,13 +267,15 @@ const LeaveManagement = () => {
             </div>
             <form onSubmit={handleApply}>
               <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                <div>
-                  <label style={labelStyle}>Employee *</label>
-                  <select style={inputStyle} value={applyForm.employee_id} onChange={e => setApplyForm({ ...applyForm, employee_id: e.target.value })} required>
-                    <option value="">Select Employee</option>
-                    {employees.map(emp => <option key={emp.id} value={emp.id}>{emp.first_name} {emp.last_name} ({emp.emp_code})</option>)}
-                  </select>
-                </div>
+                {isHRMSAdmin && (
+                  <div>
+                    <label style={labelStyle}>Employee *</label>
+                    <select style={inputStyle} value={applyForm.employee_id} onChange={e => setApplyForm({ ...applyForm, employee_id: e.target.value })} required>
+                      <option value="">Select Employee</option>
+                      {employees.map(emp => <option key={emp.id} value={emp.id}>{emp.first_name} {emp.last_name} ({emp.emp_code})</option>)}
+                    </select>
+                  </div>
+                )}
                 <div>
                   <label style={labelStyle}>Leave Type *</label>
                   <select style={inputStyle} value={applyForm.leave_type_id} onChange={e => setApplyForm({ ...applyForm, leave_type_id: e.target.value })} required>

@@ -2,6 +2,7 @@
 // HRMS Employees API
 require_once __DIR__ . '/../../core/db.php';
 require_once __DIR__ . '/../../core/validation.php';
+require_once __DIR__ . '/../../core/sync_helper.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 $tenant_id = getTenantId();
@@ -164,6 +165,8 @@ switch ($method) {
             $lb->execute([$employee_id, $lt['id'], $lt['default_days'], $lt['default_days'], $year, $tenant_id]);
         }
 
+        syncHRMSToUser($pdo, $tenant_id, $email, $first_name, $last_name, $phone, $gender);
+
         echo json_encode(["success" => true, "message" => "Employee created.", "id" => $employee_id, "emp_code" => $emp_code]);
         break;
 
@@ -220,6 +223,14 @@ switch ($method) {
                 $bank = $pdo->prepare("INSERT INTO hrms_employee_bank_details (employee_id, bank_name, account_number, ifsc_code, pan_number, tenant_id) VALUES (?, ?, ?, ?, ?, ?)");
                 $bank->execute([$id, $input['bank_name'] ?? '', $input['account_number'] ?? '', $input['ifsc_code'] ?? '', $input['pan_number'] ?? '', $tenant_id]);
             }
+        }
+
+        // Fetch current details to sync
+        $estmt = $pdo->prepare("SELECT first_name, last_name, email, phone, gender FROM hrms_employees WHERE id = ? AND tenant_id = ?");
+        $estmt->execute([$id, $tenant_id]);
+        $emp = $estmt->fetch();
+        if ($emp) {
+            syncHRMSToUser($pdo, $tenant_id, $emp['email'], $emp['first_name'], $emp['last_name'], $emp['phone'], $emp['gender']);
         }
 
         echo json_encode(["success" => true, "message" => "Employee updated."]);

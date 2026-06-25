@@ -1,6 +1,7 @@
 <?php
 // auth.php
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/jwt.php';
 
 header('Content-Type: application/json');
 
@@ -35,24 +36,23 @@ switch ($method) {
                     echo json_encode(["success" => false, "error" => "This organization workspace has been suspended. Please contact system administrator."]);
                     exit();
                 }
-                unset($user['password']); // security
                 
-                // Fetch allowed apps
-                if ($user['role'] === 'Superadmin') {
-                    $user['apps'] = ['crm', 'hrms', 'accounting', 'inventory', 'servicedesk'];
-                } else if ($user['role'] === 'Admin') {
-                    $astmt = $pdo->prepare("SELECT app_id FROM tenant_apps WHERE tenant_id = ?");
-                    $astmt->execute([$user['tenant_id']]);
-                    $user['apps'] = $astmt->fetchAll(PDO::FETCH_COLUMN);
-                } else {
-                    $astmt = $pdo->prepare("SELECT app_id FROM user_apps WHERE user_id = ?");
-                    $astmt->execute([$user['id']]);
-                    $user['apps'] = $astmt->fetchAll(PDO::FETCH_COLUMN);
-                }
+                // Create JWT Payload
+                $payload = [
+                    'user_id' => $user['id'],
+                    'tenant_id' => $user['tenant_id'],
+                    'role' => $user['role']
+                ];
+                
+                // Remove password before returning
+                unset($user['password']);
+                
+                $token = jwt_encode($payload);
                 
                 echo json_encode([
                     "success" => true,
                     "message" => "Login successful",
+                    "token" => $token,
                     "user" => $user
                 ]);
             } else {

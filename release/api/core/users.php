@@ -2,6 +2,7 @@
 // users.php
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/mailer.php';
+require_once __DIR__ . '/sync_helper.php';
 
 header('Content-Type: application/json');
 
@@ -32,12 +33,21 @@ switch ($method) {
             break;
         }
 
-        // Retrieve all users for this tenant (excluding passwords for security)
+        // Retrieve all users (Tenant admin sees own users, Superadmin sees all)
         try {
-            $tenant_id = getTenantId();
-            $stmt = $pdo->prepare("SELECT id, first_name, last_name, email, contact, gender, address, profile_photo, role, created_at FROM users WHERE tenant_id = ? ORDER BY created_at DESC");
-            $stmt->execute([$tenant_id]);
-            $users = $stmt->fetchAll();
+            $token = getBearerToken();
+            $decoded = $token ? jwt_decode($token) : null;
+            $role = $decoded['role'] ?? null;
+            
+            if ($role === 'Superadmin') {
+                $stmt = $pdo->query("SELECT u.id, u.first_name, u.last_name, u.email, u.contact, u.gender, u.address, u.profile_photo, u.role, u.created_at, t.name as tenant_name FROM users u LEFT JOIN tenants t ON u.tenant_id = t.id ORDER BY u.created_at DESC");
+                $users = $stmt->fetchAll();
+            } else {
+                $tenant_id = getTenantId();
+                $stmt = $pdo->prepare("SELECT id, first_name, last_name, email, contact, gender, address, profile_photo, role, created_at FROM users WHERE tenant_id = ? ORDER BY created_at DESC");
+                $stmt->execute([$tenant_id]);
+                $users = $stmt->fetchAll();
+            }
 
             $astmt = $pdo->prepare("SELECT app_id FROM user_apps WHERE user_id = ?");
             foreach ($users as &$u) {
@@ -54,9 +64,49 @@ switch ($method) {
 
 
     case 'POST':
+        // Handle User Impersonation (Admin impersonating employee)
+        $data = json_decode(file_get_contents("php://input"), true);
+        if (isset($data['action']) && $data['action'] === 'impersonate') {
+            $token = getBearerToken();
+            if (!$token) {
+                http_response_code(401);
+                echo json_encode(["success" => false, "error" => "Unauthorized"]);
+                exit();
+            }
+            $decoded = jwt_decode($token);
+            if (!$decoded || ($decoded['role'] !== 'Admin' && $decoded['role'] !== 'Superadmin')) {
+                http_response_code(403);
+                echo json_encode(["success" => false, "error" => "Only Admin can impersonate users."]);
+                exit();
+            }
+
+            $target_user_id = isset($data['user_id']) ? intval($data['user_id']) : 0;
+            $ustmt = $pdo->prepare("SELECT id, role, tenant_id FROM users WHERE id = ? AND tenant_id = ? LIMIT 1");
+            $ustmt->execute([$target_user_id, $decoded['tenant_id']]);
+            $targetUser = $ustmt->fetch();
+
+            if (!$targetUser) {
+                http_response_code(404);
+                echo json_encode(["success" => false, "error" => "User not found or not in your tenant."]);
+                exit();
+            }
+
+            // Create JWT for impersonated user
+            $payload = [
+                'user_id' => $targetUser['id'],
+                'tenant_id' => $targetUser['tenant_id'],
+                'role' => $targetUser['role'],
+                'impersonator' => $decoded['user_id']
+            ];
+            
+            $impersonate_token = jwt_encode($payload);
+            echo json_encode(["success" => true, "token" => $impersonate_token]);
+            exit();
+        }
+
         // Handle User Creation or Update (if ID is provided)
-        $id = isset($_POST['id']) ? intval($_POST['id']) : null;
-        $first_name = isset($_POST['first_name']) ? $_POST['first_name'] : '';
+        $id = isset($_POST['id']) ? intval($_POST['id']) : (isset($data['id']) ? intval($data['id']) : null);
+        $first_name = isset($_POST['first_name']) ? $_POST['first_name'] : (isset($data['first_name']) ? $data['first_name'] : '');
         $last_name = isset($_POST['last_name']) ? $_POST['last_name'] : '';
         $email = isset($_POST['email']) ? $_POST['email'] : '';
         $contact = isset($_POST['contact']) ? $_POST['contact'] : '';
@@ -193,6 +243,12 @@ switch ($method) {
                     }
                 }
 
+                if (isset($actual_tenant_id) && $actual_tenant_id) {
+                    syncUserToHRMS($pdo, $actual_tenant_id, $email, $first_name, $last_name, $contact, $gender, $assigned_apps);
+                } elseif (isset($tenant_id) && $tenant_id) {
+                    syncUserToHRMS($pdo, $tenant_id, $email, $first_name, $last_name, $contact, $gender, $assigned_apps);
+                }
+
                 echo json_encode([
                     "success" => true,
                     "message" => "User updated successfully",
@@ -228,6 +284,10 @@ switch ($method) {
                     foreach ($assigned_apps as $app_id) {
                         $insStmt->execute([$newId, $app_id, $tenant_id]);
                     }
+                }
+                
+                if ($tenant_id) {
+                    syncUserToHRMS($pdo, $tenant_id, $email, $first_name, $last_name, $contact, $gender, $assigned_apps);
                 }
                 
                 // --- Send Welcome Email ---

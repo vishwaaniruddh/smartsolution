@@ -76,6 +76,9 @@ switch ($route) {
     case 'settings':
         require_once __DIR__ . '/core/settings.php';
         break;
+    case 'chat':
+        require_once __DIR__ . '/modules/chat/chat.php';
+        break;
     case 'tenants':
         require_once __DIR__ . '/modules/superadmin/tenants.php';
         break;

@@ -90,6 +90,36 @@ function getTenantId()
     return 1; // Fallback to Tenant 1
 }
 
+// Global helper to get the full decoded user token context
+function getCurrentUserContext() {
+    $token = getBearerToken();
+    if ($token) {
+        $decoded = jwt_decode($token);
+        if ($decoded) {
+            return $decoded;
+        }
+    }
+    return null;
+}
+
+// Global helper to get the currently logged-in HRMS employee ID (based on their email)
+function getCurrentEmployeeId($pdo, $tenant_id) {
+    $user = getCurrentUserContext();
+    if (!$user || !isset($user['user_id'])) return null;
+    
+    // Fetch email from users table
+    $ustmt = $pdo->prepare("SELECT email FROM users WHERE id = ?");
+    $ustmt->execute([$user['user_id']]);
+    $u = $ustmt->fetch();
+    
+    if (!$u || empty($u['email'])) return null;
+    
+    $stmt = $pdo->prepare("SELECT id FROM hrms_employees WHERE email = ? AND tenant_id = ?");
+    $stmt->execute([$u['email'], $tenant_id]);
+    $emp = $stmt->fetch();
+    return $emp ? $emp['id'] : null;
+}
+
 // Function to handle preflight CORS requests
 if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);

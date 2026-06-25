@@ -2,6 +2,7 @@
 // users.php
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/mailer.php';
+require_once __DIR__ . '/sync_helper.php';
 
 header('Content-Type: application/json');
 
@@ -32,12 +33,21 @@ switch ($method) {
             break;
         }
 
-        // Retrieve all users for this tenant (excluding passwords for security)
+        // Retrieve all users (Tenant admin sees own users, Superadmin sees all)
         try {
-            $tenant_id = getTenantId();
-            $stmt = $pdo->prepare("SELECT id, first_name, last_name, email, contact, gender, address, profile_photo, role, created_at FROM users WHERE tenant_id = ? ORDER BY created_at DESC");
-            $stmt->execute([$tenant_id]);
-            $users = $stmt->fetchAll();
+            $token = getBearerToken();
+            $decoded = $token ? jwt_decode($token) : null;
+            $role = $decoded['role'] ?? null;
+            
+            if ($role === 'Superadmin') {
+                $stmt = $pdo->query("SELECT u.id, u.first_name, u.last_name, u.email, u.contact, u.gender, u.address, u.profile_photo, u.role, u.created_at, t.name as tenant_name FROM users u LEFT JOIN tenants t ON u.tenant_id = t.id ORDER BY u.created_at DESC");
+                $users = $stmt->fetchAll();
+            } else {
+                $tenant_id = getTenantId();
+                $stmt = $pdo->prepare("SELECT id, first_name, last_name, email, contact, gender, address, profile_photo, role, created_at FROM users WHERE tenant_id = ? ORDER BY created_at DESC");
+                $stmt->execute([$tenant_id]);
+                $users = $stmt->fetchAll();
+            }
 
             $astmt = $pdo->prepare("SELECT app_id FROM user_apps WHERE user_id = ?");
             foreach ($users as &$u) {
@@ -233,6 +243,12 @@ switch ($method) {
                     }
                 }
 
+                if (isset($actual_tenant_id) && $actual_tenant_id) {
+                    syncUserToHRMS($pdo, $actual_tenant_id, $email, $first_name, $last_name, $contact, $gender, $assigned_apps);
+                } elseif (isset($tenant_id) && $tenant_id) {
+                    syncUserToHRMS($pdo, $tenant_id, $email, $first_name, $last_name, $contact, $gender, $assigned_apps);
+                }
+
                 echo json_encode([
                     "success" => true,
                     "message" => "User updated successfully",
@@ -268,6 +284,10 @@ switch ($method) {
                     foreach ($assigned_apps as $app_id) {
                         $insStmt->execute([$newId, $app_id, $tenant_id]);
                     }
+                }
+                
+                if ($tenant_id) {
+                    syncUserToHRMS($pdo, $tenant_id, $email, $first_name, $last_name, $contact, $gender, $assigned_apps);
                 }
                 
                 // --- Send Welcome Email ---

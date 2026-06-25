@@ -77,7 +77,7 @@ const TenantReports = () => {
     const currentToken = localStorage.getItem('crm_token');
     if (!currentToken) return;
 
-    fetch(`${apiBaseUrl}/superadmin/tenants`, {
+    fetch(`${apiBaseUrl}/tenants`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -401,191 +401,125 @@ const TenantReports = () => {
       </div>
 
       {/* Reports Table Grid */}
-      <div className="leads-table-card">
-        <h2 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '16px', padding: '16px 24px' }}>
+      <div className="leads-table-card" style={{ background: 'transparent', border: 'none', boxShadow: 'none', padding: 0 }}>
+        <h2 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '16px', padding: '0 0 16px 0' }}>
           <span>Tenant Analytical Ledger</span>
           <span style={{ fontSize: '12px', fontWeight: 500, color: 'var(--text-muted)' }}>
             Showing {filteredAndSorted.length} of {totalTenants} organizations
           </span>
         </h2>
         
-        <div style={{ overflowX: 'auto' }}>
-          <table className="leads-table">
-            <thead>
-              <tr>
-                <th onClick={() => requestSort('id')} style={{ cursor: 'pointer', userSelect: 'none' }}>
-                  ID <ArrowUpDown size={12} style={{ marginLeft: 4, display: 'inline' }} />
-                </th>
-                <th onClick={() => requestSort('name')} style={{ cursor: 'pointer', userSelect: 'none' }}>
-                  Tenant Organization <ArrowUpDown size={12} style={{ marginLeft: 4, display: 'inline' }} />
-                </th>
-                <th>Primary Admin</th>
-                <th onClick={() => requestSort('users')} style={{ cursor: 'pointer', userSelect: 'none' }}>
-                  User Base <ArrowUpDown size={12} style={{ marginLeft: 4, display: 'inline' }} />
-                </th>
-                <th onClick={() => requestSort('leads')} style={{ cursor: 'pointer', userSelect: 'none' }}>
-                  Leads Summary <ArrowUpDown size={12} style={{ marginLeft: 4, display: 'inline' }} />
-                </th>
-                <th onClick={() => requestSort('revenue')} style={{ cursor: 'pointer', userSelect: 'none' }}>
-                  Sales Revenue <ArrowUpDown size={12} style={{ marginLeft: 4, display: 'inline' }} />
-                </th>
-                <th>Activity</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredAndSorted.length > 0 ? (
-                filteredAndSorted.map((tenant) => (
-                  <tr key={tenant.id}>
-                    {/* ID */}
-                    <td style={{ fontWeight: 600 }}>#{tenant.id}</td>
-                    
-                    {/* Tenant Name */}
-                    <td>
-                      <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{tenant.name}</span>
-                        <span style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4, marginTop: 2 }}>
-                          <Calendar size={11} /> Registered: {new Date(tenant.created_at).toLocaleDateString()}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '24px', paddingBottom: '24px', marginTop: '24px' }}>
+          {filteredAndSorted.length > 0 ? (
+            filteredAndSorted.map((tenant) => (
+              <div key={tenant.id} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative', transition: 'transform 0.2s, box-shadow 0.2s' }}>
+                
+                {/* Header: ID + Name + Actions */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={tenant.name}>{tenant.name}</div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>ID: #{tenant.id}</div>
+                  </div>
+                  <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
+                    <button
+                      onClick={() => handleOpenConfig(tenant)}
+                      className="user-card-action-btn edit"
+                      title="Config"
+                    >
+                      <Settings size={14} />
+                    </button>
+                    {tenant.admin && (
+                      <button 
+                        onClick={() => handleImpersonate(tenant)}
+                        className="user-card-action-btn edit"
+                        style={{ color: 'var(--accent-blue)', background: 'rgba(59, 130, 246, 0.1)', borderColor: 'rgba(59, 130, 246, 0.2)' }}
+                        title="Impersonate"
+                      >
+                        <UserCheck size={14} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Admin Info */}
+                <div style={{ padding: '12px', background: 'var(--bg-card-hover)', borderRadius: 'var(--radius-md)' }}>
+                  <div style={{ fontSize: '11px', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: 600, marginBottom: '4px' }}>Primary Admin</div>
+                  {tenant.admin ? (
+                    <div>
+                      <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '13px' }}>{tenant.admin.first_name} {tenant.admin.last_name}</div>
+                      <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{tenant.admin.email}</div>
+                    </div>
+                  ) : (
+                    <div style={{ color: 'var(--accent-red)', fontSize: '12px', fontWeight: 500 }}>No Administrator</div>
+                  )}
+                </div>
+
+                {/* Stats Grid */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  {/* Users */}
+                  <div>
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}><Users size={12}/> Users</div>
+                    <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)' }}>{tenant.users.total}</div>
+                  </div>
+                  {/* Leads */}
+                  <div>
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}><TrendingUp size={12}/> Leads</div>
+                    <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)' }}>{tenant.leads.total}</div>
+                  </div>
+                  {/* Revenue */}
+                  <div>
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}><IndianRupee size={12}/> Revenue</div>
+                    <div style={{ fontSize: '18px', fontWeight: 700, color: tenant.leads.revenue > 0 ? 'var(--accent-green)' : 'var(--text-primary)' }}>
+                      {tenant.currency_symbol || '₹'}{tenant.leads.revenue.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                    </div>
+                  </div>
+                  {/* Activity */}
+                  <div>
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}><Activity size={12}/> Activity</div>
+                    <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)' }}>{tenant.activities_count}</div>
+                  </div>
+                </div>
+
+                {/* Apps List */}
+                <div style={{ paddingTop: '4px', borderTop: '1px dashed rgba(255,255,255,0.05)', marginTop: '4px' }}>
+                  <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Provisioned Apps</div>
+                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'nowrap', overflowX: 'auto', paddingBottom: '4px', scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
+                    {tenant.apps && tenant.apps.map(appId => {
+                      let label = appId ? String(appId).toUpperCase() : 'UNKNOWN';
+                      let color = 'var(--text-muted)';
+                      let bg = 'var(--bg-hover)';
+                      if (appId === 'crm') { label = 'CRM'; color = 'var(--accent-cyan)'; bg = 'rgba(34, 211, 238, 0.1)'; }
+                      if (appId === 'hrms') { label = 'HRMS'; color = 'var(--accent-blue)'; bg = 'rgba(59, 130, 246, 0.1)'; }
+                      if (appId === 'accounting') { label = 'Accounting'; color = 'var(--accent-purple)'; bg = 'rgba(139, 92, 246, 0.1)'; }
+                      if (appId === 'inventory') { label = 'Inventory'; color = 'var(--accent-orange)'; bg = 'rgba(249, 115, 22, 0.1)'; }
+                      if (appId === 'servicedesk') { label = 'Service Desk'; color = '#a78bfa'; bg = 'rgba(167, 139, 250, 0.1)'; }
+
+                      return (
+                        <span key={appId} style={{ fontSize: '10px', background: bg, border: `1px solid ${color}22`, padding: '2px 8px', borderRadius: '4px', color: color, fontWeight: 600, whiteSpace: 'nowrap' }}>
+                          {label}
                         </span>
-                      </div>
-                    </td>
+                      );
+                    })}
+                    {(!tenant.apps || tenant.apps.length === 0) && (
+                      <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontStyle: 'italic' }}>No apps assigned</span>
+                    )}
+                  </div>
+                </div>
 
-                    {/* Primary Admin */}
-                    <td>
-                      {tenant.admin ? (
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
-                          <span style={{ fontWeight: 500, color: 'var(--text-primary)' }}>
-                            {tenant.admin.first_name} {tenant.admin.last_name}
-                          </span>
-                          <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                            {tenant.admin.email}
-                          </span>
-                        </div>
-                      ) : (
-                        <span style={{ color: 'var(--accent-red)', fontSize: '12px', fontWeight: 500 }}>
-                          No Administrator
-                        </span>
-                      )}
-                    </td>
+                {/* Footer info */}
+                <div style={{ marginTop: 'auto', borderTop: '1px solid var(--border)', paddingTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Calendar size={12}/> Registered: {new Date(tenant.created_at).toLocaleDateString()}
+                  </div>
+                </div>
 
-                    {/* User Base */}
-                    <td>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                        <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
-                          {tenant.users.total} Users
-                        </span>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-                          {tenant.users.Admin > 0 && (
-                            <span style={{ fontSize: '9px', background: 'rgba(34, 211, 238, 0.15)', color: 'var(--accent-cyan)', padding: '1px 5px', borderRadius: '4px', fontWeight: 600 }}>
-                              {tenant.users.Admin} Admin
-                            </span>
-                          )}
-                          {tenant.users.Manager > 0 && (
-                            <span style={{ fontSize: '9px', background: 'rgba(139, 92, 246, 0.15)', color: 'var(--accent-purple)', padding: '1px 5px', borderRadius: '4px', fontWeight: 600 }}>
-                              {tenant.users.Manager} Mgr
-                            </span>
-                          )}
-                          {tenant.users['Sales Associate'] > 0 && (
-                            <span style={{ fontSize: '9px', background: 'rgba(16, 185, 129, 0.15)', color: 'var(--accent-green)', padding: '1px 5px', borderRadius: '4px', fontWeight: 600 }}>
-                              {tenant.users['Sales Associate']} Agent
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </td>
-
-                    {/* Leads Summary */}
-                    <td>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                        <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
-                          {tenant.leads.total} Leads
-                        </span>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-                          {tenant.leads.pending > 0 && (
-                            <span style={{ fontSize: '9px', background: 'rgba(249, 115, 22, 0.15)', color: 'var(--accent-orange)', padding: '1px 5px', borderRadius: '4px', fontWeight: 600 }}>
-                              {tenant.leads.pending} Open
-                            </span>
-                          )}
-                          {tenant.leads.won > 0 && (
-                            <span style={{ fontSize: '9px', background: 'rgba(16, 185, 129, 0.15)', color: 'var(--accent-green)', padding: '1px 5px', borderRadius: '4px', fontWeight: 600 }}>
-                              {tenant.leads.won} Won
-                            </span>
-                          )}
-                          {tenant.leads.lost > 0 && (
-                            <span style={{ fontSize: '9px', background: 'rgba(239, 68, 68, 0.15)', color: 'var(--accent-red)', padding: '1px 5px', borderRadius: '4px', fontWeight: 600 }}>
-                              {tenant.leads.lost} Lost
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </td>
-
-                    {/* Sales Revenue */}
-                    <td>
-                      <span style={{ color: tenant.leads.revenue > 0 ? 'var(--accent-green)' : 'var(--text-muted)', fontWeight: 700 }}>
-                        {tenant.currency_symbol || '₹'}{tenant.leads.revenue.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-                      </span>
-                    </td>
-
-                    {/* Activity */}
-                    <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                        <Activity size={13} style={{ color: 'var(--accent-cyan)' }} />
-                        <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>
-                          {tenant.activities_count}
-                        </span>
-                      </div>
-                    </td>
-
-                    {/* Actions */}
-                    <td>
-                      <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                        <button
-                          onClick={() => handleOpenConfig(tenant)}
-                          className="modal-btn secondary"
-                          style={{
-                            padding: '6px 10px',
-                            fontSize: '11px',
-                            height: 'auto',
-                            minHeight: '0',
-                            gap: '4px',
-                            borderRadius: 'var(--radius-sm)',
-                            display: 'flex',
-                            alignItems: 'center'
-                          }}
-                        >
-                          <Settings size={12} /> Config
-                        </button>
-                        {tenant.admin ? (
-                          <button 
-                            onClick={() => handleImpersonate(tenant)}
-                            className="add-lead-btn"
-                            style={{
-                              padding: '6px 12px',
-                              fontSize: '11px',
-                              height: 'auto',
-                              minHeight: '0',
-                              gap: '4px'
-                            }}
-                          >
-                            <UserCheck size={12} /> Impersonate
-                          </button>
-                        ) : (
-                          <span style={{ color: 'var(--text-muted)', fontSize: '11px' }}>-</span>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="8" style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>
-                    No tenant organizations match the filter criteria.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+              </div>
+            ))
+          ) : (
+            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px', color: 'var(--text-muted)', background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)' }}>
+              No tenant organizations match the filter criteria.
+            </div>
+          )}
         </div>
       </div>
 

@@ -75,6 +75,11 @@ try {
             $admin['currency_symbol'] = $t['currency_symbol'] ?? '₹';
         }
         
+        // 5. Fetch assigned apps
+        $apps_stmt = $pdo->prepare("SELECT app_id FROM tenant_apps WHERE tenant_id = ?");
+        $apps_stmt->execute([$tenant_id]);
+        $apps = $apps_stmt->fetchAll(PDO::FETCH_COLUMN);
+        
         $analytics[] = [
             'id' => $tenant_id,
             'name' => $t['name'],
@@ -84,7 +89,8 @@ try {
             'users' => $user_stats,
             'leads' => $leads_stats,
             'activities_count' => $activity_count,
-            'admin' => $admin ? $admin : null
+            'admin' => $admin ? $admin : null,
+            'apps' => $apps
         ];
     }
     

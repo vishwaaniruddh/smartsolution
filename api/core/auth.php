@@ -18,9 +18,17 @@ switch ($method) {
         $email = isset($data['email']) ? trim($data['email']) : '';
         $password = isset($data['password']) ? $data['password'] : '';
 
+        // --- Custom Log ---
+        $logFile = __DIR__ . '/../api_log.txt';
+        $logData = "[" . date('Y-m-d H:i:s') . "] AUTH REQUEST\nPayload: " . json_encode($data) . "\n";
+        file_put_contents($logFile, $logData, FILE_APPEND);
+        // ------------------
+
         if (empty($email) || empty($password)) {
             http_response_code(400);
-            echo json_encode(["success" => false, "error" => "Email and Password are required."]);
+            $res = ["success" => false, "error" => "Email and Password are required."];
+            file_put_contents($logFile, "Response (400): " . json_encode($res) . "\n\n", FILE_APPEND);
+            echo json_encode($res);
             exit();
         }
 
@@ -33,7 +41,9 @@ switch ($method) {
             if ($user && password_verify($password, $user['password'])) {
                 if ($user['role'] !== 'Superadmin' && isset($user['tenant_deleted']) && intval($user['tenant_deleted']) === 1) {
                     http_response_code(403);
-                    echo json_encode(["success" => false, "error" => "This organization workspace has been suspended. Please contact system administrator."]);
+                    $res = ["success" => false, "error" => "This organization workspace has been suspended. Please contact system administrator."];
+                    file_put_contents($logFile, "Response (403): " . json_encode($res) . "\n\n", FILE_APPEND);
+                    echo json_encode($res);
                     exit();
                 }
                 
@@ -44,20 +54,30 @@ switch ($method) {
                     'role' => $user['role']
                 ];
                 
+                // Remove password before returning
+                unset($user['password']);
+                
                 $token = jwt_encode($payload);
                 
-                echo json_encode([
+                $res = [
                     "success" => true,
                     "message" => "Login successful",
-                    "token" => $token
-                ]);
+                    "token" => $token,
+                    "user" => $user
+                ];
+                file_put_contents($logFile, "Response (200): " . json_encode($res) . "\n\n", FILE_APPEND);
+                echo json_encode($res);
             } else {
                 http_response_code(401);
-                echo json_encode(["success" => false, "error" => "Invalid email or password."]);
+                $res = ["success" => false, "error" => "Invalid email or password."];
+                file_put_contents($logFile, "Response (401): " . json_encode($res) . "\n\n", FILE_APPEND);
+                echo json_encode($res);
             }
         } catch (PDOException $e) {
             http_response_code(500);
-            echo json_encode(["success" => false, "error" => $e->getMessage()]);
+            $res = ["success" => false, "error" => $e->getMessage()];
+            file_put_contents($logFile, "Response (500): " . json_encode($res) . "\n\n", FILE_APPEND);
+            echo json_encode($res);
         }
         break;
 

@@ -5,9 +5,22 @@ require_once __DIR__ . '/../../core/db.php';
 $method = $_SERVER['REQUEST_METHOD'];
 $tenant_id = getTenantId();
 
+$user_context = getCurrentUserContext();
+$is_admin_or_manager = $user_context && in_array($user_context['role'], ['Admin', 'Manager', 'Superadmin']);
+$current_emp_id = getCurrentEmployeeId($pdo, $tenant_id);
+
 switch ($method) {
     case 'GET':
         $employee_id = $_GET['employee_id'] ?? null;
+        
+        // Enforce ESS isolation
+        if (!$is_admin_or_manager) {
+            if (!$current_emp_id) {
+                echo json_encode(["success" => true, "data" => []]);
+                exit;
+            }
+            $employee_id = $current_emp_id; // Force to their own
+        }
         $date = $_GET['date'] ?? null;
         $from_date = $_GET['from_date'] ?? null;
         $to_date = $_GET['to_date'] ?? null;
@@ -58,6 +71,25 @@ switch ($method) {
         
         if ($entries && is_array($entries)) {
             // Bulk insert
+            if (!$is_admin_or_manager) {
+                if (!$current_emp_id) {
+                    http_response_code(403);
+                    echo json_encode(["success" => false, "error" => "No employee record linked to your user account."]);
+                    exit;
+                }
+                $filtered_entries = [];
+                foreach ($entries as $entry) {
+                    if ($entry['employee_id'] == $current_emp_id) {
+                        $filtered_entries[] = $entry;
+                    }
+                }
+                if (empty($filtered_entries)) {
+                    http_response_code(403);
+                    echo json_encode(["success" => false, "error" => "You can only update your own attendance."]);
+                    exit;
+                }
+                $entries = $filtered_entries;
+            }
             $date = $input['date'] ?? date('Y-m-d');
             $inserted = 0;
             
@@ -85,6 +117,17 @@ switch ($method) {
         } else {
             // Single entry
             $employee_id = $input['employee_id'] ?? null;
+            
+            // Enforce ESS isolation
+            if (!$is_admin_or_manager) {
+                if (!$current_emp_id) {
+                    http_response_code(403);
+                    echo json_encode(["success" => false, "error" => "No employee record linked to your user account."]);
+                    exit;
+                }
+                $employee_id = $current_emp_id; // Force to their own
+            }
+
             $date = $input['date'] ?? date('Y-m-d');
             $status = $input['status'] ?? 'Present';
             $clock_in = $input['clock_in'] ?? null;
@@ -121,6 +164,22 @@ switch ($method) {
             echo json_encode(["success" => false, "error" => "Attendance ID is required."]);
             exit;
         }
+
+        if (!$is_admin_or_manager) {
+            // Employees can only edit their own attendance
+            if (!$current_emp_id) {
+                http_response_code(403);
+                echo json_encode(["success" => false, "error" => "Unauthorized"]);
+                exit;
+            }
+            $check = $pdo->prepare("SELECT id FROM hrms_attendance WHERE id = ? AND employee_id = ?");
+            $check->execute([$id, $current_emp_id]);
+            if (!$check->fetch()) {
+                http_response_code(403);
+                echo json_encode(["success" => false, "error" => "Unauthorized to edit this record."]);
+                exit;
+            }
+        }
         
         $status = $input['status'] ?? null;
         $clock_in = $input['clock_in'] ?? null;
@@ -142,6 +201,11 @@ switch ($method) {
         break;
 
     case 'DELETE':
+        if (!$is_admin_or_manager) {
+            http_response_code(403);
+            echo json_encode(["success" => false, "error" => "Unauthorized to delete attendance records."]);
+            exit;
+        }
         $id = $_GET['id'] ?? null;
         if (!$id) {
             echo json_encode(["success" => false, "error" => "Attendance ID is required."]);

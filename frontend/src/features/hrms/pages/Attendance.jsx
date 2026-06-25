@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { apiBaseUrl } from '../../../utils/env.js';
 import { useHRMS } from '../context/HRMSContext';
+import { useAuth } from '../../../context/AuthContext';
 import { Calendar, Clock, ChevronLeft, ChevronRight, Save } from 'lucide-react';
 
 const statusOptions = ['Present', 'Absent', 'Half-Day', 'Late', 'On Leave'];
@@ -15,6 +16,9 @@ const statusConfig = {
 const Attendance = () => {
   const { toast, tenantId } = useHRMS();
 
+  const { user } = useAuth();
+  const isHRMSAdmin = ['Admin', 'Manager', 'Superadmin'].includes(user?.role);
+
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [employees, setEmployees] = useState([]);
   const [attendanceMap, setAttendanceMap] = useState({});
@@ -24,7 +28,7 @@ const Attendance = () => {
   const [calendarMonth, setCalendarMonth] = useState(new Date().getMonth() + 1);
   const [calendarYear, setCalendarYear] = useState(new Date().getFullYear());
   const [calendarData, setCalendarData] = useState([]);
-  const [selectedEmpForCalendar, setSelectedEmpForCalendar] = useState('');
+  const [selectedEmpForCalendar, setSelectedEmpForCalendar] = useState(isHRMSAdmin ? '' : 'me');
 
   // Fetch employees
   useEffect(() => {
@@ -177,15 +181,17 @@ const Attendance = () => {
         {viewMode === 'daily' && (
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
             <input type="date" value={selectedDate} onChange={e => setSelectedDate(e.target.value)} style={{ ...inputStyle, padding: '8px 12px' }} />
-            <div style={{ display: 'flex', gap: '4px' }}>
-              {['Present', 'Absent'].map(s => (
-                <button key={s} onClick={() => handleMarkAll(s)} style={{
-                  padding: '6px 12px', fontSize: '11px', fontWeight: 600,
-                  background: statusConfig[s].bg, color: statusConfig[s].color,
-                  border: 'none', borderRadius: 'var(--radius-sm)', cursor: 'pointer'
-                }}>Mark All {s}</button>
-              ))}
-            </div>
+            {isHRMSAdmin && (
+              <div style={{ display: 'flex', gap: '4px' }}>
+                {['Present', 'Absent'].map(s => (
+                  <button key={s} onClick={() => handleMarkAll(s)} style={{
+                    padding: '6px 12px', fontSize: '11px', fontWeight: 600,
+                    background: statusConfig[s].bg, color: statusConfig[s].color,
+                    border: 'none', borderRadius: 'var(--radius-sm)', cursor: 'pointer'
+                  }}>Mark All {s}</button>
+                ))}
+              </div>
+            )}
             <button onClick={handleSave} disabled={saving} className="add-lead-btn" style={{ gap: '6px' }}>
               <Save size={14} /> {saving ? 'Saving...' : 'Save Attendance'}
             </button>
@@ -274,10 +280,14 @@ const Attendance = () => {
       {viewMode === 'calendar' && (
         <div style={{ background: 'var(--bg-card)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', padding: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
-            <select value={selectedEmpForCalendar} onChange={e => setSelectedEmpForCalendar(e.target.value)} style={{ ...inputStyle, minWidth: '220px', padding: '8px 12px' }}>
-              <option value="">Select Employee</option>
-              {employees.map(emp => <option key={emp.id} value={emp.id}>{emp.first_name} {emp.last_name} ({emp.emp_code})</option>)}
-            </select>
+            {isHRMSAdmin ? (
+              <select value={selectedEmpForCalendar} onChange={e => setSelectedEmpForCalendar(e.target.value)} style={{ ...inputStyle, minWidth: '220px', padding: '8px 12px' }}>
+                <option value="">Select Employee</option>
+                {employees.map(emp => <option key={emp.id} value={emp.id}>{emp.first_name} {emp.last_name} ({emp.emp_code})</option>)}
+              </select>
+            ) : (
+              <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>My Calendar</div>
+            )}
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <button onClick={() => {
                 if (calendarMonth === 1) { setCalendarMonth(12); setCalendarYear(calendarYear - 1); }

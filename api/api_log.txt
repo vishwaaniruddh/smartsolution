@@ -1,0 +1,13 @@
+ 
+[2026-06-25 08:42:48] AUTH REQUEST
+Payload: {"email":"vishwaaniruddh@gmail.com","password":"rootroot"}
+Response (200): {"success":true,"message":"Login successful","token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjo2LCJ0ZW5hbnRfaWQiOm51bGwsInJvbGUiOiJTdXBlcmFkbWluIiwiZXhwIjoxNzgyNDU2MTY4LCJpYXQiOjE3ODIzNjk3Njh9.AM8udXezWD_IDcUr8UStnd6FWI2JxRowL3buKniU5oc","user":{"id":6,"first_name":"System","last_name":"Superadmin","email":"vishwaaniruddh@gmail.com","contact":"","gender":"Other","address":"","profile_photo":null,"role":"Superadmin","created_at":"2026-06-13 13:14:52","tenant_id":null,"is_first_login":0,"tenant_name":null,"currency_name":null,"currency_symbol":null,"tenant_deleted":null}}
+
+[2026-06-25 08:44:42] AUTH REQUEST
+Payload: {"email":"mithunat81@gmail.com","password":"rootroot"}
+Response (200): {"success":true,"message":"Login successful","token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxMCwidGVuYW50X2lkIjoyLCJyb2xlIjoiQWRtaW4iLCJleHAiOjE3ODI0NTYyODIsImlhdCI6MTc4MjM2OTg4Mn0.yJvs7uwrZ89SRbMnwuw9m97XwLWSIBm7GQXb-_AXnf0","user":{"id":10,"first_name":"Mithun","last_name":"Desai","email":"mithunat81@gmail.com","contact":"+919870978709","gender":"Male","address":"Jagriti","profile_photo":null,"role":"Admin","created_at":"2026-06-13 14:51:50","tenant_id":2,"is_first_login":0,"tenant_name":"mithundesai@sarsspl.com","currency_name":"Indian Rupee","currency_symbol":"\u20b9","tenant_deleted":0}}
+
+[2026-06-25 09:25:54] AUTH REQUEST
+Payload: {"email":"vishwaaniruddh@gmail.com","password":"rootroot"}
+Response (200): {"success":true,"message":"Login successful","token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjo2LCJ0ZW5hbnRfaWQiOm51bGwsInJvbGUiOiJTdXBlcmFkbWluIiwiZXhwIjoxNzgyNDU4NzU1LCJpYXQiOjE3ODIzNzIzNTV9.K-HFFFFdGz9yfIq0rv_hztDKVdJ-SO_FnEGmW3rrvYU","user":{"id":6,"first_name":"System","last_name":"Superadmin","email":"vishwaaniruddh@gmail.com","contact":"","gender":"Other","address":"","profile_photo":null,"role":"Superadmin","created_at":"2026-06-13 13:14:52","tenant_id":null,"is_first_login":0,"tenant_name":null,"currency_name":null,"currency_symbol":null,"tenant_deleted":null}}
+

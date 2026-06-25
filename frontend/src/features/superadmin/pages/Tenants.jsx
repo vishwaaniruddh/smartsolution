@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Plus, X, Search, Building, ShieldAlert, ShieldCheck, Mail, Phone, Calendar, User, UserCheck, Settings, Save, Send, Ban, MoreVertical } from 'lucide-react';
+import { Plus, X, Search, Building, ShieldAlert, ShieldCheck, Mail, Phone, Calendar, User, UserCheck, Settings, Save, Send, Ban, MoreVertical, Trash2 } from 'lucide-react';
 import { basePath, apiBaseUrl } from '../../../utils/env.js';
-import { useToast } from '../../../components/NotificationContext';
+import { useToast, useConfirm } from '../../../components/NotificationContext';
 
 const currenciesList = [
   { name: 'Indian Rupee', symbol: '₹' },
@@ -35,6 +35,7 @@ const validatePhone = (phone) => {
 
 const Tenants = () => {
   const toast = useToast();
+  const confirm = useConfirm();
   const [tenants, setTenants] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -108,12 +109,16 @@ const Tenants = () => {
       .catch(err => console.warn('API error fetching plans:', err));
   };
 
-  const handleToggleSuspend = (tenant) => {
+  const handleToggleSuspend = async (tenant) => {
     const isSuspended = tenant.is_deleted === 1 || tenant.is_deleted === '1';
     const nextDeleted = isSuspended ? 0 : 1;
     const actionText = nextDeleted === 1 ? 'suspend' : 'activate';
     
-    if (!window.confirm(`Are you sure you want to ${actionText} organization '${tenant.name}' and all associated user accounts?`)) {
+    const isConfirmed = await confirm(
+      `Are you sure you want to ${actionText} organization '${tenant.name}' and all associated user accounts?`,
+      `Confirm ${nextDeleted === 1 ? 'Suspension' : 'Activation'}`
+    );
+    if (!isConfirmed) {
       return;
     }
     
@@ -143,6 +148,33 @@ const Tenants = () => {
       .catch((err) => {
         console.error("Error toggling tenant status:", err);
         toast.error('Network error while toggling organization status.');
+      });
+  };
+
+  const handleDelete = async (tenant) => {
+    const isConfirmed = await confirm(
+      `CRITICAL WARNING: Are you sure you want to PERMANENTLY delete organization '${tenant.name}' and ALL associated data? This action cannot be undone.`,
+      'Permanent Deletion'
+    );
+    if (!isConfirmed) {
+      return;
+    }
+    
+    fetch(`${apiBaseUrl}/tenants?id=${tenant.id}`, {
+      method: 'DELETE',
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          toast.success('Organization deleted permanently.');
+          fetchTenants();
+        } else {
+          toast.error(data.error || 'Failed to delete organization.');
+        }
+      })
+      .catch((err) => {
+        console.error("Error deleting tenant:", err);
+        toast.error('Network error while deleting organization.');
       });
   };
 
@@ -543,12 +575,16 @@ const Tenants = () => {
           <table className="leads-table">
             <thead>
               <tr>
+                <th>#</th>
+                <th>ID</th>
                 <th>Organization</th>
-                <th>Status</th>
                 <th>Primary Administrator</th>
+                <th>Email</th>
+                <th>Phone</th>
                 <th>Applications</th>
                 <th>Currency</th>
                 <th>Registered</th>
+                <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -561,6 +597,20 @@ const Tenants = () => {
                     : 'TO';
                   return (
                     <tr key={tenant.id} style={{ opacity: isSuspended ? 0.65 : 1, transition: 'opacity 0.2s ease' }}>
+                      {/* Serial Number */}
+                      <td>
+                        <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                          {tenants.findIndex(t => t.id === tenant.id) + 1}
+                        </span>
+                      </td>
+
+                      {/* ID */}
+                      <td>
+                        <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                          #{tenant.id}
+                        </span>
+                      </td>
+
                       {/* Organization */}
                       <td>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -584,33 +634,8 @@ const Tenants = () => {
                           </div>
                           <div>
                             <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '14px' }}>{tenant.name}</div>
-                            <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '1px' }}>ID: #{tenant.id}</div>
                           </div>
                         </div>
-                      </td>
-
-                      {/* Status */}
-                      <td>
-                        <span style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '5px',
-                          fontSize: '11px',
-                          fontWeight: 600,
-                          padding: '3px 10px',
-                          borderRadius: '20px',
-                          background: isSuspended ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
-                          color: isSuspended ? 'var(--accent-red)' : 'var(--accent-emerald)',
-                          border: isSuspended ? '1px solid rgba(239, 68, 68, 0.2)' : '1px solid rgba(16, 185, 129, 0.2)'
-                        }}>
-                          <span style={{
-                            width: '6px',
-                            height: '6px',
-                            borderRadius: '50%',
-                            background: isSuspended ? 'var(--accent-red)' : 'var(--accent-emerald)'
-                          }}></span>
-                          {isSuspended ? 'Suspended' : 'Active'}
-                        </span>
                       </td>
 
                       {/* Primary Admin */}
@@ -632,13 +657,8 @@ const Tenants = () => {
                             }}>
                               {getInitials(tenant.admin)}
                             </div>
-                            <div style={{ minWidth: 0 }}>
-                              <div style={{ fontWeight: 500, color: 'var(--text-primary)', fontSize: '13px' }}>
-                                {tenant.admin.first_name} {tenant.admin.last_name}
-                              </div>
-                              <div style={{ fontSize: '11px', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '200px' }} title={tenant.admin.email}>
-                                {tenant.admin.email}
-                              </div>
+                            <div style={{ fontWeight: 500, color: 'var(--text-primary)', fontSize: '13px' }}>
+                              {tenant.admin.first_name} {tenant.admin.last_name}
                             </div>
                           </div>
                         ) : (
@@ -648,9 +668,31 @@ const Tenants = () => {
                         )}
                       </td>
                       
-                      {/* Apps */}
+                      {/* Email */}
                       <td>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                        {tenant.admin ? (
+                          <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }} title={tenant.admin.email}>
+                            {tenant.admin.email}
+                          </span>
+                        ) : (
+                          <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>—</span>
+                        )}
+                      </td>
+
+                      {/* Phone */}
+                      <td>
+                        {tenant.admin && tenant.admin.contact ? (
+                          <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                            {tenant.admin.contact}
+                          </span>
+                        ) : (
+                          <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>—</span>
+                        )}
+                      </td>
+                      
+                      {/* Applications */}
+                      <td style={{ whiteSpace: 'nowrap' }}>
+                        <div style={{ display: 'flex', gap: '4px' }}>
                           {tenant.apps && tenant.apps.map(appObj => {
                             const appId = typeof appObj === 'string' ? appObj : appObj.app_id;
                             let label = appId ? String(appId).toUpperCase() : 'UNKNOWN';
@@ -686,6 +728,30 @@ const Tenants = () => {
                         <span style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                           <Calendar size={12} />
                           {new Date(tenant.created_at).toLocaleDateString()}
+                        </span>
+                      </td>
+
+                      {/* Status */}
+                      <td>
+                        <span style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '5px',
+                          fontSize: '11px',
+                          fontWeight: 600,
+                          padding: '3px 10px',
+                          borderRadius: '20px',
+                          background: isSuspended ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
+                          color: isSuspended ? 'var(--accent-red)' : 'var(--accent-emerald)',
+                          border: isSuspended ? '1px solid rgba(239, 68, 68, 0.2)' : '1px solid rgba(16, 185, 129, 0.2)'
+                        }}>
+                          <span style={{
+                            width: '6px',
+                            height: '6px',
+                            borderRadius: '50%',
+                            background: isSuspended ? 'var(--accent-red)' : 'var(--accent-emerald)'
+                          }}></span>
+                          {isSuspended ? 'Suspended' : 'Active'}
                         </span>
                       </td>
 
@@ -803,6 +869,34 @@ const Tenants = () => {
                                   }}
                                 >
                                   <UserCheck size={14} /> Impersonate
+                                </button>
+                              )}
+
+                              {isSuspended && (
+                                <button
+                                  onClick={() => { handleDelete(tenant); setOpenActionMenu(null); }}
+                                  title="Delete Organization Permanently"
+                                  style={{
+                                    padding: '5px 10px',
+                                    fontSize: '11px',
+                                    fontWeight: 600,
+                                    height: 'auto',
+                                    minHeight: '0',
+                                    gap: '8px',
+                                    borderRadius: 'var(--radius-sm)',
+                                    border: 'none',
+                                    background: 'rgba(239, 68, 68, 0.1)',
+                                    color: 'var(--accent-red)',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    width: '100%',
+                                    justifyContent: 'flex-start',
+                                    transition: 'all 0.15s ease',
+                                    marginTop: '4px'
+                                  }}
+                                >
+                                  <Trash2 size={14} /> Delete
                                 </button>
                               )}
                             </div>

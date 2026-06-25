@@ -1,0 +1,4610 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "composer.json",
+      "file_type": "code",
+      "source_file": "api/composer.json",
+      "source_location": "L1",
+      "id": "api_composer_json",
+      "community": 10,
+      "norm_label": "composer.json"
+    },
+    {
+      "label": "require",
+      "file_type": "code",
+      "source_file": "api/composer.json",
+      "source_location": "L2",
+      "id": "api_composer_require",
+      "community": 10,
+      "norm_label": "require"
+    },
+    {
+      "label": "phpmailer/phpmailer",
+      "file_type": "code",
+      "source_file": "api/composer.json",
+      "source_location": "L3",
+      "id": "api_composer_require_phpmailer_phpmailer",
+      "community": 10,
+      "norm_label": "phpmailer/phpmailer"
+    },
+    {
+      "label": "index.php",
+      "file_type": "code",
+      "source_file": "api/index.php",
+      "source_location": "L1",
+      "id": "api_index_php",
+      "community": 13,
+      "norm_label": "index.php"
+    },
+    {
+      "label": "setup.php",
+      "file_type": "code",
+      "source_file": "api/setup.php",
+      "source_location": "L1",
+      "id": "api_setup_php",
+      "community": 14,
+      "norm_label": "setup.php"
+    },
+    {
+      "label": "auth.php",
+      "file_type": "code",
+      "source_file": "api/core/auth.php",
+      "source_location": "L1",
+      "id": "api_core_auth_php",
+      "community": 15,
+      "norm_label": "auth.php"
+    },
+    {
+      "label": "db.php",
+      "file_type": "code",
+      "source_file": "api/core/db.php",
+      "source_location": "L1",
+      "id": "api_core_db_php",
+      "community": 8,
+      "norm_label": "db.php"
+    },
+    {
+      "label": "getTenantId()",
+      "file_type": "code",
+      "source_file": "api/core/db.php",
+      "source_location": "L54",
+      "id": "core_db_gettenantid",
+      "community": 8,
+      "norm_label": "gettenantid()"
+    },
+    {
+      "label": "email_logs.php",
+      "file_type": "code",
+      "source_file": "api/core/email_logs.php",
+      "source_location": "L1",
+      "id": "api_core_email_logs_php",
+      "community": 16,
+      "norm_label": "email_logs.php"
+    },
+    {
+      "label": "mailer.php",
+      "file_type": "code",
+      "source_file": "api/core/mailer.php",
+      "source_location": "L1",
+      "id": "api_core_mailer_php",
+      "community": 8,
+      "norm_label": "mailer.php"
+    },
+    {
+      "label": "getMailer()",
+      "file_type": "code",
+      "source_file": "api/core/mailer.php",
+      "source_location": "L16",
+      "id": "core_mailer_getmailer",
+      "community": 8,
+      "norm_label": "getmailer()"
+    },
+    {
+      "label": "logEmailAttempt()",
+      "file_type": "code",
+      "source_file": "api/core/mailer.php",
+      "source_location": "L76",
+      "id": "core_mailer_logemailattempt",
+      "community": 8,
+      "norm_label": "logemailattempt()"
+    },
+    {
+      "label": "smtp_config.php",
+      "file_type": "code",
+      "source_file": "api/core/smtp_config.php",
+      "source_location": "L1",
+      "id": "api_core_smtp_config_php",
+      "community": 17,
+      "norm_label": "smtp_config.php"
+    },
+    {
+      "label": "users.php",
+      "file_type": "code",
+      "source_file": "api/core/users.php",
+      "source_location": "L1",
+      "id": "api_core_users_php",
+      "community": 18,
+      "norm_label": "users.php"
+    },
+    {
+      "label": "attendance.php",
+      "file_type": "code",
+      "source_file": "api/modules/hrms/attendance.php",
+      "source_location": "L1",
+      "id": "api_modules_hrms_attendance_php",
+      "community": 19,
+      "norm_label": "attendance.php"
+    },
+    {
+      "label": "departments.php",
+      "file_type": "code",
+      "source_file": "api/modules/hrms/departments.php",
+      "source_location": "L1",
+      "id": "api_modules_hrms_departments_php",
+      "community": 20,
+      "norm_label": "departments.php"
+    },
+    {
+      "label": "designations.php",
+      "file_type": "code",
+      "source_file": "api/modules/hrms/designations.php",
+      "source_location": "L1",
+      "id": "api_modules_hrms_designations_php",
+      "community": 21,
+      "norm_label": "designations.php"
+    },
+    {
+      "label": "employees.php",
+      "file_type": "code",
+      "source_file": "api/modules/hrms/employees.php",
+      "source_location": "L1",
+      "id": "api_modules_hrms_employees_php",
+      "community": 22,
+      "norm_label": "employees.php"
+    },
+    {
+      "label": "holidays.php",
+      "file_type": "code",
+      "source_file": "api/modules/hrms/holidays.php",
+      "source_location": "L1",
+      "id": "api_modules_hrms_holidays_php",
+      "community": 23,
+      "norm_label": "holidays.php"
+    },
+    {
+      "label": "hrms_dashboard.php",
+      "file_type": "code",
+      "source_file": "api/modules/hrms/hrms_dashboard.php",
+      "source_location": "L1",
+      "id": "api_modules_hrms_hrms_dashboard_php",
+      "community": 24,
+      "norm_label": "hrms_dashboard.php"
+    },
+    {
+      "label": "leaves.php",
+      "file_type": "code",
+      "source_file": "api/modules/hrms/leaves.php",
+      "source_location": "L1",
+      "id": "api_modules_hrms_leaves_php",
+      "community": 25,
+      "norm_label": "leaves.php"
+    },
+    {
+      "label": "payroll.php",
+      "file_type": "code",
+      "source_file": "api/modules/hrms/payroll.php",
+      "source_location": "L1",
+      "id": "api_modules_hrms_payroll_php",
+      "community": 26,
+      "norm_label": "payroll.php"
+    },
+    {
+      "label": "activities.php",
+      "file_type": "code",
+      "source_file": "api/modules/leads/activities.php",
+      "source_location": "L1",
+      "id": "api_modules_leads_activities_php",
+      "community": 27,
+      "norm_label": "activities.php"
+    },
+    {
+      "label": "leads.php",
+      "file_type": "code",
+      "source_file": "api/modules/leads/leads.php",
+      "source_location": "L1",
+      "id": "api_modules_leads_leads_php",
+      "community": 11,
+      "norm_label": "leads.php"
+    },
+    {
+      "label": "isValidEmail()",
+      "file_type": "code",
+      "source_file": "api/modules/leads/leads.php",
+      "source_location": "L7",
+      "id": "leads_leads_isvalidemail",
+      "community": 11,
+      "norm_label": "isvalidemail()"
+    },
+    {
+      "label": "isValidPhone()",
+      "file_type": "code",
+      "source_file": "api/modules/leads/leads.php",
+      "source_location": "L15",
+      "id": "leads_leads_isvalidphone",
+      "community": 11,
+      "norm_label": "isvalidphone()"
+    },
+    {
+      "label": "lead_sources.php",
+      "file_type": "code",
+      "source_file": "api/modules/leads/lead_sources.php",
+      "source_location": "L1",
+      "id": "api_modules_leads_lead_sources_php",
+      "community": 28,
+      "norm_label": "lead_sources.php"
+    },
+    {
+      "label": "payments.php",
+      "file_type": "code",
+      "source_file": "api/modules/leads/payments.php",
+      "source_location": "L1",
+      "id": "api_modules_leads_payments_php",
+      "community": 29,
+      "norm_label": "payments.php"
+    },
+    {
+      "label": "tasks.php",
+      "file_type": "code",
+      "source_file": "api/modules/leads/tasks.php",
+      "source_location": "L1",
+      "id": "api_modules_leads_tasks_php",
+      "community": 30,
+      "norm_label": "tasks.php"
+    },
+    {
+      "label": "superadmin_analytics.php",
+      "file_type": "code",
+      "source_file": "api/modules/superadmin/superadmin_analytics.php",
+      "source_location": "L1",
+      "id": "api_modules_superadmin_superadmin_analytics_php",
+      "community": 31,
+      "norm_label": "superadmin_analytics.php"
+    },
+    {
+      "label": "tenants.php",
+      "file_type": "code",
+      "source_file": "api/modules/superadmin/tenants.php",
+      "source_location": "L1",
+      "id": "api_modules_superadmin_tenants_php",
+      "community": 12,
+      "norm_label": "tenants.php"
+    },
+    {
+      "label": "isValidEmail()",
+      "file_type": "code",
+      "source_file": "api/modules/superadmin/tenants.php",
+      "source_location": "L8",
+      "id": "superadmin_tenants_isvalidemail",
+      "community": 12,
+      "norm_label": "isvalidemail()"
+    },
+    {
+      "label": "isValidPhone()",
+      "file_type": "code",
+      "source_file": "api/modules/superadmin/tenants.php",
+      "source_location": "L16",
+      "id": "superadmin_tenants_isvalidphone",
+      "community": 12,
+      "norm_label": "isvalidphone()"
+    },
+    {
+      "label": "eslint.config.js",
+      "file_type": "code",
+      "source_file": "frontend/eslint.config.js",
+      "source_location": "L1",
+      "id": "frontend_eslint_config_js",
+      "community": 32,
+      "norm_label": "eslint.config.js"
+    },
+    {
+      "label": "package.json",
+      "file_type": "code",
+      "source_file": "frontend/package.json",
+      "source_location": "L1",
+      "id": "frontend_package_json",
+      "community": 2,
+      "norm_label": "package.json"
+    },
+    {
+      "label": "name",
+      "file_type": "code",
+      "source_file": "frontend/package.json",
+      "source_location": "L2",
+      "id": "frontend_package_name",
+      "community": 2,
+      "norm_label": "name"
+    },
+    {
+      "label": "private",
+      "file_type": "code",
+      "source_file": "frontend/package.json",
+      "source_location": "L3",
+      "id": "frontend_package_private",
+      "community": 2,
+      "norm_label": "private"
+    },
+    {
+      "label": "version",
+      "file_type": "code",
+      "source_file": "frontend/package.json",
+      "source_location": "L4",
+      "id": "frontend_package_version",
+      "community": 2,
+      "norm_label": "version"
+    },
+    {
+      "label": "type",
+      "file_type": "code",
+      "source_file": "frontend/package.json",
+      "source_location": "L5",
+      "id": "frontend_package_type",
+      "community": 2,
+      "norm_label": "type"
+    },
+    {
+      "label": "scripts",
+      "file_type": "code",
+      "source_file": "frontend/package.json",
+      "source_location": "L6",
+      "id": "frontend_package_scripts",
+      "community": 2,
+      "norm_label": "scripts"
+    },
+    {
+      "label": "dev",
+      "file_type": "code",
+      "source_file": "frontend/package.json",
+      "source_location": "L7",
+      "id": "frontend_package_scripts_dev",
+      "community": 2,
+      "norm_label": "dev"
+    },
+    {
+      "label": "build",
+      "file_type": "code",
+      "source_file": "frontend/package.json",
+      "source_location": "L8",
+      "id": "frontend_package_scripts_build",
+      "community": 2,
+      "norm_label": "build"
+    },
+    {
+      "label": "lint",
+      "file_type": "code",
+      "source_file": "frontend/package.json",
+      "source_location": "L9",
+      "id": "frontend_package_scripts_lint",
+      "community": 2,
+      "norm_label": "lint"
+    },
+    {
+      "label": "preview",
+      "file_type": "code",
+      "source_file": "frontend/package.json",
+      "source_location": "L10",
+      "id": "frontend_package_scripts_preview",
+      "community": 2,
+      "norm_label": "preview"
+    },
+    {
+      "label": "dependencies",
+      "file_type": "code",
+      "source_file": "frontend/package.json",
+      "source_location": "L12",
+      "id": "frontend_package_dependencies",
+      "community": 2,
+      "norm_label": "dependencies"
+    },
+    {
+      "label": "lucide-react",
+      "file_type": "code",
+      "source_file": "frontend/package.json",
+      "source_location": "L13",
+      "id": "frontend_package_dependencies_lucide_react",
+      "community": 2,
+      "norm_label": "lucide-react"
+    },
+    {
+      "label": "react",
+      "file_type": "code",
+      "source_file": "frontend/package.json",
+      "source_location": "L14",
+      "id": "frontend_package_dependencies_react",
+      "community": 2,
+      "norm_label": "react"
+    },
+    {
+      "label": "react-dom",
+      "file_type": "code",
+      "source_file": "frontend/package.json",
+      "source_location": "L15",
+      "id": "frontend_package_dependencies_react_dom",
+      "community": 2,
+      "norm_label": "react-dom"
+    },
+    {
+      "label": "react-router-dom",
+      "file_type": "code",
+      "source_file": "frontend/package.json",
+      "source_location": "L16",
+      "id": "frontend_package_dependencies_react_router_dom",
+      "community": 2,
+      "norm_label": "react-router-dom"
+    },
+    {
+      "label": "devDependencies",
+      "file_type": "code",
+      "source_file": "frontend/package.json",
+      "source_location": "L18",
+      "id": "frontend_package_devdependencies",
+      "community": 2,
+      "norm_label": "devdependencies"
+    },
+    {
+      "label": "@eslint/js",
+      "file_type": "code",
+      "source_file": "frontend/package.json",
+      "source_location": "L19",
+      "id": "frontend_package_devdependencies_eslint_js",
+      "community": 2,
+      "norm_label": "@eslint/js"
+    },
+    {
+      "label": "@types/react",
+      "file_type": "code",
+      "source_file": "frontend/package.json",
+      "source_location": "L20",
+      "id": "frontend_package_devdependencies_types_react",
+      "community": 2,
+      "norm_label": "@types/react"
+    },
+    {
+      "label": "@types/react-dom",
+      "file_type": "code",
+      "source_file": "frontend/package.json",
+      "source_location": "L21",
+      "id": "frontend_package_devdependencies_types_react_dom",
+      "community": 2,
+      "norm_label": "@types/react-dom"
+    },
+    {
+      "label": "@vitejs/plugin-react",
+      "file_type": "code",
+      "source_file": "frontend/package.json",
+      "source_location": "L22",
+      "id": "frontend_package_devdependencies_vitejs_plugin_react",
+      "community": 2,
+      "norm_label": "@vitejs/plugin-react"
+    },
+    {
+      "label": "eslint",
+      "file_type": "code",
+      "source_file": "frontend/package.json",
+      "source_location": "L23",
+      "id": "frontend_package_devdependencies_eslint",
+      "community": 2,
+      "norm_label": "eslint"
+    },
+    {
+      "label": "eslint-plugin-react-hooks",
+      "file_type": "code",
+      "source_file": "frontend/package.json",
+      "source_location": "L24",
+      "id": "frontend_package_devdependencies_eslint_plugin_react_hooks",
+      "community": 2,
+      "norm_label": "eslint-plugin-react-hooks"
+    },
+    {
+      "label": "eslint-plugin-react-refresh",
+      "file_type": "code",
+      "source_file": "frontend/package.json",
+      "source_location": "L25",
+      "id": "frontend_package_devdependencies_eslint_plugin_react_refresh",
+      "community": 2,
+      "norm_label": "eslint-plugin-react-refresh"
+    },
+    {
+      "label": "globals",
+      "file_type": "code",
+      "source_file": "frontend/package.json",
+      "source_location": "L26",
+      "id": "frontend_package_devdependencies_globals",
+      "community": 2,
+      "norm_label": "globals"
+    },
+    {
+      "label": "vite",
+      "file_type": "code",
+      "source_file": "frontend/package.json",
+      "source_location": "L27",
+      "id": "frontend_package_devdependencies_vite",
+      "community": 2,
+      "norm_label": "vite"
+    },
+    {
+      "label": "vite.config.js",
+      "file_type": "code",
+      "source_file": "frontend/vite.config.js",
+      "source_location": "L1",
+      "id": "frontend_vite_config_js",
+      "community": 33,
+      "norm_label": "vite.config.js"
+    },
+    {
+      "label": "App.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_app_jsx",
+      "community": 1,
+      "norm_label": "app.jsx"
+    },
+    {
+      "label": "ProtectedRoute()",
+      "file_type": "code",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L35",
+      "id": "src_app_protectedroute",
+      "community": 1,
+      "norm_label": "protectedroute()"
+    },
+    {
+      "label": "RootRedirect()",
+      "file_type": "code",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L64",
+      "id": "src_app_rootredirect",
+      "community": 1,
+      "norm_label": "rootredirect()"
+    },
+    {
+      "label": "App()",
+      "file_type": "code",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L110",
+      "id": "src_app_app",
+      "community": 1,
+      "norm_label": "app()"
+    },
+    {
+      "label": "main.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/main.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_main_jsx",
+      "community": 1,
+      "norm_label": "main.jsx"
+    },
+    {
+      "label": "NotificationContext.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/components/NotificationContext.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_components_notificationcontext_jsx",
+      "community": 0,
+      "norm_label": "notificationcontext.jsx"
+    },
+    {
+      "label": "NotificationContext",
+      "file_type": "code",
+      "source_file": "frontend/src/components/NotificationContext.jsx",
+      "source_location": "L4",
+      "id": "components_notificationcontext_notificationcontext",
+      "community": 0,
+      "norm_label": "notificationcontext"
+    },
+    {
+      "label": "useToast()",
+      "file_type": "code",
+      "source_file": "frontend/src/components/NotificationContext.jsx",
+      "source_location": "L6",
+      "id": "components_notificationcontext_usetoast",
+      "community": 0,
+      "norm_label": "usetoast()"
+    },
+    {
+      "label": "useConfirm()",
+      "file_type": "code",
+      "source_file": "frontend/src/components/NotificationContext.jsx",
+      "source_location": "L12",
+      "id": "components_notificationcontext_useconfirm",
+      "community": 3,
+      "norm_label": "useconfirm()"
+    },
+    {
+      "label": "NotificationProvider()",
+      "file_type": "code",
+      "source_file": "frontend/src/components/NotificationContext.jsx",
+      "source_location": "L18",
+      "id": "components_notificationcontext_notificationprovider",
+      "community": 0,
+      "norm_label": "notificationprovider()"
+    },
+    {
+      "label": "AppShell.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/components/layout/AppShell.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_components_layout_appshell_jsx",
+      "community": 7,
+      "norm_label": "appshell.jsx"
+    },
+    {
+      "label": "adminNavItems",
+      "file_type": "code",
+      "source_file": "frontend/src/components/layout/AppShell.jsx",
+      "source_location": "L10",
+      "id": "layout_appshell_adminnavitems",
+      "community": 7,
+      "norm_label": "adminnavitems"
+    },
+    {
+      "label": "saNavItems",
+      "file_type": "code",
+      "source_file": "frontend/src/components/layout/AppShell.jsx",
+      "source_location": "L29",
+      "id": "layout_appshell_sanavitems",
+      "community": 7,
+      "norm_label": "sanavitems"
+    },
+    {
+      "label": "superadminNavItems",
+      "file_type": "code",
+      "source_file": "frontend/src/components/layout/AppShell.jsx",
+      "source_location": "L37",
+      "id": "layout_appshell_superadminnavitems",
+      "community": 7,
+      "norm_label": "superadminnavitems"
+    },
+    {
+      "label": "hrmsNavItems",
+      "file_type": "code",
+      "source_file": "frontend/src/components/layout/AppShell.jsx",
+      "source_location": "L44",
+      "id": "layout_appshell_hrmsnavitems",
+      "community": 7,
+      "norm_label": "hrmsnavitems"
+    },
+    {
+      "label": "AppShell()",
+      "file_type": "code",
+      "source_file": "frontend/src/components/layout/AppShell.jsx",
+      "source_location": "L64",
+      "id": "layout_appshell_appshell",
+      "community": 7,
+      "norm_label": "appshell()"
+    },
+    {
+      "label": "Attendance.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/features/hrms/pages/Attendance.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_features_hrms_pages_attendance_jsx",
+      "community": 0,
+      "norm_label": "attendance.jsx"
+    },
+    {
+      "label": "statusOptions",
+      "file_type": "code",
+      "source_file": "frontend/src/features/hrms/pages/Attendance.jsx",
+      "source_location": "L6",
+      "id": "pages_attendance_statusoptions",
+      "community": 0,
+      "norm_label": "statusoptions"
+    },
+    {
+      "label": "statusConfig",
+      "file_type": "code",
+      "source_file": "frontend/src/features/hrms/pages/Attendance.jsx",
+      "source_location": "L7",
+      "id": "pages_attendance_statusconfig",
+      "community": 0,
+      "norm_label": "statusconfig"
+    },
+    {
+      "label": "Attendance()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/hrms/pages/Attendance.jsx",
+      "source_location": "L15",
+      "id": "pages_attendance_attendance",
+      "community": 0,
+      "norm_label": "attendance()"
+    },
+    {
+      "label": "Departments.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/features/hrms/pages/Departments.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_features_hrms_pages_departments_jsx",
+      "community": 0,
+      "norm_label": "departments.jsx"
+    },
+    {
+      "label": "Departments()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/hrms/pages/Departments.jsx",
+      "source_location": "L6",
+      "id": "pages_departments_departments",
+      "community": 0,
+      "norm_label": "departments()"
+    },
+    {
+      "label": "Employees.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/features/hrms/pages/Employees.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_features_hrms_pages_employees_jsx",
+      "community": 0,
+      "norm_label": "employees.jsx"
+    },
+    {
+      "label": "statusColors",
+      "file_type": "code",
+      "source_file": "frontend/src/features/hrms/pages/Employees.jsx",
+      "source_location": "L9",
+      "id": "pages_employees_statuscolors",
+      "community": 0,
+      "norm_label": "statuscolors"
+    },
+    {
+      "label": "Employees()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/hrms/pages/Employees.jsx",
+      "source_location": "L16",
+      "id": "pages_employees_employees",
+      "community": 0,
+      "norm_label": "employees()"
+    },
+    {
+      "label": "Holidays.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/features/hrms/pages/Holidays.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_features_hrms_pages_holidays_jsx",
+      "community": 0,
+      "norm_label": "holidays.jsx"
+    },
+    {
+      "label": "Holidays()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/hrms/pages/Holidays.jsx",
+      "source_location": "L6",
+      "id": "pages_holidays_holidays",
+      "community": 0,
+      "norm_label": "holidays()"
+    },
+    {
+      "label": "HRMSDashboard.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/features/hrms/pages/HRMSDashboard.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_features_hrms_pages_hrmsdashboard_jsx",
+      "community": 4,
+      "norm_label": "hrmsdashboard.jsx"
+    },
+    {
+      "label": "HRMSDashboard()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/hrms/pages/HRMSDashboard.jsx",
+      "source_location": "L8",
+      "id": "pages_hrmsdashboard_hrmsdashboard",
+      "community": 4,
+      "norm_label": "hrmsdashboard()"
+    },
+    {
+      "label": "LeaveManagement.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/features/hrms/pages/LeaveManagement.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_features_hrms_pages_leavemanagement_jsx",
+      "community": 0,
+      "norm_label": "leavemanagement.jsx"
+    },
+    {
+      "label": "LeaveManagement()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/hrms/pages/LeaveManagement.jsx",
+      "source_location": "L6",
+      "id": "pages_leavemanagement_leavemanagement",
+      "community": 0,
+      "norm_label": "leavemanagement()"
+    },
+    {
+      "label": "Payroll.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/features/hrms/pages/Payroll.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_features_hrms_pages_payroll_jsx",
+      "community": 0,
+      "norm_label": "payroll.jsx"
+    },
+    {
+      "label": "Payroll()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/hrms/pages/Payroll.jsx",
+      "source_location": "L6",
+      "id": "pages_payroll_payroll",
+      "community": 0,
+      "norm_label": "payroll()"
+    },
+    {
+      "label": "LeadFormResolver.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/components/LeadFormResolver.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_features_leads_components_leadformresolver_jsx",
+      "community": 5,
+      "norm_label": "leadformresolver.jsx"
+    },
+    {
+      "label": "customForms",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/components/LeadFormResolver.jsx",
+      "source_location": "L5",
+      "id": "components_leadformresolver_customforms",
+      "community": 5,
+      "norm_label": "customforms"
+    },
+    {
+      "label": "LeadFormResolver()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/components/LeadFormResolver.jsx",
+      "source_location": "L7",
+      "id": "components_leadformresolver_leadformresolver",
+      "community": 5,
+      "norm_label": "leadformresolver()"
+    },
+    {
+      "label": "StandardLeadForm.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/components/StandardLeadForm.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_features_leads_components_standardleadform_jsx",
+      "community": 5,
+      "norm_label": "standardleadform.jsx"
+    },
+    {
+      "label": "validateEmail()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/components/StandardLeadForm.jsx",
+      "source_location": "L4",
+      "id": "components_standardleadform_validateemail",
+      "community": 5,
+      "norm_label": "validateemail()"
+    },
+    {
+      "label": "validatePhone()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/components/StandardLeadForm.jsx",
+      "source_location": "L10",
+      "id": "components_standardleadform_validatephone",
+      "community": 5,
+      "norm_label": "validatephone()"
+    },
+    {
+      "label": "StandardLeadForm()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/components/StandardLeadForm.jsx",
+      "source_location": "L21",
+      "id": "components_standardleadform_standardleadform",
+      "community": 5,
+      "norm_label": "standardleadform()"
+    },
+    {
+      "label": "Dashboard.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/Dashboard.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_features_leads_pages_dashboard_jsx",
+      "community": 4,
+      "norm_label": "dashboard.jsx"
+    },
+    {
+      "label": "SalesChart()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/Dashboard.jsx",
+      "source_location": "L7",
+      "id": "pages_dashboard_saleschart",
+      "community": 4,
+      "norm_label": "saleschart()"
+    },
+    {
+      "label": "DonutChart()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/Dashboard.jsx",
+      "source_location": "L187",
+      "id": "pages_dashboard_donutchart",
+      "community": 4,
+      "norm_label": "donutchart()"
+    },
+    {
+      "label": "Dashboard()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/Dashboard.jsx",
+      "source_location": "L258",
+      "id": "pages_dashboard_dashboard",
+      "community": 4,
+      "norm_label": "dashboard()"
+    },
+    {
+      "label": "LeadSources.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/LeadSources.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_features_leads_pages_leadsources_jsx",
+      "community": 3,
+      "norm_label": "leadsources.jsx"
+    },
+    {
+      "label": "LeadSources()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/LeadSources.jsx",
+      "source_location": "L7",
+      "id": "pages_leadsources_leadsources",
+      "community": 3,
+      "norm_label": "leadsources()"
+    },
+    {
+      "label": "LeadsTable.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/LeadsTable.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_features_leads_pages_leadstable_jsx",
+      "community": 3,
+      "norm_label": "leadstable.jsx"
+    },
+    {
+      "label": "formatRemarks()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/LeadsTable.jsx",
+      "source_location": "L8",
+      "id": "pages_leadstable_formatremarks",
+      "community": 3,
+      "norm_label": "formatremarks()"
+    },
+    {
+      "label": "getStatusClass()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/LeadsTable.jsx",
+      "source_location": "L28",
+      "id": "pages_leadstable_getstatusclass",
+      "community": 3,
+      "norm_label": "getstatusclass()"
+    },
+    {
+      "label": "getDelegationStatusClass()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/LeadsTable.jsx",
+      "source_location": "L39",
+      "id": "pages_leadstable_getdelegationstatusclass",
+      "community": 3,
+      "norm_label": "getdelegationstatusclass()"
+    },
+    {
+      "label": "validateEmail()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/LeadsTable.jsx",
+      "source_location": "L49",
+      "id": "pages_leadstable_validateemail",
+      "community": 3,
+      "norm_label": "validateemail()"
+    },
+    {
+      "label": "validatePhone()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/LeadsTable.jsx",
+      "source_location": "L55",
+      "id": "pages_leadstable_validatephone",
+      "community": 3,
+      "norm_label": "validatephone()"
+    },
+    {
+      "label": "LeadsTable()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/LeadsTable.jsx",
+      "source_location": "L66",
+      "id": "pages_leadstable_leadstable",
+      "community": 3,
+      "norm_label": "leadstable()"
+    },
+    {
+      "label": "Pipeline.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/Pipeline.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_features_leads_pages_pipeline_jsx",
+      "community": 0,
+      "norm_label": "pipeline.jsx"
+    },
+    {
+      "label": "Pipeline()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/Pipeline.jsx",
+      "source_location": "L6",
+      "id": "pages_pipeline_pipeline",
+      "community": 0,
+      "norm_label": "pipeline()"
+    },
+    {
+      "label": "Reports.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/Reports.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_features_leads_pages_reports_jsx",
+      "community": 6,
+      "norm_label": "reports.jsx"
+    },
+    {
+      "label": "TeamPerformance()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/Reports.jsx",
+      "source_location": "L5",
+      "id": "pages_reports_teamperformance",
+      "community": 6,
+      "norm_label": "teamperformance()"
+    },
+    {
+      "label": "RevenueChart()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/Reports.jsx",
+      "source_location": "L51",
+      "id": "pages_reports_revenuechart",
+      "community": 6,
+      "norm_label": "revenuechart()"
+    },
+    {
+      "label": "ConversionFunnel()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/Reports.jsx",
+      "source_location": "L218",
+      "id": "pages_reports_conversionfunnel",
+      "community": 6,
+      "norm_label": "conversionfunnel()"
+    },
+    {
+      "label": "ActivityHeatmap()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/Reports.jsx",
+      "source_location": "L257",
+      "id": "pages_reports_activityheatmap",
+      "community": 6,
+      "norm_label": "activityheatmap()"
+    },
+    {
+      "label": "SalesStatusBreakdown()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/Reports.jsx",
+      "source_location": "L323",
+      "id": "pages_reports_salesstatusbreakdown",
+      "community": 6,
+      "norm_label": "salesstatusbreakdown()"
+    },
+    {
+      "label": "Reports()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/Reports.jsx",
+      "source_location": "L380",
+      "id": "pages_reports_reports",
+      "community": 6,
+      "norm_label": "reports()"
+    },
+    {
+      "label": "SADashboard.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/SADashboard.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_features_leads_pages_sadashboard_jsx",
+      "community": 1,
+      "norm_label": "sadashboard.jsx"
+    },
+    {
+      "label": "SADashboard()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/SADashboard.jsx",
+      "source_location": "L6",
+      "id": "pages_sadashboard_sadashboard",
+      "community": 1,
+      "norm_label": "sadashboard()"
+    },
+    {
+      "label": "Sales.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/Sales.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_features_leads_pages_sales_jsx",
+      "community": 3,
+      "norm_label": "sales.jsx"
+    },
+    {
+      "label": "Sales()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/Sales.jsx",
+      "source_location": "L8",
+      "id": "pages_sales_sales",
+      "community": 3,
+      "norm_label": "sales()"
+    },
+    {
+      "label": "SAMyLeads.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/SAMyLeads.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_features_leads_pages_samyleads_jsx",
+      "community": 5,
+      "norm_label": "samyleads.jsx"
+    },
+    {
+      "label": "getStatusClass()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/SAMyLeads.jsx",
+      "source_location": "L10",
+      "id": "pages_samyleads_getstatusclass",
+      "community": 5,
+      "norm_label": "getstatusclass()"
+    },
+    {
+      "label": "getDelegationStatusClass()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/SAMyLeads.jsx",
+      "source_location": "L21",
+      "id": "pages_samyleads_getdelegationstatusclass",
+      "community": 5,
+      "norm_label": "getdelegationstatusclass()"
+    },
+    {
+      "label": "SAMyLeads()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/SAMyLeads.jsx",
+      "source_location": "L31",
+      "id": "pages_samyleads_samyleads",
+      "community": 5,
+      "norm_label": "samyleads()"
+    },
+    {
+      "label": "SAPipeline.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/SAPipeline.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_features_leads_pages_sapipeline_jsx",
+      "community": 0,
+      "norm_label": "sapipeline.jsx"
+    },
+    {
+      "label": "SAPipeline()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/SAPipeline.jsx",
+      "source_location": "L7",
+      "id": "pages_sapipeline_sapipeline",
+      "community": 0,
+      "norm_label": "sapipeline()"
+    },
+    {
+      "label": "SATasks.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/SATasks.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_features_leads_pages_satasks_jsx",
+      "community": 0,
+      "norm_label": "satasks.jsx"
+    },
+    {
+      "label": "SATasks()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/pages/SATasks.jsx",
+      "source_location": "L7",
+      "id": "pages_satasks_satasks",
+      "community": 0,
+      "norm_label": "satasks()"
+    },
+    {
+      "label": "CustomLeadForm.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/tenants/tenant_2/CustomLeadForm.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_features_leads_tenants_tenant_2_customleadform_jsx",
+      "community": 4,
+      "norm_label": "customleadform.jsx"
+    },
+    {
+      "label": "validateEmail()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/tenants/tenant_2/CustomLeadForm.jsx",
+      "source_location": "L5",
+      "id": "tenant_2_customleadform_validateemail",
+      "community": 4,
+      "norm_label": "validateemail()"
+    },
+    {
+      "label": "validatePhone()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/tenants/tenant_2/CustomLeadForm.jsx",
+      "source_location": "L11",
+      "id": "tenant_2_customleadform_validatephone",
+      "community": 4,
+      "norm_label": "validatephone()"
+    },
+    {
+      "label": "CustomLeadForm()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/leads/tenants/tenant_2/CustomLeadForm.jsx",
+      "source_location": "L22",
+      "id": "tenant_2_customleadform_customleadform",
+      "community": 4,
+      "norm_label": "customleadform()"
+    },
+    {
+      "label": "Apps.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/features/superadmin/pages/Apps.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_features_superadmin_pages_apps_jsx",
+      "community": 0,
+      "norm_label": "apps.jsx"
+    },
+    {
+      "label": "appsList",
+      "file_type": "code",
+      "source_file": "frontend/src/features/superadmin/pages/Apps.jsx",
+      "source_location": "L5",
+      "id": "pages_apps_appslist",
+      "community": 0,
+      "norm_label": "appslist"
+    },
+    {
+      "label": "Apps()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/superadmin/pages/Apps.jsx",
+      "source_location": "L66",
+      "id": "pages_apps_apps",
+      "community": 0,
+      "norm_label": "apps()"
+    },
+    {
+      "label": "TenantReports.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/features/superadmin/pages/TenantReports.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_features_superadmin_pages_tenantreports_jsx",
+      "community": 1,
+      "norm_label": "tenantreports.jsx"
+    },
+    {
+      "label": "currenciesList",
+      "file_type": "code",
+      "source_file": "frontend/src/features/superadmin/pages/TenantReports.jsx",
+      "source_location": "L7",
+      "id": "pages_tenantreports_currencieslist",
+      "community": 1,
+      "norm_label": "currencieslist"
+    },
+    {
+      "label": "TenantReports()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/superadmin/pages/TenantReports.jsx",
+      "source_location": "L19",
+      "id": "pages_tenantreports_tenantreports",
+      "community": 1,
+      "norm_label": "tenantreports()"
+    },
+    {
+      "label": "Tenants.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/features/superadmin/pages/Tenants.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_features_superadmin_pages_tenants_jsx",
+      "community": 1,
+      "norm_label": "tenants.jsx"
+    },
+    {
+      "label": "currenciesList",
+      "file_type": "code",
+      "source_file": "frontend/src/features/superadmin/pages/Tenants.jsx",
+      "source_location": "L7",
+      "id": "pages_tenants_currencieslist",
+      "community": 1,
+      "norm_label": "currencieslist"
+    },
+    {
+      "label": "validateEmail()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/superadmin/pages/Tenants.jsx",
+      "source_location": "L20",
+      "id": "pages_tenants_validateemail",
+      "community": 1,
+      "norm_label": "validateemail()"
+    },
+    {
+      "label": "validatePhone()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/superadmin/pages/Tenants.jsx",
+      "source_location": "L25",
+      "id": "pages_tenants_validatephone",
+      "community": 1,
+      "norm_label": "validatephone()"
+    },
+    {
+      "label": "Tenants()",
+      "file_type": "code",
+      "source_file": "frontend/src/features/superadmin/pages/Tenants.jsx",
+      "source_location": "L36",
+      "id": "pages_tenants_tenants",
+      "community": 1,
+      "norm_label": "tenants()"
+    },
+    {
+      "label": "Contacts.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/pages/Contacts.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_pages_contacts_jsx",
+      "community": 4,
+      "norm_label": "contacts.jsx"
+    },
+    {
+      "label": "colors",
+      "file_type": "code",
+      "source_file": "frontend/src/pages/Contacts.jsx",
+      "source_location": "L5",
+      "id": "pages_contacts_colors",
+      "community": 4,
+      "norm_label": "colors"
+    },
+    {
+      "label": "getInitials()",
+      "file_type": "code",
+      "source_file": "frontend/src/pages/Contacts.jsx",
+      "source_location": "L7",
+      "id": "pages_contacts_getinitials",
+      "community": 4,
+      "norm_label": "getinitials()"
+    },
+    {
+      "label": "Contacts()",
+      "file_type": "code",
+      "source_file": "frontend/src/pages/Contacts.jsx",
+      "source_location": "L12",
+      "id": "pages_contacts_contacts",
+      "community": 4,
+      "norm_label": "contacts()"
+    },
+    {
+      "label": "HelpCenter.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/pages/HelpCenter.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_pages_helpcenter_jsx",
+      "community": 9,
+      "norm_label": "helpcenter.jsx"
+    },
+    {
+      "label": "categories",
+      "file_type": "code",
+      "source_file": "frontend/src/pages/HelpCenter.jsx",
+      "source_location": "L7",
+      "id": "pages_helpcenter_categories",
+      "community": 9,
+      "norm_label": "categories"
+    },
+    {
+      "label": "articles",
+      "file_type": "code",
+      "source_file": "frontend/src/pages/HelpCenter.jsx",
+      "source_location": "L16",
+      "id": "pages_helpcenter_articles",
+      "community": 9,
+      "norm_label": "articles"
+    },
+    {
+      "label": "forums",
+      "file_type": "code",
+      "source_file": "frontend/src/pages/HelpCenter.jsx",
+      "source_location": "L25",
+      "id": "pages_helpcenter_forums",
+      "community": 9,
+      "norm_label": "forums"
+    },
+    {
+      "label": "HelpCenter()",
+      "file_type": "code",
+      "source_file": "frontend/src/pages/HelpCenter.jsx",
+      "source_location": "L34",
+      "id": "pages_helpcenter_helpcenter",
+      "community": 9,
+      "norm_label": "helpcenter()"
+    },
+    {
+      "label": "Login.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/pages/Login.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_pages_login_jsx",
+      "community": 1,
+      "norm_label": "login.jsx"
+    },
+    {
+      "label": "Login()",
+      "file_type": "code",
+      "source_file": "frontend/src/pages/Login.jsx",
+      "source_location": "L6",
+      "id": "pages_login_login",
+      "community": 1,
+      "norm_label": "login()"
+    },
+    {
+      "label": "ResetPassword.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/pages/ResetPassword.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_pages_resetpassword_jsx",
+      "community": 1,
+      "norm_label": "resetpassword.jsx"
+    },
+    {
+      "label": "ResetPassword()",
+      "file_type": "code",
+      "source_file": "frontend/src/pages/ResetPassword.jsx",
+      "source_location": "L6",
+      "id": "pages_resetpassword_resetpassword",
+      "community": 1,
+      "norm_label": "resetpassword()"
+    },
+    {
+      "label": "SelectApp.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/pages/SelectApp.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_pages_selectapp_jsx",
+      "community": 1,
+      "norm_label": "selectapp.jsx"
+    },
+    {
+      "label": "appsData",
+      "file_type": "code",
+      "source_file": "frontend/src/pages/SelectApp.jsx",
+      "source_location": "L7",
+      "id": "pages_selectapp_appsdata",
+      "community": 1,
+      "norm_label": "appsdata"
+    },
+    {
+      "label": "SelectApp()",
+      "file_type": "code",
+      "source_file": "frontend/src/pages/SelectApp.jsx",
+      "source_location": "L54",
+      "id": "pages_selectapp_selectapp",
+      "community": 1,
+      "norm_label": "selectapp()"
+    },
+    {
+      "label": "SettingsPage.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/pages/SettingsPage.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_pages_settingspage_jsx",
+      "community": 0,
+      "norm_label": "settingspage.jsx"
+    },
+    {
+      "label": "currenciesList",
+      "file_type": "code",
+      "source_file": "frontend/src/pages/SettingsPage.jsx",
+      "source_location": "L6",
+      "id": "pages_settingspage_currencieslist",
+      "community": 0,
+      "norm_label": "currencieslist"
+    },
+    {
+      "label": "SettingsPage()",
+      "file_type": "code",
+      "source_file": "frontend/src/pages/SettingsPage.jsx",
+      "source_location": "L17",
+      "id": "pages_settingspage_settingspage",
+      "community": 0,
+      "norm_label": "settingspage()"
+    },
+    {
+      "label": "Users.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/pages/Users.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_pages_users_jsx",
+      "community": 3,
+      "norm_label": "users.jsx"
+    },
+    {
+      "label": "defaultUsers",
+      "file_type": "code",
+      "source_file": "frontend/src/pages/Users.jsx",
+      "source_location": "L7",
+      "id": "pages_users_defaultusers",
+      "community": 3,
+      "norm_label": "defaultusers"
+    },
+    {
+      "label": "validateEmail()",
+      "file_type": "code",
+      "source_file": "frontend/src/pages/Users.jsx",
+      "source_location": "L43",
+      "id": "pages_users_validateemail",
+      "community": 3,
+      "norm_label": "validateemail()"
+    },
+    {
+      "label": "validatePhone()",
+      "file_type": "code",
+      "source_file": "frontend/src/pages/Users.jsx",
+      "source_location": "L48",
+      "id": "pages_users_validatephone",
+      "community": 3,
+      "norm_label": "validatephone()"
+    },
+    {
+      "label": "Users()",
+      "file_type": "code",
+      "source_file": "frontend/src/pages/Users.jsx",
+      "source_location": "L59",
+      "id": "pages_users_users",
+      "community": 3,
+      "norm_label": "users()"
+    },
+    {
+      "label": "env.js",
+      "file_type": "code",
+      "source_file": "frontend/src/utils/env.js",
+      "source_location": "L1",
+      "id": "frontend_src_utils_env_js",
+      "community": 1,
+      "norm_label": "env.js"
+    },
+    {
+      "label": "getAppBasePath()",
+      "file_type": "code",
+      "source_file": "frontend/src/utils/env.js",
+      "source_location": "L1",
+      "id": "utils_env_getappbasepath",
+      "community": 1,
+      "norm_label": "getappbasepath()"
+    },
+    {
+      "label": "basePath",
+      "file_type": "code",
+      "source_file": "frontend/src/utils/env.js",
+      "source_location": "L38",
+      "id": "utils_env_basepath",
+      "community": 1,
+      "norm_label": "basepath"
+    },
+    {
+      "label": "getApiBaseUrl()",
+      "file_type": "code",
+      "source_file": "frontend/src/utils/env.js",
+      "source_location": "L41",
+      "id": "utils_env_getapibaseurl",
+      "community": 1,
+      "norm_label": "getapibaseurl()"
+    },
+    {
+      "label": "apiBaseUrl",
+      "file_type": "code",
+      "source_file": "frontend/src/utils/env.js",
+      "source_location": "L56",
+      "id": "utils_env_apibaseurl",
+      "community": 4,
+      "norm_label": "apibaseurl"
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "api/composer.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "api_composer_json",
+      "target": "api_composer_require",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "api/composer.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "api_composer_require",
+      "target": "api_composer_require_phpmailer_phpmailer",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "api/core/db.php",
+      "source_location": "L54",
+      "weight": 1.0,
+      "source": "api_core_db_php",
+      "target": "core_db_gettenantid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "api/core/mailer.php",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "core_mailer_getmailer",
+      "target": "core_db_gettenantid"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "api/core/mailer.php",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "api_core_mailer_php",
+      "target": "core_mailer_getmailer",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "api/core/mailer.php",
+      "source_location": "L76",
+      "weight": 1.0,
+      "source": "api_core_mailer_php",
+      "target": "core_mailer_logemailattempt",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "api/modules/leads/leads.php",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "api_modules_leads_leads_php",
+      "target": "leads_leads_isvalidemail",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "api/modules/leads/leads.php",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "api_modules_leads_leads_php",
+      "target": "leads_leads_isvalidphone",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "api/modules/superadmin/tenants.php",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "api_modules_superadmin_tenants_php",
+      "target": "superadmin_tenants_isvalidemail",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "api/modules/superadmin/tenants.php",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "api_modules_superadmin_tenants_php",
+      "target": "superadmin_tenants_isvalidphone",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/package.json",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "frontend_package_json",
+      "target": "frontend_package_dependencies",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/package.json",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "frontend_package_json",
+      "target": "frontend_package_devdependencies",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/package.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "frontend_package_json",
+      "target": "frontend_package_name",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/package.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "frontend_package_json",
+      "target": "frontend_package_private",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/package.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "frontend_package_json",
+      "target": "frontend_package_scripts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/package.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_package_json",
+      "target": "frontend_package_type",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/package.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_package_json",
+      "target": "frontend_package_version",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/package.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "frontend_package_scripts",
+      "target": "frontend_package_scripts_build",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/package.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "frontend_package_scripts",
+      "target": "frontend_package_scripts_dev",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/package.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "frontend_package_scripts",
+      "target": "frontend_package_scripts_lint",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/package.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "frontend_package_scripts",
+      "target": "frontend_package_scripts_preview",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/package.json",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "frontend_package_dependencies",
+      "target": "frontend_package_dependencies_lucide_react",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/package.json",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "frontend_package_dependencies",
+      "target": "frontend_package_dependencies_react",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/package.json",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "frontend_package_dependencies",
+      "target": "frontend_package_dependencies_react_dom",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/package.json",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "frontend_package_dependencies",
+      "target": "frontend_package_dependencies_react_router_dom",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/package.json",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "frontend_package_devdependencies",
+      "target": "frontend_package_devdependencies_eslint",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/package.json",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "frontend_package_devdependencies",
+      "target": "frontend_package_devdependencies_eslint_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/package.json",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "frontend_package_devdependencies",
+      "target": "frontend_package_devdependencies_eslint_plugin_react_hooks",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/package.json",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "frontend_package_devdependencies",
+      "target": "frontend_package_devdependencies_eslint_plugin_react_refresh",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/package.json",
+      "source_location": "L26",
+      "weight": 1.0,
+      "source": "frontend_package_devdependencies",
+      "target": "frontend_package_devdependencies_globals",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/package.json",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "frontend_package_devdependencies",
+      "target": "frontend_package_devdependencies_types_react",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/package.json",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "frontend_package_devdependencies",
+      "target": "frontend_package_devdependencies_types_react_dom",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/package.json",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "frontend_package_devdependencies",
+      "target": "frontend_package_devdependencies_vite",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/package.json",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "frontend_package_devdependencies",
+      "target": "frontend_package_devdependencies_vitejs_plugin_react",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "components_notificationcontext_notificationprovider",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "frontend_src_components_layout_appshell_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "frontend_src_components_notificationcontext_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "frontend_src_features_hrms_pages_attendance_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "frontend_src_features_hrms_pages_departments_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L26",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "frontend_src_features_hrms_pages_employees_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L31",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "frontend_src_features_hrms_pages_holidays_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "frontend_src_features_hrms_pages_hrmsdashboard_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "frontend_src_features_hrms_pages_leavemanagement_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "frontend_src_features_hrms_pages_payroll_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "frontend_src_features_leads_pages_dashboard_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "frontend_src_features_leads_pages_leadsources_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "frontend_src_features_leads_pages_leadstable_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "frontend_src_features_leads_pages_pipeline_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "frontend_src_features_leads_pages_reports_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "frontend_src_features_leads_pages_sadashboard_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "frontend_src_features_leads_pages_sales_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "frontend_src_features_leads_pages_samyleads_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "frontend_src_features_leads_pages_sapipeline_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "frontend_src_features_leads_pages_satasks_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "frontend_src_features_superadmin_pages_apps_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "frontend_src_features_superadmin_pages_tenantreports_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "frontend_src_features_superadmin_pages_tenants_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "frontend_src_pages_contacts_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "frontend_src_pages_helpcenter_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "frontend_src_pages_login_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "frontend_src_pages_resetpassword_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "frontend_src_pages_selectapp_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "frontend_src_pages_settingspage_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "frontend_src_pages_users_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "frontend_src_utils_env_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L110",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "src_app_app",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L35",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "src_app_protectedroute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L64",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "src_app_rootredirect",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "utils_env_basepath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/main.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "frontend_src_main_jsx",
+      "target": "frontend_src_app_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/main.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_src_main_jsx",
+      "target": "frontend_src_utils_env_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/main.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_src_main_jsx",
+      "target": "utils_env_basepath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/components/NotificationContext.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_components_notificationcontext_jsx",
+      "target": "components_notificationcontext_notificationcontext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/components/NotificationContext.jsx",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "frontend_src_components_notificationcontext_jsx",
+      "target": "components_notificationcontext_notificationprovider",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/components/NotificationContext.jsx",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "frontend_src_components_notificationcontext_jsx",
+      "target": "components_notificationcontext_useconfirm",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/components/NotificationContext.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "frontend_src_components_notificationcontext_jsx",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Attendance.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_attendance_jsx",
+      "target": "frontend_src_components_notificationcontext_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Departments.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_departments_jsx",
+      "target": "frontend_src_components_notificationcontext_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Employees.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_employees_jsx",
+      "target": "frontend_src_components_notificationcontext_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Holidays.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_holidays_jsx",
+      "target": "frontend_src_components_notificationcontext_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/LeaveManagement.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_leavemanagement_jsx",
+      "target": "frontend_src_components_notificationcontext_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Payroll.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_payroll_jsx",
+      "target": "frontend_src_components_notificationcontext_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/LeadSources.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_leadsources_jsx",
+      "target": "frontend_src_components_notificationcontext_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/LeadsTable.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_leadstable_jsx",
+      "target": "frontend_src_components_notificationcontext_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/Pipeline.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_pipeline_jsx",
+      "target": "frontend_src_components_notificationcontext_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/Sales.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_sales_jsx",
+      "target": "frontend_src_components_notificationcontext_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/SAMyLeads.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_samyleads_jsx",
+      "target": "frontend_src_components_notificationcontext_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/SAPipeline.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_sapipeline_jsx",
+      "target": "frontend_src_components_notificationcontext_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/SATasks.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_satasks_jsx",
+      "target": "frontend_src_components_notificationcontext_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/superadmin/pages/Apps.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "frontend_src_features_superadmin_pages_apps_jsx",
+      "target": "frontend_src_components_notificationcontext_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/superadmin/pages/TenantReports.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_src_features_superadmin_pages_tenantreports_jsx",
+      "target": "frontend_src_components_notificationcontext_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/superadmin/pages/Tenants.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_src_features_superadmin_pages_tenants_jsx",
+      "target": "frontend_src_components_notificationcontext_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/SelectApp.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_src_pages_selectapp_jsx",
+      "target": "frontend_src_components_notificationcontext_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/SettingsPage.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "frontend_src_pages_settingspage_jsx",
+      "target": "frontend_src_components_notificationcontext_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/Users.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_pages_users_jsx",
+      "target": "frontend_src_components_notificationcontext_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Attendance.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_attendance_jsx",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Departments.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_departments_jsx",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Employees.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_employees_jsx",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Holidays.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_holidays_jsx",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/LeaveManagement.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_leavemanagement_jsx",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Payroll.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_payroll_jsx",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/LeadSources.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_leadsources_jsx",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/LeadsTable.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_leadstable_jsx",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/Pipeline.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_pipeline_jsx",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/Sales.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_sales_jsx",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/SAMyLeads.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_samyleads_jsx",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/SAPipeline.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_sapipeline_jsx",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/SATasks.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_satasks_jsx",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/superadmin/pages/Apps.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "frontend_src_features_superadmin_pages_apps_jsx",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/superadmin/pages/TenantReports.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_src_features_superadmin_pages_tenantreports_jsx",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/superadmin/pages/Tenants.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_src_features_superadmin_pages_tenants_jsx",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/SelectApp.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_src_pages_selectapp_jsx",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/SettingsPage.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "frontend_src_pages_settingspage_jsx",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/Users.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_pages_users_jsx",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/superadmin/pages/Apps.jsx",
+      "source_location": "L67",
+      "weight": 1.0,
+      "source": "pages_apps_apps",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Attendance.jsx",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "pages_attendance_attendance",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Departments.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "pages_departments_departments",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Employees.jsx",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "pages_employees_employees",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Holidays.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "pages_holidays_holidays",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/LeadSources.jsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "pages_leadsources_leadsources",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/LeadsTable.jsx",
+      "source_location": "L67",
+      "weight": 1.0,
+      "source": "pages_leadstable_leadstable",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/LeaveManagement.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "pages_leavemanagement_leavemanagement",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Payroll.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "pages_payroll_payroll",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/Pipeline.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "pages_pipeline_pipeline",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/Sales.jsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "pages_sales_sales",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/SAMyLeads.jsx",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "pages_samyleads_samyleads",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/SAPipeline.jsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "pages_sapipeline_sapipeline",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/SATasks.jsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "pages_satasks_satasks",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/SelectApp.jsx",
+      "source_location": "L56",
+      "weight": 1.0,
+      "source": "pages_selectapp_selectapp",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/SettingsPage.jsx",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "pages_settingspage_settingspage",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/superadmin/pages/TenantReports.jsx",
+      "source_location": "L26",
+      "weight": 1.0,
+      "source": "pages_tenantreports_tenantreports",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/superadmin/pages/Tenants.jsx",
+      "source_location": "L37",
+      "weight": 1.0,
+      "source": "pages_tenants_tenants",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/Users.jsx",
+      "source_location": "L81",
+      "weight": 1.0,
+      "source": "pages_users_users",
+      "target": "components_notificationcontext_usetoast",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/LeadSources.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_leadsources_jsx",
+      "target": "components_notificationcontext_useconfirm",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/LeadsTable.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_leadstable_jsx",
+      "target": "components_notificationcontext_useconfirm",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/Sales.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_sales_jsx",
+      "target": "components_notificationcontext_useconfirm",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/Users.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_pages_users_jsx",
+      "target": "components_notificationcontext_useconfirm",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/LeadSources.jsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "pages_leadsources_leadsources",
+      "target": "components_notificationcontext_useconfirm",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/LeadsTable.jsx",
+      "source_location": "L68",
+      "weight": 1.0,
+      "source": "pages_leadstable_leadstable",
+      "target": "components_notificationcontext_useconfirm",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/Sales.jsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "pages_sales_sales",
+      "target": "components_notificationcontext_useconfirm",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/Users.jsx",
+      "source_location": "L82",
+      "weight": 1.0,
+      "source": "pages_users_users",
+      "target": "components_notificationcontext_useconfirm",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/components/layout/AppShell.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "frontend_src_components_layout_appshell_jsx",
+      "target": "frontend_src_utils_env_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/components/layout/AppShell.jsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "frontend_src_components_layout_appshell_jsx",
+      "target": "layout_appshell_adminnavitems",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/components/layout/AppShell.jsx",
+      "source_location": "L64",
+      "weight": 1.0,
+      "source": "frontend_src_components_layout_appshell_jsx",
+      "target": "layout_appshell_appshell",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/components/layout/AppShell.jsx",
+      "source_location": "L44",
+      "weight": 1.0,
+      "source": "frontend_src_components_layout_appshell_jsx",
+      "target": "layout_appshell_hrmsnavitems",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/components/layout/AppShell.jsx",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "frontend_src_components_layout_appshell_jsx",
+      "target": "layout_appshell_sanavitems",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/components/layout/AppShell.jsx",
+      "source_location": "L37",
+      "weight": 1.0,
+      "source": "frontend_src_components_layout_appshell_jsx",
+      "target": "layout_appshell_superadminnavitems",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/components/layout/AppShell.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "frontend_src_components_layout_appshell_jsx",
+      "target": "utils_env_apibaseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/components/layout/AppShell.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "frontend_src_components_layout_appshell_jsx",
+      "target": "utils_env_basepath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Attendance.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_attendance_jsx",
+      "target": "frontend_src_utils_env_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Attendance.jsx",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_attendance_jsx",
+      "target": "pages_attendance_attendance",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Attendance.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_attendance_jsx",
+      "target": "pages_attendance_statusconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Attendance.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_attendance_jsx",
+      "target": "pages_attendance_statusoptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Attendance.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_attendance_jsx",
+      "target": "utils_env_apibaseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Departments.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_departments_jsx",
+      "target": "frontend_src_utils_env_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Departments.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_departments_jsx",
+      "target": "pages_departments_departments",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Departments.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_departments_jsx",
+      "target": "utils_env_apibaseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Employees.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_employees_jsx",
+      "target": "frontend_src_utils_env_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Employees.jsx",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_employees_jsx",
+      "target": "pages_employees_employees",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Employees.jsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_employees_jsx",
+      "target": "pages_employees_statuscolors",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Employees.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_employees_jsx",
+      "target": "utils_env_apibaseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Holidays.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_holidays_jsx",
+      "target": "frontend_src_utils_env_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Holidays.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_holidays_jsx",
+      "target": "pages_holidays_holidays",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Holidays.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_holidays_jsx",
+      "target": "utils_env_apibaseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/HRMSDashboard.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_hrmsdashboard_jsx",
+      "target": "frontend_src_utils_env_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/HRMSDashboard.jsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_hrmsdashboard_jsx",
+      "target": "pages_hrmsdashboard_hrmsdashboard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/HRMSDashboard.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_hrmsdashboard_jsx",
+      "target": "utils_env_apibaseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/LeaveManagement.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_leavemanagement_jsx",
+      "target": "frontend_src_utils_env_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/LeaveManagement.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_leavemanagement_jsx",
+      "target": "pages_leavemanagement_leavemanagement",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/LeaveManagement.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_leavemanagement_jsx",
+      "target": "utils_env_apibaseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Payroll.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_payroll_jsx",
+      "target": "frontend_src_utils_env_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Payroll.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_payroll_jsx",
+      "target": "pages_payroll_payroll",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/hrms/pages/Payroll.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "frontend_src_features_hrms_pages_payroll_jsx",
+      "target": "utils_env_apibaseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/components/LeadFormResolver.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_components_leadformresolver_jsx",
+      "target": "components_leadformresolver_customforms",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/components/LeadFormResolver.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_components_leadformresolver_jsx",
+      "target": "components_leadformresolver_leadformresolver",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/components/LeadFormResolver.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_components_leadformresolver_jsx",
+      "target": "frontend_src_features_leads_components_standardleadform_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/LeadsTable.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_leadstable_jsx",
+      "target": "frontend_src_features_leads_components_leadformresolver_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/SAMyLeads.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_samyleads_jsx",
+      "target": "frontend_src_features_leads_components_leadformresolver_jsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/components/StandardLeadForm.jsx",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_components_standardleadform_jsx",
+      "target": "components_standardleadform_standardleadform",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/components/StandardLeadForm.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_components_standardleadform_jsx",
+      "target": "components_standardleadform_validateemail",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/components/StandardLeadForm.jsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_components_standardleadform_jsx",
+      "target": "components_standardleadform_validatephone",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/components/StandardLeadForm.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_components_standardleadform_jsx",
+      "target": "frontend_src_utils_env_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/components/StandardLeadForm.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_components_standardleadform_jsx",
+      "target": "utils_env_apibaseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/Dashboard.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_dashboard_jsx",
+      "target": "frontend_src_utils_env_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/Dashboard.jsx",
+      "source_location": "L258",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_dashboard_jsx",
+      "target": "pages_dashboard_dashboard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/Dashboard.jsx",
+      "source_location": "L187",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_dashboard_jsx",
+      "target": "pages_dashboard_donutchart",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/Dashboard.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_dashboard_jsx",
+      "target": "pages_dashboard_saleschart",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/Dashboard.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_dashboard_jsx",
+      "target": "utils_env_apibaseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/LeadSources.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_leadsources_jsx",
+      "target": "frontend_src_utils_env_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/LeadSources.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_leadsources_jsx",
+      "target": "pages_leadsources_leadsources",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/LeadSources.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_leadsources_jsx",
+      "target": "utils_env_apibaseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/LeadsTable.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_leadstable_jsx",
+      "target": "frontend_src_utils_env_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/LeadsTable.jsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_leadstable_jsx",
+      "target": "pages_leadstable_formatremarks",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/LeadsTable.jsx",
+      "source_location": "L39",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_leadstable_jsx",
+      "target": "pages_leadstable_getdelegationstatusclass",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/LeadsTable.jsx",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_leadstable_jsx",
+      "target": "pages_leadstable_getstatusclass",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/LeadsTable.jsx",
+      "source_location": "L66",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_leadstable_jsx",
+      "target": "pages_leadstable_leadstable",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/LeadsTable.jsx",
+      "source_location": "L49",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_leadstable_jsx",
+      "target": "pages_leadstable_validateemail",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/LeadsTable.jsx",
+      "source_location": "L55",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_leadstable_jsx",
+      "target": "pages_leadstable_validatephone",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/LeadsTable.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_leadstable_jsx",
+      "target": "utils_env_apibaseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/LeadsTable.jsx",
+      "source_location": "L726",
+      "weight": 1.0,
+      "source": "pages_leadstable_leadstable",
+      "target": "pages_leadstable_getstatusclass",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/Pipeline.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_pipeline_jsx",
+      "target": "frontend_src_utils_env_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/Pipeline.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_pipeline_jsx",
+      "target": "pages_pipeline_pipeline",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/Pipeline.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_pipeline_jsx",
+      "target": "utils_env_apibaseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/Reports.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_reports_jsx",
+      "target": "frontend_src_utils_env_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/Reports.jsx",
+      "source_location": "L257",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_reports_jsx",
+      "target": "pages_reports_activityheatmap",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/Reports.jsx",
+      "source_location": "L218",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_reports_jsx",
+      "target": "pages_reports_conversionfunnel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/Reports.jsx",
+      "source_location": "L380",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_reports_jsx",
+      "target": "pages_reports_reports",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/Reports.jsx",
+      "source_location": "L51",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_reports_jsx",
+      "target": "pages_reports_revenuechart",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/Reports.jsx",
+      "source_location": "L323",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_reports_jsx",
+      "target": "pages_reports_salesstatusbreakdown",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/Reports.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_reports_jsx",
+      "target": "pages_reports_teamperformance",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/Reports.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_reports_jsx",
+      "target": "utils_env_apibaseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/SADashboard.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_sadashboard_jsx",
+      "target": "frontend_src_utils_env_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/SADashboard.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_sadashboard_jsx",
+      "target": "pages_sadashboard_sadashboard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/SADashboard.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_sadashboard_jsx",
+      "target": "utils_env_apibaseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/Sales.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_sales_jsx",
+      "target": "frontend_src_utils_env_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/Sales.jsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_sales_jsx",
+      "target": "pages_sales_sales",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/Sales.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_sales_jsx",
+      "target": "utils_env_apibaseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/SAMyLeads.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_samyleads_jsx",
+      "target": "frontend_src_utils_env_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/SAMyLeads.jsx",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_samyleads_jsx",
+      "target": "pages_samyleads_getdelegationstatusclass",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/SAMyLeads.jsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_samyleads_jsx",
+      "target": "pages_samyleads_getstatusclass",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/SAMyLeads.jsx",
+      "source_location": "L31",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_samyleads_jsx",
+      "target": "pages_samyleads_samyleads",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/SAMyLeads.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_samyleads_jsx",
+      "target": "utils_env_apibaseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/SAMyLeads.jsx",
+      "source_location": "L432",
+      "weight": 1.0,
+      "source": "pages_samyleads_samyleads",
+      "target": "pages_samyleads_getstatusclass",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/SAPipeline.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_sapipeline_jsx",
+      "target": "frontend_src_utils_env_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/SAPipeline.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_sapipeline_jsx",
+      "target": "pages_sapipeline_sapipeline",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/SAPipeline.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_sapipeline_jsx",
+      "target": "utils_env_apibaseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/SATasks.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_satasks_jsx",
+      "target": "frontend_src_utils_env_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/SATasks.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_satasks_jsx",
+      "target": "pages_satasks_satasks",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/pages/SATasks.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_pages_satasks_jsx",
+      "target": "utils_env_apibaseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/tenants/tenant_2/CustomLeadForm.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_tenants_tenant_2_customleadform_jsx",
+      "target": "frontend_src_utils_env_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/tenants/tenant_2/CustomLeadForm.jsx",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_tenants_tenant_2_customleadform_jsx",
+      "target": "tenant_2_customleadform_customleadform",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/tenants/tenant_2/CustomLeadForm.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_tenants_tenant_2_customleadform_jsx",
+      "target": "tenant_2_customleadform_validateemail",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/tenants/tenant_2/CustomLeadForm.jsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_tenants_tenant_2_customleadform_jsx",
+      "target": "tenant_2_customleadform_validatephone",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/leads/tenants/tenant_2/CustomLeadForm.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "frontend_src_features_leads_tenants_tenant_2_customleadform_jsx",
+      "target": "utils_env_apibaseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/superadmin/pages/Apps.jsx",
+      "source_location": "L66",
+      "weight": 1.0,
+      "source": "frontend_src_features_superadmin_pages_apps_jsx",
+      "target": "pages_apps_apps",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/superadmin/pages/Apps.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_src_features_superadmin_pages_apps_jsx",
+      "target": "pages_apps_appslist",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/superadmin/pages/TenantReports.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_features_superadmin_pages_tenantreports_jsx",
+      "target": "frontend_src_utils_env_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/superadmin/pages/TenantReports.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "frontend_src_features_superadmin_pages_tenantreports_jsx",
+      "target": "pages_tenantreports_currencieslist",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/superadmin/pages/TenantReports.jsx",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "frontend_src_features_superadmin_pages_tenantreports_jsx",
+      "target": "pages_tenantreports_tenantreports",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/superadmin/pages/TenantReports.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_features_superadmin_pages_tenantreports_jsx",
+      "target": "utils_env_apibaseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/superadmin/pages/TenantReports.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_features_superadmin_pages_tenantreports_jsx",
+      "target": "utils_env_basepath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/superadmin/pages/Tenants.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_features_superadmin_pages_tenants_jsx",
+      "target": "frontend_src_utils_env_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/superadmin/pages/Tenants.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "frontend_src_features_superadmin_pages_tenants_jsx",
+      "target": "pages_tenants_currencieslist",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/superadmin/pages/Tenants.jsx",
+      "source_location": "L36",
+      "weight": 1.0,
+      "source": "frontend_src_features_superadmin_pages_tenants_jsx",
+      "target": "pages_tenants_tenants",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/superadmin/pages/Tenants.jsx",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "frontend_src_features_superadmin_pages_tenants_jsx",
+      "target": "pages_tenants_validateemail",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/superadmin/pages/Tenants.jsx",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "frontend_src_features_superadmin_pages_tenants_jsx",
+      "target": "pages_tenants_validatephone",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/superadmin/pages/Tenants.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_features_superadmin_pages_tenants_jsx",
+      "target": "utils_env_apibaseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/features/superadmin/pages/Tenants.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_features_superadmin_pages_tenants_jsx",
+      "target": "utils_env_basepath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/Contacts.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "frontend_src_pages_contacts_jsx",
+      "target": "frontend_src_utils_env_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/Contacts.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_src_pages_contacts_jsx",
+      "target": "pages_contacts_colors",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/Contacts.jsx",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "frontend_src_pages_contacts_jsx",
+      "target": "pages_contacts_contacts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/Contacts.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "frontend_src_pages_contacts_jsx",
+      "target": "pages_contacts_getinitials",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/Contacts.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "frontend_src_pages_contacts_jsx",
+      "target": "utils_env_apibaseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/HelpCenter.jsx",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "frontend_src_pages_helpcenter_jsx",
+      "target": "pages_helpcenter_articles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/HelpCenter.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "frontend_src_pages_helpcenter_jsx",
+      "target": "pages_helpcenter_categories",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/HelpCenter.jsx",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "frontend_src_pages_helpcenter_jsx",
+      "target": "pages_helpcenter_forums",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/HelpCenter.jsx",
+      "source_location": "L34",
+      "weight": 1.0,
+      "source": "frontend_src_pages_helpcenter_jsx",
+      "target": "pages_helpcenter_helpcenter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/Login.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_pages_login_jsx",
+      "target": "frontend_src_utils_env_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/Login.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "frontend_src_pages_login_jsx",
+      "target": "pages_login_login",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/Login.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_pages_login_jsx",
+      "target": "utils_env_apibaseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/Login.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_pages_login_jsx",
+      "target": "utils_env_basepath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/ResetPassword.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_pages_resetpassword_jsx",
+      "target": "frontend_src_utils_env_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/ResetPassword.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "frontend_src_pages_resetpassword_jsx",
+      "target": "pages_resetpassword_resetpassword",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/ResetPassword.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_pages_resetpassword_jsx",
+      "target": "utils_env_apibaseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/ResetPassword.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_pages_resetpassword_jsx",
+      "target": "utils_env_basepath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/SelectApp.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_pages_selectapp_jsx",
+      "target": "frontend_src_utils_env_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/SelectApp.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "frontend_src_pages_selectapp_jsx",
+      "target": "pages_selectapp_appsdata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/SelectApp.jsx",
+      "source_location": "L54",
+      "weight": 1.0,
+      "source": "frontend_src_pages_selectapp_jsx",
+      "target": "pages_selectapp_selectapp",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/SelectApp.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_pages_selectapp_jsx",
+      "target": "utils_env_basepath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/SettingsPage.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_pages_settingspage_jsx",
+      "target": "frontend_src_utils_env_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/SettingsPage.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "frontend_src_pages_settingspage_jsx",
+      "target": "pages_settingspage_currencieslist",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/SettingsPage.jsx",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "frontend_src_pages_settingspage_jsx",
+      "target": "pages_settingspage_settingspage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/SettingsPage.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_pages_settingspage_jsx",
+      "target": "utils_env_apibaseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/Users.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_src_pages_users_jsx",
+      "target": "frontend_src_utils_env_js",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/Users.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "frontend_src_pages_users_jsx",
+      "target": "pages_users_defaultusers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/Users.jsx",
+      "source_location": "L59",
+      "weight": 1.0,
+      "source": "frontend_src_pages_users_jsx",
+      "target": "pages_users_users",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/Users.jsx",
+      "source_location": "L43",
+      "weight": 1.0,
+      "source": "frontend_src_pages_users_jsx",
+      "target": "pages_users_validateemail",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/Users.jsx",
+      "source_location": "L48",
+      "weight": 1.0,
+      "source": "frontend_src_pages_users_jsx",
+      "target": "pages_users_validatephone",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/Users.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_src_pages_users_jsx",
+      "target": "utils_env_apibaseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/utils/env.js",
+      "source_location": "L56",
+      "weight": 1.0,
+      "source": "frontend_src_utils_env_js",
+      "target": "utils_env_apibaseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/utils/env.js",
+      "source_location": "L38",
+      "weight": 1.0,
+      "source": "frontend_src_utils_env_js",
+      "target": "utils_env_basepath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/utils/env.js",
+      "source_location": "L41",
+      "weight": 1.0,
+      "source": "frontend_src_utils_env_js",
+      "target": "utils_env_getapibaseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/utils/env.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "frontend_src_utils_env_js",
+      "target": "utils_env_getappbasepath",
+      "confidence_score": 1.0
+    }
+  ],
+  "hyperedges": [],
+  "built_at_commit": "3d32721ae5fcb2ff91e94ad1c6c8a384a1a33e92"
+}

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { apiBaseUrl } from '../../../utils/env.js';
 import { useHRMS } from '../context/HRMSContext';
 import {
@@ -11,6 +12,7 @@ const HRMSDashboard = () => {
   const [loading, setLoading] = useState(true);
 
   const { tenantId } = useHRMS();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch(`${apiBaseUrl}/hrms/dashboard?tenant_id=${tenantId}`)
@@ -44,19 +46,107 @@ const HRMSDashboard = () => {
   const halfDayCount = attToday['Half-Day'] || 0;
   const notMarked = attToday['Not Marked'] || 0;
 
+  if (data.is_ess) {
+    return (
+      <div className="animate-in" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <h2 style={{ margin: 0, fontSize: '24px', fontWeight: 700, color: 'var(--text-primary)' }}>My HR Workspace</h2>
+            <p style={{ margin: '4px 0 0', color: 'var(--text-muted)', fontSize: '14px' }}>Overview of your attendance, leaves, and payroll</p>
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
+          
+          {/* My Attendance Today */}
+          <div style={{ background: 'var(--bg-card)', padding: '24px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
+            <h3 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Clock size={18} style={{ color: 'var(--accent-blue)' }} /> Today's Attendance
+            </h3>
+            {data.my_attendance ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: 'var(--text-muted)' }}>Status:</span>
+                  <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{data.my_attendance.status}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: 'var(--text-muted)' }}>Clock In:</span>
+                  <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{data.my_attendance.clock_in ? new Date(`1970-01-01T${data.my_attendance.clock_in}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '--'}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: 'var(--text-muted)' }}>Clock Out:</span>
+                  <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{data.my_attendance.clock_out ? new Date(`1970-01-01T${data.my_attendance.clock_out}`).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '--'}</span>
+                </div>
+              </div>
+            ) : (
+              <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-muted)' }}>
+                You have not marked attendance today.
+              </div>
+            )}
+          </div>
+
+          {/* Upcoming Holidays */}
+          <div style={{ background: 'var(--bg-card)', padding: '24px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
+            <h3 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Calendar size={18} style={{ color: 'var(--accent-purple)' }} /> Upcoming Holidays
+            </h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {data.upcoming_holidays?.length > 0 ? data.upcoming_holidays.map((hol, i) => (
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px', background: 'var(--bg-hover)', borderRadius: 'var(--radius-sm)' }}>
+                  <span style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{hol.title}</span>
+                  <span style={{ color: 'var(--accent-purple)', fontSize: '12px' }}>{new Date(hol.from_date).toLocaleDateString()}</span>
+                </div>
+              )) : (
+                <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-muted)' }}>No upcoming holidays.</div>
+              )}
+            </div>
+          </div>
+
+        </div>
+
+        {/* Leave Balances */}
+        <div style={{ background: 'var(--bg-card)', padding: '24px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
+          <h3 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Calendar size={18} style={{ color: 'var(--accent-emerald)' }} /> My Leave Balances
+          </h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px' }}>
+            {data.my_leaves?.map((lb, i) => (
+              <div key={i} style={{ padding: '16px', background: 'var(--bg-hover)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
+                <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px' }}>{lb.leave_type_name}</div>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                  <span style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text-primary)' }}>{lb.remaining}</span>
+                  <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>/ {lb.allocated} remaining</span>
+                </div>
+              </div>
+            ))}
+            {(!data.my_leaves || data.my_leaves.length === 0) && (
+              <div style={{ color: 'var(--text-muted)' }}>No leave balances configured.</div>
+            )}
+          </div>
+        </div>
+
+      </div>
+    );
+  }
+
   return (
     <div className="animate-in" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
 
       {/* Top Metric Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px' }}>
         {/* Total Employees */}
-        <div style={{
+        <div 
+          onClick={() => navigate('/feature/hrms/employees')}
+          onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = 'var(--shadow-md)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'var(--shadow-sm)'; }}
+          style={{
           background: 'var(--bg-card)',
           padding: '24px',
           borderRadius: 'var(--radius-lg)',
           border: '1px solid var(--border)',
           boxShadow: 'var(--shadow-sm)',
-          display: 'flex', alignItems: 'center', gap: '16px'
+          display: 'flex', alignItems: 'center', gap: '16px',
+          cursor: 'pointer', transition: 'all 0.2s ease'
         }}>
           <div style={{
             width: '52px', height: '52px', borderRadius: 'var(--radius-md)',
@@ -74,13 +164,18 @@ const HRMSDashboard = () => {
         </div>
 
         {/* Present Today */}
-        <div style={{
+        <div 
+          onClick={() => navigate('/feature/hrms/attendance')}
+          onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = 'var(--shadow-md)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'var(--shadow-sm)'; }}
+          style={{
           background: 'var(--bg-card)',
           padding: '24px',
           borderRadius: 'var(--radius-lg)',
           border: '1px solid var(--border)',
           boxShadow: 'var(--shadow-sm)',
-          display: 'flex', alignItems: 'center', gap: '16px'
+          display: 'flex', alignItems: 'center', gap: '16px',
+          cursor: 'pointer', transition: 'all 0.2s ease'
         }}>
           <div style={{
             width: '52px', height: '52px', borderRadius: 'var(--radius-md)',
@@ -98,13 +193,18 @@ const HRMSDashboard = () => {
         </div>
 
         {/* Absent Today */}
-        <div style={{
+        <div 
+          onClick={() => navigate('/feature/hrms/attendance')}
+          onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = 'var(--shadow-md)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'var(--shadow-sm)'; }}
+          style={{
           background: 'var(--bg-card)',
           padding: '24px',
           borderRadius: 'var(--radius-lg)',
           border: '1px solid var(--border)',
           boxShadow: 'var(--shadow-sm)',
-          display: 'flex', alignItems: 'center', gap: '16px'
+          display: 'flex', alignItems: 'center', gap: '16px',
+          cursor: 'pointer', transition: 'all 0.2s ease'
         }}>
           <div style={{
             width: '52px', height: '52px', borderRadius: 'var(--radius-md)',
@@ -122,13 +222,18 @@ const HRMSDashboard = () => {
         </div>
 
         {/* Pending Leaves */}
-        <div style={{
+        <div 
+          onClick={() => navigate('/feature/hrms/leaves')}
+          onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = 'var(--shadow-md)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'var(--shadow-sm)'; }}
+          style={{
           background: 'var(--bg-card)',
           padding: '24px',
           borderRadius: 'var(--radius-lg)',
           border: '1px solid var(--border)',
           boxShadow: 'var(--shadow-sm)',
-          display: 'flex', alignItems: 'center', gap: '16px'
+          display: 'flex', alignItems: 'center', gap: '16px',
+          cursor: 'pointer', transition: 'all 0.2s ease'
         }}>
           <div style={{
             width: '52px', height: '52px', borderRadius: 'var(--radius-md)',
@@ -149,12 +254,17 @@ const HRMSDashboard = () => {
       {/* Middle Row: Department Breakdown + Attendance Ring */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
         {/* Department Breakdown */}
-        <div style={{
+        <div 
+          onClick={() => navigate('/feature/hrms/employees')}
+          onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = 'var(--shadow-md)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'var(--shadow-sm)'; }}
+          style={{
           background: 'var(--bg-card)',
           borderRadius: 'var(--radius-lg)',
           border: '1px solid var(--border)',
           boxShadow: 'var(--shadow-sm)',
-          padding: '24px'
+          padding: '24px',
+          cursor: 'pointer', transition: 'all 0.2s ease'
         }}>
           <h3 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Briefcase size={16} style={{ color: 'var(--accent-blue)' }} /> Department Breakdown
@@ -183,12 +293,17 @@ const HRMSDashboard = () => {
         </div>
 
         {/* Today's Attendance Summary */}
-        <div style={{
+        <div 
+          onClick={() => navigate('/feature/hrms/attendance')}
+          onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = 'var(--shadow-md)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'var(--shadow-sm)'; }}
+          style={{
           background: 'var(--bg-card)',
           borderRadius: 'var(--radius-lg)',
           border: '1px solid var(--border)',
           boxShadow: 'var(--shadow-sm)',
-          padding: '24px'
+          padding: '24px',
+          cursor: 'pointer', transition: 'all 0.2s ease'
         }}>
           <h3 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Clock size={16} style={{ color: 'var(--accent-emerald)' }} /> Today's Attendance
@@ -218,14 +333,19 @@ const HRMSDashboard = () => {
       </div>
 
       {/* Recruitment ATS Insights Section */}
-      <div style={{
+      <div 
+        onClick={() => navigate('/feature/hrms/recruitment')}
+        onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = 'var(--shadow-md)'; }}
+        onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'var(--shadow-sm)'; }}
+        style={{
         background: 'rgba(20, 27, 45, 0.2)',
         borderRadius: 'var(--radius-lg)',
         border: '1px solid var(--border)',
         padding: '24px',
         display: 'flex',
         flexDirection: 'column',
-        gap: '16px'
+        gap: '16px',
+        cursor: 'pointer', transition: 'all 0.2s ease'
       }}>
         <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: 'var(--text-white)', display: 'flex', alignItems: 'center', gap: '8px' }}>
           <UserPlus size={16} style={{ color: 'var(--accent-cyan)' }} />
@@ -323,12 +443,17 @@ const HRMSDashboard = () => {
       {/* Bottom Row: Recent Leaves + Recent Hires + Birthdays */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
         {/* Pending Leave Requests */}
-        <div style={{
+        <div 
+          onClick={() => navigate('/feature/hrms/leaves')}
+          onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = 'var(--shadow-md)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'var(--shadow-sm)'; }}
+          style={{
           background: 'var(--bg-card)',
           borderRadius: 'var(--radius-lg)',
           border: '1px solid var(--border)',
           boxShadow: 'var(--shadow-sm)',
-          padding: '24px'
+          padding: '24px',
+          cursor: 'pointer', transition: 'all 0.2s ease'
         }}>
           <h3 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Calendar size={16} style={{ color: 'var(--accent-yellow)' }} /> Recent Leave Requests
@@ -359,12 +484,17 @@ const HRMSDashboard = () => {
         </div>
 
         {/* Recent Hires */}
-        <div style={{
+        <div 
+          onClick={() => navigate('/feature/hrms/employees')}
+          onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = 'var(--shadow-md)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'var(--shadow-sm)'; }}
+          style={{
           background: 'var(--bg-card)',
           borderRadius: 'var(--radius-lg)',
           border: '1px solid var(--border)',
           boxShadow: 'var(--shadow-sm)',
-          padding: '24px'
+          padding: '24px',
+          cursor: 'pointer', transition: 'all 0.2s ease'
         }}>
           <h3 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <UserPlus size={16} style={{ color: 'var(--accent-cyan)' }} /> Recent Hires
@@ -391,12 +521,17 @@ const HRMSDashboard = () => {
         </div>
 
         {/* Upcoming Birthdays */}
-        <div style={{
+        <div 
+          onClick={() => navigate('/feature/hrms/employees')}
+          onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = 'var(--shadow-md)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'var(--shadow-sm)'; }}
+          style={{
           background: 'var(--bg-card)',
           borderRadius: 'var(--radius-lg)',
           border: '1px solid var(--border)',
           boxShadow: 'var(--shadow-sm)',
-          padding: '24px'
+          padding: '24px',
+          cursor: 'pointer', transition: 'all 0.2s ease'
         }}>
           <h3 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Gift size={16} style={{ color: 'var(--accent-purple)' }} /> Upcoming Birthdays

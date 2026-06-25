@@ -6,11 +6,25 @@ $method = $_SERVER['REQUEST_METHOD'];
 $tenant_id = getTenantId();
 $action = $_GET['action'] ?? '';
 
+$user_context = getCurrentUserContext();
+$is_admin_or_manager = $user_context && in_array($user_context['role'], ['Admin', 'Manager', 'Superadmin']);
+$current_emp_id = getCurrentEmployeeId($pdo, $tenant_id);
+
 switch ($method) {
     case 'GET':
         if ($action === 'structure') {
             // Get salary structures
             $employee_id = $_GET['employee_id'] ?? null;
+            
+            // Enforce ESS isolation
+            if (!$is_admin_or_manager) {
+                if (!$current_emp_id) {
+                    echo json_encode(["success" => true, "data" => []]);
+                    exit;
+                }
+                $employee_id = $current_emp_id;
+            }
+
             
             $sql = "SELECT ss.*, CONCAT(e.first_name, ' ', e.last_name) as employee_name, e.emp_code, d.name as department_name, des.name as designation_name
                 FROM hrms_salary_structures ss
@@ -34,20 +48,42 @@ switch ($method) {
             // Get payroll runs
             $month = $_GET['month'] ?? date('n');
             $year = $_GET['year'] ?? date('Y');
+            $employee_id = $_GET['employee_id'] ?? null;
+            
+            // Enforce ESS isolation
+            if (!$is_admin_or_manager) {
+                if (!$current_emp_id) {
+                    echo json_encode(["success" => true, "data" => []]);
+                    exit;
+                }
+                $employee_id = $current_emp_id;
+            }
             
             $sql = "SELECT pr.*, CONCAT(e.first_name, ' ', e.last_name) as employee_name, e.emp_code, d.name as department_name
                 FROM hrms_payroll_runs pr
                 JOIN hrms_employees e ON pr.employee_id = e.id
                 LEFT JOIN hrms_departments d ON e.department_id = d.id
-                WHERE pr.tenant_id = ? AND pr.month = ? AND pr.year = ?
-                ORDER BY e.first_name";
+                WHERE pr.tenant_id = ? AND pr.month = ? AND pr.year = ?";
+            $params = [$tenant_id, $month, $year];
+            
+            if ($employee_id) {
+                $sql .= " AND pr.employee_id = ?";
+                $params[] = $employee_id;
+            }
+            
+            $sql .= " ORDER BY e.first_name";
             $stmt = $pdo->prepare($sql);
-            $stmt->execute([$tenant_id, $month, $year]);
+            $stmt->execute($params);
             echo json_encode(["success" => true, "data" => $stmt->fetchAll()]);
         }
         break;
 
     case 'POST':
+        if (!$is_admin_or_manager) {
+            http_response_code(403);
+            echo json_encode(["success" => false, "error" => "Unauthorized to modify payroll data."]);
+            exit;
+        }
         $input = json_decode(file_get_contents("php://input"), true);
         
         if ($action === 'structure') {
@@ -119,6 +155,11 @@ switch ($method) {
         break;
 
     case 'PUT':
+        if (!$is_admin_or_manager) {
+            http_response_code(403);
+            echo json_encode(["success" => false, "error" => "Unauthorized to modify payroll data."]);
+            exit;
+        }
         $input = json_decode(file_get_contents("php://input"), true);
         $id = $input['id'] ?? null;
         $status = $input['status'] ?? 'Paid';

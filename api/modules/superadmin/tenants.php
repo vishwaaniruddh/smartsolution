@@ -302,7 +302,7 @@ switch ($method) {
         break;
 
     case 'DELETE':
-        // Soft delete tenant
+        // Hard delete tenant
         $id = isset($_GET['id']) ? intval($_GET['id']) : null;
         if (!$id) {
             http_response_code(400);
@@ -310,10 +310,31 @@ switch ($method) {
             exit();
         }
         try {
-            $stmt = $pdo->prepare("UPDATE tenants SET is_deleted = 1 WHERE id = ?");
-            $stmt->execute([$id]);
-            echo json_encode(["success" => true, "message" => "Tenant soft-deleted successfully."]);
+            $checkStmt = $pdo->prepare("SELECT is_deleted FROM tenants WHERE id = ?");
+            $checkStmt->execute([$id]);
+            $tenant = $checkStmt->fetch();
+            if (!$tenant) {
+                http_response_code(404);
+                echo json_encode(["success" => false, "error" => "Tenant not found."]);
+                exit();
+            }
+            if (intval($tenant['is_deleted']) !== 1) {
+                http_response_code(403);
+                echo json_encode(["success" => false, "error" => "Tenant must be suspended before it can be deleted."]);
+                exit();
+            }
+
+            $pdo->beginTransaction();
+            $pdo->prepare("DELETE FROM tenant_apps WHERE tenant_id = ?")->execute([$id]);
+            $pdo->prepare("DELETE FROM users WHERE tenant_id = ?")->execute([$id]);
+            $pdo->prepare("DELETE FROM tenants WHERE id = ?")->execute([$id]);
+            $pdo->commit();
+
+            echo json_encode(["success" => true, "message" => "Tenant deleted successfully."]);
         } catch (PDOException $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
             http_response_code(500);
             echo json_encode(["success" => false, "error" => $e->getMessage()]);
         }

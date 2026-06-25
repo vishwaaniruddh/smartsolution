@@ -1,24 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { basePath, apiBaseUrl } from '../../utils/env.js';
+import { initSocket, disconnectSocket } from '../../utils/socket.js';
+import CallWidget from '../chat/CallWidget.jsx';
 import { useAuth } from '../../context/AuthContext';
 import {
   LayoutDashboard, Users, GitBranch, UserCircle, BarChart3,
   Settings, UserCheck, CheckSquare, IndianRupee, Building, LogOut, Menu, ChevronDown, ChevronRight, Shield, LayoutGrid,
   Clock, CalendarDays, Wallet, CalendarHeart, Warehouse, Truck, Package, ClipboardList, History, Upload, UserPlus, ShoppingBag,
-  Receipt, Headphones, Ticket, MessageSquare
+  Receipt, Headphones, Ticket, MessageSquare, MessageCircle, Scale
 } from 'lucide-react';
 import { useSettings } from '../SettingsContext';
+import ImpersonationBanner from './ImpersonationBanner';
 
 const adminNavItems = [
-  { isHeader: true, label: 'Overview' },
-  { to: '/feature/leads', icon: LayoutDashboard, label: 'Dashboard' },
-  { isHeader: true, label: 'Sales & Relations' },
-  { to: '/feature/leads/leads', icon: Users, label: 'Leads' },
-  { to: '/feature/leads/pipeline', icon: GitBranch, label: 'Sales Pipeline' },
-  { to: '/feature/leads/sales', icon: IndianRupee, label: 'Sales' },
-  { to: '/contacts', icon: UserCircle, label: 'Contacts' },
-  { to: '/feature/leads/reports', icon: BarChart3, label: 'Reports' },
   { isHeader: true, label: 'Administration' },
   {
     isDropdown: true,
@@ -29,6 +24,15 @@ const adminNavItems = [
       { to: '/users', icon: UserCheck, label: 'Users' }
     ]
   },
+  { isHeader: true, label: 'Overview' },
+  { to: '/feature/leads', icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/chat', icon: MessageCircle, label: 'Chat' },
+  { isHeader: true, label: 'Sales & Relations' },
+  { to: '/feature/leads/leads', icon: Users, label: 'Leads' },
+  { to: '/feature/leads/pipeline', icon: GitBranch, label: 'Sales Pipeline' },
+  { to: '/feature/leads/sales', icon: IndianRupee, label: 'Sales' },
+  { to: '/contacts', icon: UserCircle, label: 'Contacts' },
+  { to: '/feature/leads/reports', icon: BarChart3, label: 'Reports' },
   { isHeader: true, label: 'System' },
   { to: '/settings', icon: Settings, label: 'Settings' },
 ];
@@ -36,6 +40,7 @@ const adminNavItems = [
 const saNavItems = [
   { isHeader: true, label: 'Overview' },
   { to: '/feature/leads/sa/dashboard', icon: LayoutDashboard, label: 'SA Dashboard' },
+  { to: '/chat', icon: MessageCircle, label: 'Chat' },
   { isHeader: true, label: 'My Workspace' },
   { to: '/feature/leads/sa/leads', icon: Users, label: 'My Leads' },
   { to: '/feature/leads/sa/pipeline', icon: GitBranch, label: 'My Pipeline' },
@@ -47,14 +52,29 @@ const superadminNavItems = [
   { isHeader: true, label: 'Tenant Administration' },
   { to: '/superadmin/tenants', icon: Building, label: 'Tenants' },
   { to: '/superadmin/analytics', icon: BarChart3, label: 'Tenant Reports' },
+  { to: '/superadmin/comparison', icon: Scale, label: 'CRM Comparison' },
+  { to: '/chat', icon: MessageCircle, label: 'Chat' },
+  { to: '/superadmin/contacts', icon: Users, label: 'Contacts' },
   { to: '/superadmin/apps', icon: LayoutGrid, label: 'Apps' },
   { isHeader: true, label: 'System' },
   { to: '/settings', icon: Settings, label: 'Settings' }
 ];
 
 const hrmsNavItems = [
+  { isHeader: true, label: 'Administration' },
+  {
+    isDropdown: true,
+    icon: Shield,
+    label: 'Admin Settings',
+    subItems: [
+      { to: '/feature/hrms/departments', icon: Building, label: 'Departments' },
+      { to: '/feature/hrms/holidays', icon: CalendarHeart, label: 'Holidays' },
+      { to: '/users', icon: UserCheck, label: 'Users' }
+    ]
+  },
   { isHeader: true, label: 'Overview' },
   { to: '/feature/hrms', icon: LayoutDashboard, label: 'HR Dashboard' },
+  { to: '/chat', icon: MessageCircle, label: 'Chat' },
   { isHeader: true, label: 'Personnel & Payroll' },
   { to: '/feature/hrms/employees', icon: Users, label: 'Employees' },
   { to: '/feature/hrms/attendance', icon: Clock, label: 'Attendance' },
@@ -62,24 +82,37 @@ const hrmsNavItems = [
   { to: '/feature/hrms/payroll', icon: Wallet, label: 'Payroll' },
   { isHeader: true, label: 'Recruitment' },
   { to: '/feature/hrms/recruitment', icon: UserPlus, label: 'Recruitment' },
-  { isHeader: true, label: 'Administration' },
-  {
-    isDropdown: true,
-    icon: Shield,
-    label: 'HR Admin',
-    subItems: [
-      { to: '/feature/hrms/departments', icon: Building, label: 'Departments' },
-      { to: '/feature/hrms/holidays', icon: CalendarHeart, label: 'Holidays' },
-    ]
-  },
   { to: '/feature/hrms/bulk-operations', icon: Upload, label: 'Bulk Operations' },
   { isHeader: true, label: 'System' },
   { to: '/settings', icon: Settings, label: 'Settings' },
 ];
 
+const hrmsEmployeeNavItems = [
+  { isHeader: true, label: 'My HR Workspace' },
+  { to: '/feature/hrms', icon: LayoutDashboard, label: 'My Dashboard' },
+  { to: '/chat', icon: MessageCircle, label: 'Chat' },
+  { isHeader: true, label: 'Self-Service' },
+  { to: '/feature/hrms/attendance', icon: Clock, label: 'My Attendance' },
+  { to: '/feature/hrms/leaves', icon: CalendarDays, label: 'My Leaves' },
+  { to: '/feature/hrms/payroll', icon: Wallet, label: 'My Payslips' },
+  { to: '/feature/hrms/holidays', icon: CalendarHeart, label: 'Holidays' },
+  { isHeader: true, label: 'System' },
+  { to: '/settings', icon: Settings, label: 'Settings' },
+];
+
 const inventoryNavItems = [
+  { isHeader: true, label: 'Administration' },
+  {
+    isDropdown: true,
+    icon: Shield,
+    label: 'Admin Settings',
+    subItems: [
+      { to: '/users', icon: UserCheck, label: 'Users' }
+    ]
+  },
   { isHeader: true, label: 'Overview' },
   { to: '/feature/inventory', icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/chat', icon: MessageCircle, label: 'Chat' },
   { isHeader: true, label: 'Product & Stock' },
   { to: '/feature/inventory/products', icon: Package, label: 'Product Catalog' },
   { to: '/feature/inventory/warehouses', icon: Warehouse, label: 'Warehouses' },
@@ -96,8 +129,18 @@ const inventoryNavItems = [
 ];
 
 const accountingNavItems = [
+  { isHeader: true, label: 'Administration' },
+  {
+    isDropdown: true,
+    icon: Shield,
+    label: 'Admin Settings',
+    subItems: [
+      { to: '/users', icon: UserCheck, label: 'Users' }
+    ]
+  },
   { isHeader: true, label: 'Overview' },
   { to: '/feature/accounting', icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/chat', icon: MessageCircle, label: 'Chat' },
   { isHeader: true, label: 'Transactions & Ledger' },
   { to: '/feature/accounting/accounts', icon: Building, label: 'Chart of Accounts' },
   { to: '/feature/accounting/journals', icon: ClipboardList, label: 'Journal Ledger' },
@@ -113,8 +156,18 @@ const accountingNavItems = [
 ];
 
 const servicedeskNavItems = [
+  { isHeader: true, label: 'Administration' },
+  {
+    isDropdown: true,
+    icon: Shield,
+    label: 'Admin Settings',
+    subItems: [
+      { to: '/users', icon: UserCheck, label: 'Users' }
+    ]
+  },
   { isHeader: true, label: 'Overview' },
   { to: '/feature/servicedesk', icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/chat', icon: MessageCircle, label: 'Chat' },
   { isHeader: true, label: 'Tickets' },
   { to: '/feature/servicedesk/tickets', icon: Ticket, label: 'All Tickets' },
   { to: '/feature/servicedesk/my-tickets', icon: MessageSquare, label: 'My Tickets' },
@@ -128,6 +181,36 @@ const AppShell = () => {
   const navigate = useNavigate();
   const { settings } = useSettings();
   const { user, logout } = useAuth();
+
+  const [callState, setCallState] = useState('idle');
+  const [callData, setCallData] = useState(null);
+  const [socketInstance, setSocketInstance] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('crm_token');
+    if (user && token) {
+      const activeSocket = initSocket(token);
+      setSocketInstance(activeSocket);
+
+      if (activeSocket) {
+        activeSocket.on('call-made', (data) => {
+          setCallState('ringing');
+          setCallData({
+            peerId: data.from,
+            peerName: data.callerName || `User #${data.from}`,
+            isVideo: data.isVideo,
+            isIncoming: true,
+            offer: data.offer
+          });
+        });
+      }
+    }
+
+    return () => {
+      disconnectSocket();
+      setSocketInstance(null);
+    };
+  }, [user]);
 
   if (!user) return null;
   const activeRole = user ? user.role : 'Admin/Manager';
@@ -169,27 +252,6 @@ const AppShell = () => {
       });
   };
 
-  const isImpersonatingSuperadmin = !!localStorage.getItem('crm_superadmin_token') && activeRole !== 'Superadmin';
-  const isImpersonatingTenantAdmin = !!localStorage.getItem('crm_tenant_admin_token');
-  const isImpersonating = isImpersonatingSuperadmin || isImpersonatingTenantAdmin;
-
-  const handleStopImpersonation = () => {
-    const superadminToken = localStorage.getItem('crm_superadmin_token');
-    const tenantAdminToken = localStorage.getItem('crm_tenant_admin_token');
-
-    if (tenantAdminToken) {
-      localStorage.setItem('crm_token', tenantAdminToken);
-      localStorage.removeItem('crm_tenant_admin_token');
-      const targetUrl = window.location.origin + basePath + '/users';
-      window.location.href = targetUrl;
-    } else if (superadminToken) {
-      localStorage.setItem('crm_token', superadminToken);
-      localStorage.removeItem('crm_superadmin_token');
-      const targetUrl = window.location.origin + basePath + '/superadmin/tenants';
-      window.location.href = targetUrl;
-    }
-  };
-
   const handleLogout = () => {
     logout();
     navigate('/login');
@@ -206,10 +268,12 @@ const AppShell = () => {
           ? 'servicedesk'
           : (location.pathname.startsWith('/feature/leads') ? 'crm' : (localStorage.getItem('crm_active_app') || 'crm')))));
 
+  const isHRMSAdmin = ['Admin', 'Manager', 'Superadmin'].includes(activeRole);
+
   const currentNavItems = activeRole === 'Superadmin'
     ? superadminNavItems
     : (activeApp === 'hrms'
-      ? hrmsNavItems
+      ? (isHRMSAdmin ? hrmsNavItems : hrmsEmployeeNavItems)
       : (activeApp === 'inventory'
         ? inventoryNavItems
         : (activeApp === 'accounting'
@@ -246,6 +310,7 @@ const AppShell = () => {
     if (path === '/feature/accounting/reports') return 'Financial Statements';
     if (path === '/contacts') return 'Contacts';
     if (path === '/users') return 'User Management';
+    if (path === '/chat') return 'Internal Chat';
     if (path === '/feature/leads/reports') return 'Reports';
     if (path === '/settings') return 'Settings';
     if (path === '/feature/leads/lead-sources') return 'Lead Sources Management';
@@ -259,6 +324,7 @@ const AppShell = () => {
     // Superadmin Routes
     if (path === '/superadmin/tenants') return 'Superadmin Tenant Management';
     if (path === '/superadmin/analytics') return 'Tenant Reports & Analytics';
+    if (path === '/superadmin/comparison') return 'Global CRM Market Comparison';
     if (path === '/superadmin/apps') return 'Enterprise App Directory';
 
     // HRMS Routes
@@ -379,43 +445,7 @@ const AppShell = () => {
 
       {/* Main Area */}
       <div className="main-area">
-        {isImpersonating && (
-          <div style={{
-            background: 'linear-gradient(90deg, #d97706, #b45309)',
-            color: 'white',
-            padding: '8px 28px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            fontSize: '13px',
-            fontWeight: 600,
-            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-            zIndex: 10,
-            borderBottom: '1px solid rgba(255,255,255,0.1)',
-            flexShrink: 0
-          }}>
-            <span>⚠️ You are currently impersonating <strong>{isImpersonatingTenantAdmin ? `${user?.first_name} ${user?.last_name}` : (user?.tenant_name || 'Tenant Admin')}</strong>.</span>
-            <button 
-              onClick={handleStopImpersonation}
-              style={{
-                background: 'white',
-                color: '#b45309',
-                border: 'none',
-                padding: '4px 12px',
-                borderRadius: 'var(--radius-sm)',
-                cursor: 'pointer',
-                fontSize: '12px',
-                fontWeight: 700,
-                boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                transition: 'transform 0.1s'
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.03)'}
-              onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-            >
-              Return to {isImpersonatingTenantAdmin ? 'Admin' : 'Superadmin'}
-            </button>
-          </div>
-        )}
+        <ImpersonationBanner />
         {/* Top Header */}
 
         <header className="top-header">
@@ -468,8 +498,7 @@ const AppShell = () => {
               </button>
             )}
 
-            <div style={{ position: 'relative' }}>
-              {/* User Profile Initials Button */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', position: 'relative' }}>              {/* User Profile Initials Button */}
               {user && (
                 <button 
                   onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
@@ -549,7 +578,7 @@ const AppShell = () => {
 
         {/* Page Content */}
         <div className="page-content">
-          <Outlet context={{ activeRole, activeAgent }} />
+          <Outlet context={{ activeRole, activeAgent, setCallState, setCallData, socket: socketInstance }} />
         </div>
       </div>
 
@@ -612,6 +641,15 @@ const AppShell = () => {
           </div>
         </div>
       )}
+      {/* Chat Widget Removed */}
+
+      <CallWidget 
+        socket={socketInstance}
+        callState={callState}
+        setCallState={setCallState}
+        callData={callData}
+        setCallData={setCallData}
+      />
     </div>
   );
 };

@@ -2,10 +2,14 @@ import { useState, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { apiBaseUrl } from '../../../utils/env.js';
 import { useHRMS } from '../context/HRMSContext';
+import { useAuth } from '../../../context/AuthContext';
 import { Plus, Play, Check, X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const Payroll = () => {
   const { toast, tenantId } = useHRMS();
+
+  const { user } = useAuth();
+  const isHRMSAdmin = ['Admin', 'Manager', 'Superadmin'].includes(user?.role);
 
   const [activeTab, setActiveTab] = useState('payroll');
   const [payrollData, setPayrollData] = useState([]);
@@ -129,7 +133,7 @@ const Payroll = () => {
       {/* Tabs */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
         <div style={{ display: 'flex', gap: '8px' }}>
-          {['payroll', 'structures'].map(tab => (
+          {['payroll', ...(isHRMSAdmin ? ['structures'] : [])].map(tab => (
             <button key={tab} onClick={() => setActiveTab(tab)} className="modal-btn secondary" style={{
               padding: '8px 18px', fontSize: '12px', fontWeight: 600,
               background: activeTab === tab ? 'var(--bg-hover)' : 'transparent',
@@ -150,34 +154,40 @@ const Payroll = () => {
               <button onClick={() => { if (selectedMonth === 12) { setSelectedMonth(1); setSelectedYear(selectedYear + 1); } else setSelectedMonth(selectedMonth + 1); }}
                 style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', color: 'var(--text-primary)', cursor: 'pointer', padding: '6px' }}><ChevronRight size={16} /></button>
             </div>
-            <button onClick={handleRunPayroll} disabled={processing} className="add-lead-btn" style={{ gap: '6px' }}>
-              <Play size={14} /> {processing ? 'Processing...' : 'Run Payroll'}
-            </button>
+            {isHRMSAdmin && (
+              <button onClick={handleRunPayroll} disabled={processing} className="add-lead-btn" style={{ gap: '6px' }}>
+                <Play size={14} /> {processing ? 'Processing...' : 'Run Payroll'}
+              </button>
+            )}
           </div>
         ) : (
-          <button className="add-lead-btn" onClick={() => { setStructureForm({ employee_id: '', basic: '', hra: '', da: '', special_allowance: '', pf_deduction: '', esi_deduction: '', tax_deduction: '', other_deductions: '' }); setShowStructureModal(true); }} style={{ gap: '6px' }}>
-            <Plus size={16} /> Add Salary Structure
-          </button>
+          isHRMSAdmin && (
+            <button className="add-lead-btn" onClick={() => { setStructureForm({ employee_id: '', basic: '', hra: '', da: '', special_allowance: '', pf_deduction: '', esi_deduction: '', tax_deduction: '', other_deductions: '' }); setShowStructureModal(true); }} style={{ gap: '6px' }}>
+              <Plus size={16} /> Add Salary Structure
+            </button>
+          )
         )}
       </div>
 
       {/* Payroll Summary */}
       {activeTab === 'payroll' && (
         <>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
-            <div style={{ background: 'var(--bg-card)', padding: '20px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)' }}>
-              <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 500 }}>Total Gross</div>
-              <div style={{ fontSize: '22px', fontWeight: 700, color: 'var(--accent-blue)', marginTop: '4px' }}>{formatCurrency(totalGross)}</div>
+          {isHRMSAdmin && (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '16px' }}>
+              <div style={{ background: 'var(--bg-card)', padding: '20px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)' }}>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 500 }}>Total Gross</div>
+                <div style={{ fontSize: '22px', fontWeight: 700, color: 'var(--accent-blue)', marginTop: '4px' }}>{formatCurrency(totalGross)}</div>
+              </div>
+              <div style={{ background: 'var(--bg-card)', padding: '20px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)' }}>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 500 }}>Total Net Payable</div>
+                <div style={{ fontSize: '22px', fontWeight: 700, color: 'var(--accent-emerald)', marginTop: '4px' }}>{formatCurrency(totalNet)}</div>
+              </div>
+              <div style={{ background: 'var(--bg-card)', padding: '20px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)' }}>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 500 }}>Paid / Total</div>
+                <div style={{ fontSize: '22px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '4px' }}>{paidCount} / {payrollData.length}</div>
+              </div>
             </div>
-            <div style={{ background: 'var(--bg-card)', padding: '20px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)' }}>
-              <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 500 }}>Total Net Payable</div>
-              <div style={{ fontSize: '22px', fontWeight: 700, color: 'var(--accent-emerald)', marginTop: '4px' }}>{formatCurrency(totalNet)}</div>
-            </div>
-            <div style={{ background: 'var(--bg-card)', padding: '20px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)' }}>
-              <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 500 }}>Paid / Total</div>
-              <div style={{ fontSize: '22px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '4px' }}>{paidCount} / {payrollData.length}</div>
-            </div>
-          </div>
+          )}
 
           <div className="table-wrapper" style={{ borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', overflow: 'hidden' }}>
             <table className="leads-table">
@@ -189,7 +199,7 @@ const Payroll = () => {
                   <th style={{ textAlign: 'right' }}>Deductions</th>
                   <th style={{ textAlign: 'right' }}>Net Salary</th>
                   <th>Status</th>
-                  <th style={{ textAlign: 'center' }}>Actions</th>
+                  {isHRMSAdmin && <th style={{ textAlign: 'center' }}>Actions</th>}
                 </tr>
               </thead>
               <tbody>
@@ -214,19 +224,21 @@ const Payroll = () => {
                         color: pr.status === 'Paid' ? 'var(--accent-emerald)' : pr.status === 'Processed' ? 'var(--accent-blue)' : 'var(--accent-yellow)'
                       }}>{pr.status}</span>
                     </td>
-                    <td style={{ textAlign: 'center' }}>
-                      {pr.status === 'Processed' && (
-                        <button onClick={() => handleMarkPaid(pr.id)} style={{
-                          background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)',
-                          color: 'var(--accent-emerald)', cursor: 'pointer', padding: '4px 10px',
-                          borderRadius: 'var(--radius-sm)', fontSize: '11px', fontWeight: 600,
-                          display: 'inline-flex', alignItems: 'center', gap: '4px'
-                        }}><Check size={12} /> Mark Paid</button>
-                      )}
-                      {pr.status === 'Paid' && (
-                        <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{pr.paid_on ? new Date(pr.paid_on).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'Paid'}</span>
-                      )}
-                    </td>
+                    {isHRMSAdmin && (
+                      <td style={{ textAlign: 'center' }}>
+                        {pr.status === 'Processed' && (
+                          <button onClick={() => handleMarkPaid(pr.id)} style={{
+                            background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)',
+                            color: 'var(--accent-emerald)', cursor: 'pointer', padding: '4px 10px',
+                            borderRadius: 'var(--radius-sm)', fontSize: '11px', fontWeight: 600,
+                            display: 'inline-flex', alignItems: 'center', gap: '4px'
+                          }}><Check size={12} /> Mark Paid</button>
+                        )}
+                        {pr.status === 'Paid' && (
+                          <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{pr.paid_on ? new Date(pr.paid_on).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'Paid'}</span>
+                        )}
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>

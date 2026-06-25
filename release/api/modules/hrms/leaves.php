@@ -6,6 +6,10 @@ $method = $_SERVER['REQUEST_METHOD'];
 $tenant_id = getTenantId();
 $action = $_GET['action'] ?? '';
 
+$user_context = getCurrentUserContext();
+$is_admin_or_manager = $user_context && in_array($user_context['role'], ['Admin', 'Manager', 'Superadmin']);
+$current_emp_id = getCurrentEmployeeId($pdo, $tenant_id);
+
 switch ($method) {
     case 'GET':
         if ($action === 'types') {
@@ -17,6 +21,16 @@ switch ($method) {
         } elseif ($action === 'balances') {
             // Get leave balances for an employee
             $employee_id = $_GET['employee_id'] ?? null;
+            
+            // Enforce ESS isolation
+            if (!$is_admin_or_manager) {
+                if (!$current_emp_id) {
+                    echo json_encode(["success" => true, "data" => []]);
+                    exit;
+                }
+                $employee_id = $current_emp_id; // Override
+            }
+            
             $year = $_GET['year'] ?? date('Y');
             
             $sql = "SELECT lb.*, lt.name as leave_type_name, CONCAT(e.first_name, ' ', e.last_name) as employee_name, e.emp_code
@@ -39,6 +53,16 @@ switch ($method) {
         } else {
             // Get leave requests
             $employee_id = $_GET['employee_id'] ?? null;
+            
+            // Enforce ESS isolation
+            if (!$is_admin_or_manager) {
+                if (!$current_emp_id) {
+                    echo json_encode(["success" => true, "data" => []]);
+                    exit;
+                }
+                $employee_id = $current_emp_id; // Override
+            }
+
             $status = $_GET['status'] ?? null;
             
             $sql = "SELECT lr.*, lt.name as leave_type_name, 
@@ -73,6 +97,11 @@ switch ($method) {
         $input = json_decode(file_get_contents("php://input"), true);
         
         if ($action === 'types') {
+            if (!$is_admin_or_manager) {
+                http_response_code(403);
+                echo json_encode(["success" => false, "error" => "Unauthorized to create leave types."]);
+                exit;
+            }
             // Create leave type
             $name = $input['name'] ?? '';
             $default_days = $input['default_days'] ?? 12;
@@ -89,6 +118,15 @@ switch ($method) {
         } else {
             // Apply for leave
             $employee_id = $input['employee_id'] ?? null;
+            
+            if (!$is_admin_or_manager) {
+                if (!$current_emp_id) {
+                    echo json_encode(["success" => false, "error" => "No employee record linked to your user account."]);
+                    exit;
+                }
+                $employee_id = $current_emp_id; // Override
+            }
+
             $leave_type_id = $input['leave_type_id'] ?? null;
             $from_date = $input['from_date'] ?? null;
             $to_date = $input['to_date'] ?? null;
@@ -127,6 +165,11 @@ switch ($method) {
         break;
 
     case 'PUT':
+        if (!$is_admin_or_manager) {
+            http_response_code(403);
+            echo json_encode(["success" => false, "error" => "Unauthorized to approve leaves or modify types."]);
+            exit;
+        }
         $input = json_decode(file_get_contents("php://input"), true);
         
         if ($action === 'types') {
@@ -177,12 +220,34 @@ switch ($method) {
 
     case 'DELETE':
         if ($action === 'types') {
+            if (!$is_admin_or_manager) {
+                http_response_code(403);
+                echo json_encode(["success" => false, "error" => "Unauthorized"]);
+                exit;
+            }
             $id = $_GET['id'] ?? null;
             $stmt = $pdo->prepare("DELETE FROM hrms_leave_types WHERE id = ? AND tenant_id = ?");
             $stmt->execute([$id, $tenant_id]);
             echo json_encode(["success" => true, "message" => "Leave type deleted."]);
         } else {
             $id = $_GET['id'] ?? null;
+            
+            if (!$is_admin_or_manager) {
+                if (!$current_emp_id) {
+                    http_response_code(403);
+                    echo json_encode(["success" => false, "error" => "Unauthorized"]);
+                    exit;
+                }
+                // Verify ownership
+                $check = $pdo->prepare("SELECT id FROM hrms_leave_requests WHERE id = ? AND employee_id = ? AND tenant_id = ? AND status = 'Pending'");
+                $check->execute([$id, $current_emp_id, $tenant_id]);
+                if (!$check->fetch()) {
+                    http_response_code(403);
+                    echo json_encode(["success" => false, "error" => "Unauthorized to delete this request."]);
+                    exit;
+                }
+            }
+            
             // Can only delete pending requests
             $stmt = $pdo->prepare("DELETE FROM hrms_leave_requests WHERE id = ? AND tenant_id = ? AND status = 'Pending'");
             $stmt->execute([$id, $tenant_id]);

@@ -15,6 +15,8 @@ import Sales from './features/leads/pages/Sales';
 import Tenants from './features/superadmin/pages/Tenants';
 import TenantReports from './features/superadmin/pages/TenantReports';
 import Apps from './features/superadmin/pages/Apps';
+import Comparison from './features/superadmin/pages/Comparison';
+import GlobalChatPage from './pages/GlobalChatPage';
 import Login from './pages/Login';
 import ResetPassword from './pages/ResetPassword';
 import SADashboard from './features/leads/pages/SADashboard';
@@ -471,6 +473,17 @@ function App() {
             <Route path="superadmin/apps" element={
               <ProtectedRoute allowedRoles={['Superadmin']}>
                 <Apps />
+              </ProtectedRoute>
+            } />
+            <Route path="superadmin/comparison" element={
+              <ProtectedRoute allowedRoles={['Superadmin']}>
+                <Comparison />
+              </ProtectedRoute>
+            } />
+            
+            <Route path="chat" element={
+              <ProtectedRoute>
+                <GlobalChatPage />
               </ProtectedRoute>
             } />
           </Route>
